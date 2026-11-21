@@ -125,10 +125,10 @@ safely("ventricle", async () => {
   const readout = $("[data-story-readout]");
   const lines = {
     healthy: "wall thickens, cavity shrinks",
-    infarct: "scar: no contraction",
+    infarct: "scar: no active tension in the model",
     permanent: "under 1% of muscle cells renewed per year",
     remodel: "radius up, wall thinner, stress up",
-    gel: "wall thicker, stress down",
+    gel: "wall thicker; by Laplace, stress down",
     guess: "sites chosen by eye",
   };
   const steps = $$(".step");

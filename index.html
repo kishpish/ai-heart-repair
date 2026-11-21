@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>AI Heart Repair | A Second Beat for the Broken Heart, by Krishiv Potluri</title>
-  <meta name="description" content="A pipeline that turns a heart-attack patient's cardiac MRI into a patient-specific design for an injectable hydrogel, then checks its design ranking against finite-element simulation. Research by Krishiv Potluri.">
+  <meta name="description" content="A computational pipeline from a heart-attack patient's cardiac MRI to a patient-specific design for an injectable hydrogel, with a separate design ranking checked by direct finite-element simulation. Research by Krishiv Potluri.">
   <meta name="author" content="Krishiv Potluri">
   <meta name="theme-color" content="#0d0c0b">
   <link rel="canonical" href="https://kishpish.github.io/ai-heart-repair/">
@@ -12,7 +12,7 @@
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="AI Heart Repair">
   <meta property="og:title" content="A Second Beat for the Broken Heart">
-  <meta property="og:description" content="From cardiac MRI to a patient-specific hydrogel design, with the design ranking checked by finite-element simulation. Research by Krishiv Potluri.">
+  <meta property="og:description" content="From cardiac MRI to a patient-specific hydrogel design, with a separate design ranking checked by 210 finite-element solves. Computational research by Krishiv Potluri.">
   <meta property="og:url" content="https://kishpish.github.io/ai-heart-repair/">
   <meta property="og:image" content="https://kishpish.github.io/ai-heart-repair/assets/meta/og.png">
   <meta property="og:image:width" content="1200">
@@ -20,7 +20,7 @@
   <meta property="og:image:alt" content="A short-axis cross-section of a left ventricle drawn in fine lines: grey healthy muscle, a crimson scar, ochre border zones and teal gel depots, beside the title A Second Beat for the Broken Heart.">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="A Second Beat for the Broken Heart">
-  <meta name="twitter:description" content="From cardiac MRI to a patient-specific hydrogel design, checked by finite-element simulation. Research by Krishiv Potluri.">
+  <meta name="twitter:description" content="From cardiac MRI to a patient-specific hydrogel design, with a separate design ranking checked by 210 finite-element solves. Computational research by Krishiv Potluri.">
   <meta name="twitter:image" content="https://kishpish.github.io/ai-heart-repair/assets/meta/og.png">
 
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
@@ -44,7 +44,8 @@
     "@type": "ScholarlyArticle",
     "headline": "A Second Beat for the Broken Heart: AI-Driven Inverse Design of Bio-Instructive Hydrogels for Post-Infarction Myocardial Regeneration",
     "author": { "@type": "Person", "name": "Krishiv Potluri" },
-    "datePublished": "2026",
+    "dateCreated": "2026",
+    "creativeWorkStatus": "Manuscript",
     "url": "https://kishpish.github.io/ai-heart-repair/",
     "keywords": "patient-specific cardiac modeling; injectable hydrogel; myocardial infarction; Holzapfel-Ogden constitutive model; finite-element verification; Gaussian-process surrogate; inverse design; chemical language model"
   }
@@ -98,7 +99,8 @@
       <p class="label hero__eyebrow">Computational cardiology <span aria-hidden="true">/</span> Research by Krishiv Potluri</p>
       <h1 id="hero-title">A second beat for the broken heart</h1>
       <p class="hero__sub">AI-driven inverse design of bio-instructive hydrogels for post-infarction myocardial regeneration</p>
-      <p class="hero__plain">A heart attack leaves scar where muscle was. This work takes a patient&rsquo;s cardiac MRI, builds a simulation-ready model of their left ventricle, and searches ten million injectable-gel formulations for one that supports the wall the scar weakened. Then it tests its own design ranking against physics.</p>
+      <p class="hero__plain">A heart attack leaves scar where muscle was. This work takes a patient&rsquo;s cardiac MRI and builds a simulation-ready model of their left ventricle. A chemistry model then searches ten million injectable-gel formulations for one predicted to support the weakened wall. Separately, a second model ranks designs a catheter can deliver, and that ranking is checked against direct finite-element simulation.</p>
+      <p class="hero__scope">A computational study. It shows a modelling pipeline and a checked design ranking. It does not show regeneration or clinical benefit.</p>
       <p class="hero__by"><span class="label">By</span> Krishiv Potluri, independent researcher, Austin, Texas</p>
       <ul class="hero__links" aria-label="Documents">
         <li><a class="btn btn--solid" href="#paper">Read the paper</a></li>
@@ -128,24 +130,24 @@
   <div class="wrap">
     <dl class="facts" aria-label="At a glance">
       <div>
-        <dt>Formulations searched per patient</dt>
+        <dt><span class="facts__prog">HYDRA-BERT</span>Formulations screened per patient</dt>
         <dd>10<sup>7</sup></dd>
         <dd class="facts__src"><a class="src" href="read.html?doc=full&amp;page=2" data-doc="full" data-page="2">Abstract</a></dd>
       </div>
       <div>
-        <dt>Rank agreement, sealed prediction against solved outcome, within each patient</dt>
+        <dt><span class="facts__prog">HYDRA-BERT pipeline</span>End-to-end time for a new patient</dt>
+        <dd>~37 min</dd>
+        <dd class="facts__src"><a class="src" href="read.html?doc=full&amp;page=34" data-doc="full" data-page="34">&sect;10.6</a></dd>
+      </div>
+      <div>
+        <dt><span class="facts__prog">Finite-element program</span>Rank agreement between a separate surrogate&rsquo;s sealed predictions and solved outcomes, within each patient</dt>
         <dd>0.929&ndash;0.983</dd>
         <dd class="facts__src"><a class="src" href="read.html?doc=full&amp;page=40" data-doc="full" data-page="40">Table 11</a></dd>
       </div>
       <div>
-        <dt>Verification solves that converged</dt>
+        <dt><span class="facts__prog">Finite-element program</span>Verification solves that converged (211 queued; one left no record and is excluded)</dt>
         <dd>210 of 210</dd>
         <dd class="facts__src"><a class="src" href="read.html?doc=full&amp;page=40" data-doc="full" data-page="40">&sect;11.6</a></dd>
-      </div>
-      <div>
-        <dt>End-to-end time for a new patient</dt>
-        <dd>~37 min</dd>
-        <dd class="facts__src"><a class="src" href="read.html?doc=full&amp;page=34" data-doc="full" data-page="34">&sect;10.6</a></dd>
       </div>
     </dl>
   </div>
@@ -171,11 +173,11 @@
     <ol class="story__steps">
       <li class="step" data-step="healthy">
         <h3>A working ventricle</h3>
-        <p>This is the left ventricle seen in cross-section, the way a short-axis MRI slice shows it. With each beat the wall thickens and the cavity shrinks. Healthy muscle at rest is soft: 8 to 15&nbsp;kPa. <a class="src" href="read.html?doc=full&amp;page=3" data-doc="full" data-page="3">&sect;1.1</a></p>
+        <p>This is the left ventricle seen in cross-section, the way a short-axis MRI slice shows it. With each beat the wall thickens and the cavity shrinks. Healthy muscle, relaxed between beats, is soft: 8 to 15&nbsp;kPa. <a class="src" href="read.html?doc=full&amp;page=3" data-doc="full" data-page="3">&sect;1.1</a></p>
       </li>
       <li class="step" data-step="infarct">
         <h3>A heart attack kills part of the wall</h3>
-        <p>A blocked coronary artery starves a region of muscle. The cells die and collagen scar replaces them. The scar stiffens to at least 55&nbsp;kPa and no longer contracts. About 805,000 heart attacks occur in the United States each year. <a class="src" href="read.html?doc=full&amp;page=3" data-doc="full" data-page="3">&sect;1.1</a> <a class="src" href="read.html?doc=ieee&amp;page=1" data-doc="ieee" data-page="1">IEEE &sect;I</a></p>
+        <p>A blocked coronary artery starves a region of muscle. The cells die and collagen scar replaces them. The scar stiffens to at least 55&nbsp;kPa. In the model it develops no active tension. About 805,000 heart attacks occur in the United States each year. <a class="src" href="read.html?doc=full&amp;page=3" data-doc="full" data-page="3">&sect;1.1</a> <a class="src" href="read.html?doc=full&amp;page=11" data-doc="full" data-page="11">&sect;2.11</a> <a class="src" href="read.html?doc=ieee&amp;page=1" data-doc="ieee" data-page="1">IEEE &sect;I</a></p>
       </li>
       <li class="step" data-step="permanent">
         <h3>The muscle does not grow back</h3>
@@ -189,12 +191,13 @@
       </li>
       <li class="step" data-step="gel">
         <h3>One idea: thicken the wall</h3>
-        <p>Inject a hydrogel into the wall and <em>h</em> goes up, so stress comes down. A 2006 simulation found that material filling 4.5 percent of wall volume cut border-zone fibre stress by 17 percent, from 28.2 to 23.3&nbsp;kPa. Gels can also carry properties beyond mechanics: conductivity, a degradation schedule, a stiffness that cells respond to. <a class="src" href="read.html?doc=full&amp;page=4" data-doc="full" data-page="4">&sect;1.2, citing Wall et al., 2006</a></p>
+        <p>Inject a hydrogel into the wall and <em>h</em> goes up, so by the same formula stress should come down. A 2006 simulation found that material filling 4.5 percent of wall volume cut border-zone fibre stress by 17 percent, from 28.2 to 23.3&nbsp;kPa. <a class="src" href="read.html?doc=full&amp;page=4" data-doc="full" data-page="4">&sect;1.2, citing Wall et al., 2006</a></p>
+        <p>Gels can also carry bio-instructive properties: conductivity, a degradation schedule, and the stiffness the material presents to cells. <a class="src" href="read.html?doc=full&amp;page=4" data-doc="full" data-page="4">&sect;1.2</a> <a class="src" href="read.html?doc=full&amp;page=47" data-doc="full" data-page="47">&sect;12.3</a></p>
       </li>
       <li class="step" data-step="guess">
-        <h3>Why it has not reached patients</h3>
-        <p>Results in people have been mixed. A randomized trial of a cardiac matrix delivered after large heart attacks did not reduce remodeling against placebo. <a class="src" href="read.html?doc=full&amp;page=4" data-doc="full" data-page="4">&sect;1.2, PRESERVATION-1</a></p>
-        <p>Three things stand between the idea and a prescription for one patient. Simulation-ready heart models are not built routinely from clinical data. Injection sites are chosen by eye, twelve to twenty of them, with no mechanical rationale. And with a dozen interacting formulation variables, the design space is too large to simulate directly. <a class="src" href="read.html?doc=full&amp;page=5" data-doc="full" data-page="5">&sect;1.3</a></p>
+        <h3>Why results in patients have been mixed</h3>
+        <p>Gels have been delivered to patients, and the results are mixed. A randomized trial of a bioabsorbable matrix, delivered through the coronary artery after large heart attacks, did not reduce remodeling against placebo. <a class="src" href="read.html?doc=full&amp;page=4" data-doc="full" data-page="4">&sect;1.2, PRESERVATION-1</a></p>
+        <p>Three things stand between the idea and a prescription for one patient. Simulation-ready heart models are not generated routinely from sparse atlas data without manual work. Injection sites are chosen by eye, twelve to twenty of them, with no mechanical rationale. And with a dozen interacting formulation variables, the design space is too large to simulate directly. <a class="src" href="read.html?doc=full&amp;page=5" data-doc="full" data-page="5">&sect;1.3</a></p>
         <p class="step__turn">This work addresses all three.</p>
       </li>
     </ol>
@@ -206,8 +209,8 @@
   <div class="wrap">
     <header class="sec-head">
       <p class="sec-num" aria-hidden="true">02</p>
-      <h2 id="method-title">From one MRI to one design, then a test</h2>
-      <p class="sec-lede">Six stages run in sequence. Each one is checked against an answer that comes from outside the pipeline. Select a stage.</p>
+      <h2 id="method-title">From image to design, then a sealed test of a ranking</h2>
+      <p class="sec-lede">Five stages run from image to a selected formulation. A sixth runs beside them: a sealed test of a design ranking by direct finite-element solves. The solver, the patient fit and the ranking are each checked against a reference the pipeline did not produce. Select a stage.</p>
     </header>
 
     <div class="pipe" data-pipeline>
@@ -226,14 +229,14 @@
             <h3>Image to model</h3>
             <p>The input is a stack of short-axis MRI slices with the inner and outer heart wall traced by an expert. Eight automated stages turn those sparse contours into a watertight surface and then into a solid mesh of tetrahedra that a physics solver can use. No one edits the mesh by hand.</p>
             <dl class="checks">
-              <div><dt>Built</dt><dd>10 patients, 3,658,183 elements, 677,557 nodes</dd></div>
+              <div><dt>Built</dt><dd>10 patients; 3,658,183 elements and 677,557 nodes in total</dd></div>
               <div><dt>Check</dt><dd>Zero inverted elements in every mesh</dd></div>
               <div><dt>Time</dt><dd>About fifteen minutes per patient</dd></div>
             </dl>
             <p class="pipe__src"><a class="src" href="read.html?doc=full&amp;page=19" data-doc="full" data-page="19">&sect;4.4</a></p>
             <details>
               <summary>For specialists</summary>
-              <p>Cubic Hermite atlas fits of roughly sixty nodes in prolate spheroidal coordinates are evaluated to a point cloud, triangulated, refined by three rounds of Loop subdivision, smoothed, and passed through a seven-operator surface repair that guarantees a closed two-manifold. Tetrahedralization is followed by a quality optimization that accepts a vertex move only if the worst element improves. Data: Sunnybrook Cardiac MR Database, 256&nbsp;&times;&nbsp;256 short-axis stacks, 8 to 14 slices per patient. <a class="src" href="read.html?doc=full&amp;page=17" data-doc="full" data-page="17">&sect;4.1&ndash;4.3</a> <a class="src" href="read.html?doc=full&amp;page=15" data-doc="full" data-page="15">&sect;3.1</a></p>
+              <p>Cubic Hermite atlas fits of roughly sixty nodes in prolate spheroidal coordinates are evaluated to a point cloud, triangulated, refined by three rounds of Loop subdivision, smoothed, and passed through a seven-operator surface repair that returns a closed two-manifold or aborts the build. Tetrahedralization is followed by a quality optimization that accepts a vertex move only if the worst element improves. The meshes were then rebuilt at a fixed target of 77,523 nodes for the solves reported in Results. Data: Sunnybrook Cardiac MR Database, 256&nbsp;&times;&nbsp;256 short-axis stacks, 8 to 14 slices per patient. <a class="src" href="read.html?doc=full&amp;page=4" data-doc="full" data-page="4">&sect;1.3</a> <a class="src" href="read.html?doc=full&amp;page=17" data-doc="full" data-page="17">&sect;4.1&ndash;4.3</a> <a class="src" href="read.html?doc=full&amp;page=19" data-doc="full" data-page="19">&sect;4.4</a> <a class="src" href="read.html?doc=full&amp;page=15" data-doc="full" data-page="15">&sect;3.1</a></p>
             </details>
           </div>
           <figure class="pipe__fig pipe__fig--dark">
@@ -241,7 +244,7 @@
               <source type="image/webp" srcset="assets/figures/fig2-mri-contours-640.webp 640w, assets/figures/fig2-mri-contours-1280.webp 1280w, assets/figures/fig2-mri-contours-2000.webp 2000w" sizes="(min-width: 60rem) 44vw, 92vw">
               <img src="assets/figures/original/fig2-mri-contours.png" width="2580" height="1470" loading="lazy" decoding="async" alt="Eight short-axis MRI slices of one patient's heart, from base to apex. On each, an orange line traces the outer wall of the left ventricle and a blue line traces the inner wall. A 20 millimetre scale bar is shown.">
             </picture>
-            <figcaption>Paper Fig.&nbsp;2. One patient&rsquo;s cine MRI from base to apex with expert contours: epicardium in orange, endocardium in blue. <a href="assets/figures/original/fig2-mri-contours.png" download>Original PNG</a></figcaption>
+            <figcaption>Paper Fig.&nbsp;2. One patient&rsquo;s cine MRI from base to apex with expert contours: epicardium in orange, endocardium in blue. <a class="src" href="read.html?doc=full&amp;page=16" data-doc="full" data-page="16">Fig. 2</a> <a href="assets/figures/original/fig2-mri-contours.png" download>Original PNG</a></figcaption>
           </figure>
         </article>
 
@@ -257,7 +260,7 @@
             <p class="caveat"><strong>Stated limit.</strong> The public dataset has no scar imaging, so scar is inferred from where the wall is thin. The paper calls this a weak inference. <a class="src" href="read.html?doc=full&amp;page=21" data-doc="full" data-page="21">&sect;5.4</a></p>
             <details>
               <summary>For specialists</summary>
-              <p>A Laplace&ndash;Dirichlet transmural coordinate &phi; (0 at endocardium, 1 at epicardium) drives a Streeter rule: helix angle from +60&deg; to &minus;60&deg;, sheet angle from &minus;65&deg; to +25&deg;. Core scar takes circumferential collagen and the border zone a halved rotation. Orthonormality is enforced element by element to 10<sup>&minus;9</sup>. <a class="src" href="read.html?doc=full&amp;page=9" data-doc="full" data-page="9">&sect;2.7</a></p>
+              <p>A Laplace&ndash;Dirichlet transmural coordinate &phi; (0 at endocardium, 1 at epicardium) drives a Streeter rule: helix angle from +60&deg; to &minus;60&deg;, sheet angle from &minus;65&deg; to +25&deg;. Core scar takes circumferential collagen and the border zone a halved rotation. Orthonormality is verified element by element: the worst deviation must stay below 10<sup>&minus;9</sup> or the build raises an error. <a class="src" href="read.html?doc=full&amp;page=9" data-doc="full" data-page="9">&sect;2.7</a></p>
             </details>
           </div>
           <figure class="pipe__fig">
@@ -271,14 +274,14 @@
                 <img src="assets/figures/fig4b-fibre-field-960.webp" width="960" height="899" loading="lazy" decoding="async" alt="The same ventricle covered in short blue dashes, each showing the local muscle-fibre direction.">
               </picture>
             </div>
-            <figcaption>Paper Fig.&nbsp;4A and 4B, patient SCD&nbsp;0000101. Left: tissue tags (scar crimson, border zone ochre). Right: the rule-based fibre field. <a href="assets/figures/original/fig4-substrate-depots.png" download>Original PNG</a></figcaption>
+            <figcaption>Paper Fig.&nbsp;4A and 4B, patient SCD&nbsp;0000101, on the rebuilt mesh used for the solves (this patient: 14.7% scar, 6.3% border zone). Left: tissue tags (scar crimson, border zone ochre). Right: the rule-based fibre field. The fractions listed beside this figure are for the earlier ten-patient build. <a class="src" href="read.html?doc=full&amp;page=23" data-doc="full" data-page="23">Fig. 4</a> <a class="src" href="read.html?doc=full&amp;page=30" data-doc="full" data-page="30">Table 5</a> <a href="assets/figures/original/fig4-substrate-depots.png" download>Original PNG</a></figcaption>
           </figure>
         </article>
 
         <article class="pipe__panel" role="tabpanel" id="pp-3" aria-labelledby="pt-3" tabindex="0" hidden>
           <div class="pipe__copy">
             <h3>Where to inject</h3>
-            <p>The textbook stress formula assumes the heart is a thin, uniform sphere. It is none of those. The pipeline measures the real curvature at every point of the inner wall and corrects the stress estimate with it. It measures distance along the curved wall, not in a straight line. Then it picks sites that are high in stress, inside the border zone, and well spaced. Scar is excluded outright.</p>
+            <p>The textbook stress formula assumes the heart is a thin, uniform sphere. It is none of those. The pipeline measures the real curvature at every point of the inner wall and corrects the stress estimate with it. It measures distance along the curved wall, not in a straight line. Then it scores each site for stress, for lying in the border zone, and for distance from sites already chosen, and picks them one at a time. Scar is excluded outright.</p>
             <dl class="checks">
               <div><dt>Sites</dt><dd>17 across ten patients; 82.4% in border zone, 0 in scar</dd></div>
               <div><dt>Stress</dt><dd>The spherical formula understates border-zone stress by 15 to 40%</dd></div>
@@ -287,7 +290,7 @@
             <p class="pipe__src"><a class="src" href="read.html?doc=full&amp;page=22" data-doc="full" data-page="22">&sect;6</a></p>
             <details>
               <summary>For specialists</summary>
-              <p>A least-squares shape operator at each endocardial vertex gives the principal curvatures; an anisotropy factor bounded to [1,&nbsp;2.5] modifies the Laplace estimate and recovers the classical law on a sphere. Geodesic distance uses the heat method in three sparse solves that reuse the Laplacian already assembled for the fibre field. Selection is greedy over a three-term score with a minimum geodesic separation. <a class="src" href="read.html?doc=full&amp;page=9" data-doc="full" data-page="9">&sect;2.8</a> <a class="src" href="read.html?doc=full&amp;page=10" data-doc="full" data-page="10">&sect;2.9</a></p>
+              <p>A least-squares shape operator at each endocardial vertex gives the principal curvatures; an anisotropy factor bounded to [1,&nbsp;2.5] modifies the Laplace estimate and recovers the classical law on a sphere. Geodesic distance uses the heat method in three sparse solves that reuse the Laplacian already assembled for the transmural coordinate. Selection is greedy over a three-term score with a minimum geodesic separation. <a class="src" href="read.html?doc=full&amp;page=9" data-doc="full" data-page="9">&sect;2.8</a> <a class="src" href="read.html?doc=full&amp;page=10" data-doc="full" data-page="10">&sect;2.9</a></p>
             </details>
           </div>
           <figure class="pipe__fig pipe__fig--dark">
@@ -295,17 +298,17 @@
               <source type="image/webp" srcset="assets/figures/fig3-three-zone-field-640.webp 640w, assets/figures/fig3-three-zone-field-1280.webp 1280w, assets/figures/fig3-three-zone-field-2000.webp 2000w" sizes="(min-width: 60rem) 44vw, 92vw">
               <img src="assets/figures/original/fig3-three-zone-field.png" width="2324" height="1208" loading="lazy" decoding="async" alt="A tetrahedral mesh of a left ventricle. Most of it is blue. A long band along the lower wall is coloured from green through yellow to red, marking the infarct and its border zone.">
             </picture>
-            <figcaption>Paper Fig.&nbsp;3, patient SCD&nbsp;0000101. Healthy muscle in blue; the infarct and its border zone form the warm band along the inferior wall. <a href="assets/figures/original/fig3-three-zone-field.png" download>Original PNG</a></figcaption>
+            <figcaption>Paper Fig.&nbsp;3, patient SCD&nbsp;0000101, ten-patient build. The tissue classification inferred from wall thinning, on a continuous colour scale: healthy muscle in blue; the infarct and its border zone form the warm band along the inferior wall. This is the tissue map the site search runs on. It is not a stress map, and no injection sites are drawn. <a class="src" href="read.html?doc=full&amp;page=21" data-doc="full" data-page="21">Fig. 3</a> <a href="assets/figures/original/fig3-three-zone-field.png" download>Original PNG</a></figcaption>
           </figure>
         </article>
 
         <article class="pipe__panel" role="tabpanel" id="pp-4" aria-labelledby="pt-4" tabindex="0" hidden>
           <div class="pipe__copy">
             <h3>Fit to the patient</h3>
-            <p>A mesh has a shape but not yet a behaviour. The pipeline recovers each ventricle&rsquo;s unloaded shape, then tunes how hard the muscle contracts until the model pumps the volumes that patient&rsquo;s own images show. Before any patient was solved, the muscle model was tested against exact solutions.</p>
+            <p>A mesh has a shape but not yet a behaviour. The pipeline recovers each ventricle&rsquo;s unloaded shape, then tunes how hard the muscle contracts until the model matches that patient&rsquo;s imaged volumes over the slices the mesh covers. Before any patient was solved, the muscle model was tested against exact solutions.</p>
             <dl class="checks">
-              <div><dt>Solver</dt><dd>Matches closed-form stress to 4.609&nbsp;&times;&nbsp;10<sup>&minus;12</sup>&nbsp;kPa; a second, independent implementation agrees to 6&nbsp;&times;&nbsp;10<sup>&minus;7</sup></dd></div>
-              <div><dt>Fit</dt><dd>End-diastolic volume within 1.34%, end-systolic within 1.67%, ejection fraction within 1.28 points, in every patient</dd></div>
+              <div><dt>Solver</dt><dd>Matches closed-form stress to 4.609&nbsp;&times;&nbsp;10<sup>&minus;12</sup>&nbsp;kPa; a second, independent implementation agrees to a relative 6&nbsp;&times;&nbsp;10<sup>&minus;7</sup></dd></div>
+              <div><dt>Fit</dt><dd>Over the slices each mesh covers: end-diastolic volume within 1.34%, end-systolic within 1.67%, ejection fraction within 1.28 points, in every patient</dd></div>
               <div><dt>Cohort</dt><dd>8 ventricles personalized; fitted peak tension 62.3 to 115.6&nbsp;kPa</dd></div>
             </dl>
             <p class="pipe__src"><a class="src" href="read.html?doc=full&amp;page=24" data-doc="full" data-page="24">&sect;7.2</a> <a class="src" href="read.html?doc=full&amp;page=28" data-doc="full" data-page="28">&sect;8.2</a> <a class="src" href="read.html?doc=full&amp;page=29" data-doc="full" data-page="29">&sect;8.3</a></p>
@@ -316,14 +319,14 @@
           </div>
           <div class="pipe__fig pipe__fig--ledger">
             <table class="ledger">
-              <caption>Verification before any patient result <a class="src" href="read.html?doc=full&amp;page=26" data-doc="full" data-page="26">Table 4</a></caption>
+              <caption>Verification before any patient result: eight of the twelve checks <a class="src" href="read.html?doc=full&amp;page=26" data-doc="full" data-page="26">Table 4</a></caption>
               <thead><tr><th scope="col">Check</th><th scope="col">Scored against</th><th scope="col">Result</th></tr></thead>
               <tbody>
                 <tr><th scope="row">Passive law, 11 deformations</th><td>Closed-form stress</td><td>Max error 4.609&nbsp;&times;&nbsp;10<sup>&minus;12</sup>&nbsp;kPa</td></tr>
                 <tr><th scope="row">Consistent tangent</th><td>Finite difference</td><td>6 of 6 pass</td></tr>
                 <tr><th scope="row">Active contraction</th><td>Analytic equilibrium</td><td>Relative difference 1.06&nbsp;&times;&nbsp;10<sup>&minus;6</sup></td></tr>
                 <tr><th scope="row">Independent re-implementation</th><td>Second code, 8 states</td><td>Worst discrepancy 6&nbsp;&times;&nbsp;10<sup>&minus;7</sup></td></tr>
-                <tr><th scope="row">Unloading</th><td>Known unloaded shape</td><td>Within 0.309&nbsp;mm at every node</td></tr>
+                <tr><th scope="row">Unloading</th><td>Synthetic ventricle, known unloaded shape</td><td>Within 0.309&nbsp;mm at every node</td></tr>
                 <tr><th scope="row">Loading-path independence</th><td>Two loading orders</td><td>Cavity volume differs by 0.0001%</td></tr>
                 <tr><th scope="row">Electrophysiology slab</th><td>Published consensus</td><td>Within 0.2&nbsp;ms of the interval</td></tr>
                 <tr><th scope="row">Cardiac mechanics benchmarks</th><td>Published decks</td><td>Run and converge; no pass claimed, because the reference values exist only as figures</td></tr>
@@ -344,7 +347,7 @@
             <p class="pipe__src"><a class="src" href="read.html?doc=full&amp;page=33" data-doc="full" data-page="33">&sect;10.3&ndash;10.5</a> <a class="src" href="read.html?doc=full&amp;page=31" data-doc="full" data-page="31">&sect;9.3</a></p>
             <details>
               <summary>For specialists</summary>
-              <p>The encoder is polyBERT, a twelve-layer DeBERTa-v2 pre-trained on polymer SMILES, giving a 600-dimensional fingerprint. Low-rank adaptation (rank 16, scaling 32) is applied to the query and value projections of all twelve layers. The fingerprint is fused with nineteen numerical features. Proximal policy optimization searches a hybrid action space: discrete polymer and coverage, continuous modulus, degradation half-life, conductivity and thickness. The reward penalizes predicted toxicity, fibrosis and loss of structural integrity as step functions, so predicted benefit cannot buy a design past a safety threshold. Delivery is modelled as discrete mid-wall depots: at least 8, 0.27 to 0.30&nbsp;mL each, 5 to 10&nbsp;mm apart, in wall at least 6&nbsp;mm thick, 2&nbsp;mm clear of either surface. <a class="src" href="read.html?doc=full&amp;page=32" data-doc="full" data-page="32">&sect;10.2&ndash;10.3</a> <a class="src" href="read.html?doc=full&amp;page=31" data-doc="full" data-page="31">Table 6</a></p>
+              <p>The encoder is polyBERT, a twelve-layer DeBERTa-v2 pre-trained on polymer SMILES, giving a 600-dimensional fingerprint. Low-rank adaptation (rank 16, scaling 32) is applied to the query and value projections of all twelve layers. The fingerprint is fused with nineteen numerical features. Proximal policy optimization searches a hybrid action space: discrete polymer and coverage, continuous modulus, degradation half-life, conductivity and thickness. The reward penalizes predicted toxicity, fibrosis and loss of structural integrity as step functions, so predicted benefit cannot buy a design past a safety threshold. Delivery is modelled as discrete mid-wall depots: at least 8, 0.27 to 0.30&nbsp;mL each, 5 to 10&nbsp;mm apart, in wall at least 6&nbsp;mm thick, 2&nbsp;mm clear of either surface. <a class="src" href="read.html?doc=full&amp;page=32" data-doc="full" data-page="32">&sect;10.3&ndash;10.4</a> <a class="src" href="read.html?doc=full&amp;page=31" data-doc="full" data-page="31">Table 6</a></p>
             </details>
           </div>
           <figure class="pipe__fig">
@@ -365,7 +368,8 @@
         <article class="pipe__panel" role="tabpanel" id="pp-6" aria-labelledby="pt-6" tabindex="0" hidden>
           <div class="pipe__copy">
             <h3>Seal, then solve</h3>
-            <p>A fast model is only useful if its ranking survives real physics. A second, separate surrogate predicts how each deliverable design will change each patient&rsquo;s end-systolic volume. Those predictions, their uncertainties and the analysis plan were written to a file and hashed before any verification simulation existed. Only then were the designs solved in full, including the predicted-worst ones.</p>
+            <p>This stage tests a different model from HYDRA-BERT. A separate physics-based surrogate ranks catheter-deliverable depot designs within each patient by their predicted change in end-systolic volume. Those predictions, their uncertainties and the analysis plan were written to a file and hashed before any verification simulation existed. Only then were the designs solved in full, the predicted-worst included.</p>
+            <p>The designs solved here are sampled from the deliverable design space. They are not the formulations HYDRA-BERT selected in stage 5.</p>
             <dl class="checks">
               <div><dt>Sealed</dt><dd>211 arms with predictions, hashed at 2026-11-04T17:56:58Z</dd></div>
               <div><dt>Solved</dt><dd>210, every one converged; the one missing arm is named and excluded</dd></div>
@@ -375,7 +379,7 @@
             <p class="caveat"><strong>Stated limit.</strong> The sealing was internal. Nothing was lodged with an external registry. <a class="src" href="read.html?doc=full&amp;page=50" data-doc="full" data-page="50">&sect;13</a></p>
             <details>
               <summary>For specialists</summary>
-              <p>The ranking surrogate is a Gaussian process with a Mat&eacute;rn-5/2 kernel on 32 features that exist before the treated solve. It predicts the effect relative to the same patient&rsquo;s untreated solve at equal active tension. It was selected from 9 candidate predictors by nested leave-one-patient-out validation on 188 screening designs from 4 patients. Each patient&rsquo;s verification arms include a five-point stiffness series at fixed dose and sites: 0.1, 1, 4, 12 and 50&nbsp;kPa. <a class="src" href="read.html?doc=full&amp;page=36" data-doc="full" data-page="36">&sect;11.2</a></p>
+              <p>The ranking surrogate is a Gaussian process with a Mat&eacute;rn-5/2 kernel on 32 features that exist before the treated solve. It predicts the effect relative to the same patient&rsquo;s untreated solve at equal active tension. It was selected from 9 candidate predictors by nested leave-one-patient-out validation on 188 screening designs from 4 patients. Each patient&rsquo;s verification arms include a five-point stiffness series at fixed dose and sites: 0.1, 1, 4, 12 and 50&nbsp;kPa. <a class="src" href="read.html?doc=full&amp;page=14" data-doc="full" data-page="14">&sect;2.15</a> <a class="src" href="read.html?doc=full&amp;page=36" data-doc="full" data-page="36">&sect;11.2&ndash;11.3</a></p>
             </details>
           </div>
           <div class="pipe__fig pipe__fig--ledger">
@@ -399,7 +403,7 @@
     <!-- cohort -->
     <div class="cohort">
       <h3 class="cohort__title">Who was modelled, and who was left out</h3>
-      <p class="cohort__lede">Every exclusion is named with its reason. The stages are nested, so no patient is counted twice. <a class="src" href="read.html?doc=full&amp;page=17" data-doc="full" data-page="17">Table 1</a></p>
+      <p class="cohort__lede">Every exclusion has a stated reason, and the paper names each excluded patient. The stages are nested, so no patient is counted twice. <a class="src" href="read.html?doc=full&amp;page=17" data-doc="full" data-page="17">Table 1</a></p>
       <ol class="cohort__flow">
         <li style="--n:45"><span class="cohort__n">45</span><span class="cohort__what">cases with expert contours in the Sunnybrook Cardiac MR Database</span><span class="cohort__bar" aria-hidden="true"></span></li>
         <li style="--n:12"><span class="cohort__n">12</span><span class="cohort__what">in the infarct-and-heart-failure group, the population this work draws from</span><span class="cohort__bar" aria-hidden="true"></span></li>
@@ -417,23 +421,24 @@
     <header class="sec-head">
       <p class="sec-num" aria-hidden="true">03</p>
       <h2 id="results-title">What the work shows</h2>
-      <p class="sec-lede">The paper reports two programs and keeps them apart. So does this page. One is the HYDRA-BERT evaluation, which is fast and runs on surrogate models. The other is a set of direct finite-element solves, which is slow and checks a design ranking.</p>
+      <p class="sec-lede">The paper reports two programs and keeps them apart. So does this page. One is the HYDRA-BERT evaluation, which is fast and runs on surrogate models. The other is a set of direct finite-element solves, which is slow and checks a design ranking made by a separate surrogate.</p>
     </header>
   </div>
 
   <!-- R1 -->
   <div class="wrap result result--lead">
     <div class="result__head">
-      <p class="label result__kicker">Finite-element program <span aria-hidden="true">/</span> 6 patients, 210 solves</p>
-      <h3>The ranking held up, including on hearts the model had never seen</h3>
+      <p class="label result__kicker">Finite-element program <span aria-hidden="true">/</span> 6 patients, 210 solves <span aria-hidden="true">/</span> ranking surrogate, not HYDRA-BERT</p>
+      <h3>A sealed design ranking held up, including on two hearts the surrogate had never seen</h3>
     </div>
     <div class="result__figure">
       <p class="bignum"><span class="bignum__n">0.981</span><span class="bignum__amp">and</span><span class="bignum__n">0.983</span></p>
-      <p class="bignum__cap">Rank correlation between sealed prediction and solved outcome, on the two patients that contributed no training data. A value of 1 is perfect ordering. <a class="src" href="read.html?doc=full&amp;page=40" data-doc="full" data-page="40">Table 11</a></p>
+      <p class="bignum__cap">Rank correlation between the ranking surrogate&rsquo;s sealed prediction and the solved outcome, on the two patients that contributed no training data. A value of 1 is perfect ordering. <a class="src" href="read.html?doc=full&amp;page=40" data-doc="full" data-page="40">Table 11</a></p>
     </div>
     <div class="result__body">
-      <p>Across all six patients the within-patient correlation ran from 0.929 to 0.983. The designs solved for each patient spanned the whole predicted range, worst included, so the agreement is not among near-ties at the top.</p>
-      <p>The paper is direct about the limit. Pooled across patients the correlation drops to 0.765, because each patient carries a different offset. <em>The ordering transfers to unseen anatomy. The level does not.</em> <a class="src" href="read.html?doc=full&amp;page=40" data-doc="full" data-page="40">&sect;11.6</a></p>
+      <p>The predictions come from a physics-feature Gaussian-process surrogate, a different model from HYDRA-BERT. Across all six patients its within-patient correlation ran from 0.929 to 0.983. The designs solved for each patient spanned the whole predicted range, worst included, so the agreement is not among near-ties at the top. <a class="src" href="read.html?doc=full&amp;page=36" data-doc="full" data-page="36">&sect;11.3</a></p>
+      <p>What is ranked is the change in end-systolic volume against the same heart untreated. Almost every design raised it, so the top rank means least harm, not benefit. <a class="src" href="read.html?doc=full&amp;page=41" data-doc="full" data-page="41">&sect;11.7</a></p>
+      <p>The paper is direct about the limit. Pooled across patients the correlation drops to 0.765, and over the two unseen patients alone to 0.727, because each patient carries a different offset. <em>The ordering transfers to unseen anatomy; the location does not.</em> <a class="src" href="read.html?doc=full&amp;page=40" data-doc="full" data-page="40">&sect;11.6</a></p>
     </div>
     <div class="chart" data-chart="sealed">
       <table class="chart__table">
@@ -446,15 +451,18 @@
           <tr><th scope="row">SCD 0001001</th><td>training</td><td>35</td><td>0.929</td><td>+0.403</td><td>0.443</td></tr>
           <tr><th scope="row">SCD 0000801</th><td>out of sample</td><td>36</td><td>0.981</td><td>&minus;0.451</td><td>0.455</td></tr>
           <tr><th scope="row">SCD 0001101</th><td>out of sample</td><td>32</td><td>0.983</td><td>+0.089</td><td>0.099</td></tr>
+          <tr><th scope="row">Training patients</th><td>4 patients</td><td>142</td><td>0.858</td><td>+0.102</td><td>0.237</td></tr>
+          <tr><th scope="row">Out-of-sample patients</th><td>2 patients</td><td>68</td><td>0.727</td><td>&minus;0.197</td><td>0.338</td></tr>
           <tr><th scope="row">Pooled</th><td>all</td><td>210</td><td>0.765</td><td>+0.005</td><td>0.274</td></tr>
         </tbody>
       </table>
     </div>
+    <p class="robust__scope">Checks on the ranking surrogate before sealing, by leave-one-patient-out validation on 188 screening designs from 4 patients, and one check after:</p>
     <ul class="robust">
-      <li><strong>Not chance.</strong> Permutation test, 10,000 within-patient shuffles: p&nbsp;=&nbsp;1.0&nbsp;&times;&nbsp;10<sup>&minus;4</sup>.</li>
-      <li><strong>Stable.</strong> Held-out mean correlation 0.9517; bootstrap 95% interval 0.919 to 0.965.</li>
-      <li><strong>Reported against the model.</strong> Ordering by gel stiffness alone reaches 0.916. The surrogate&rsquo;s advantage is in the pick: its mean regret is 0.028&nbsp;mL, against 0.898&nbsp;mL for the stiffness rule.</li>
-      <li><strong>Reported against the model.</strong> The sealed uncertainty intervals were too narrow. They covered 0.533 of outcomes against a nominal 0.683.</li>
+      <li><strong>Not chance.</strong> Permutation test, one-sided, 10,000 within-patient shuffles: p&nbsp;=&nbsp;1.0&nbsp;&times;&nbsp;10<sup>&minus;4</sup>.</li>
+      <li><strong>Held out.</strong> Mean rank correlation 0.9517; bootstrap 95% interval 0.919 to 0.965. The paper notes that four training patients are too few to show whether more would help.</li>
+      <li><strong>Reported against the model.</strong> Ordering by gel stiffness alone reaches an absolute correlation of 0.916. The surrogate&rsquo;s advantage is in the pick: its mean regret is 0.028&nbsp;mL, against 0.898&nbsp;mL for the stiffness rule.</li>
+      <li><strong>Reported against the model.</strong> On the 210 verification arms the sealed uncertainty intervals were too narrow. They covered 0.533 of outcomes against a nominal 0.683: 0.64 on training patients, 0.31 on the two unseen ones.</li>
     </ul>
     <p class="result__src"><a class="src" href="read.html?doc=full&amp;page=39" data-doc="full" data-page="39">&sect;11.5, Table 10</a></p>
   </div>
@@ -463,9 +471,9 @@
   <div class="band">
     <div class="wrap result result--split">
       <div class="result__head">
-        <p class="label result__kicker">HYDRA-BERT <span aria-hidden="true">/</span> hold-out set of 44,748 samples from unseen patients</p>
+        <p class="label result__kicker">HYDRA-BERT <span aria-hidden="true">/</span> hold-out set of 44,748 samples from patient models held out of training</p>
         <h3>A chemical language model that predicts, fast enough to search</h3>
-        <p>The hold-out set is split by patient, so these scores measure transfer to a heart the model has not seen, not to a new gel on a familiar heart. <a class="src" href="read.html?doc=full&amp;page=32" data-doc="full" data-page="32">&sect;10.2</a></p>
+        <p>The hold-out is split by patient model, so these scores measure transfer to a model the network has not seen, not to a new gel on a familiar one. The targets it predicts come from physics-based surrogate models, validated against 500 full simulations, not from a direct solve of each design. <a class="src" href="read.html?doc=full&amp;page=32" data-doc="full" data-page="32">&sect;10.2</a></p>
       </div>
       <dl class="tiles">
         <div class="tile">
@@ -493,7 +501,7 @@
 
       <div class="chart chart--cascade" data-chart="cascade">
         <h4 class="chart__title">Ten million candidates to one design</h4>
-        <p class="chart__sub">Each stage costs more per candidate and is more accurate than the one before it. Bar length is on a log scale. Select a stage.</p>
+        <p class="chart__sub">Each stage costs more per candidate and is more accurate than the one before it. Bar length is on a log scale. Select a stage. Stage E belongs to this cascade; it is not the finite-element verification program reported further down.</p>
         <table class="chart__table">
           <caption>The six-stage screening cascade, per patient (Algorithm 6)</caption>
           <thead><tr><th scope="col">Stage</th><th scope="col">Candidates remaining</th></tr></thead>
@@ -504,10 +512,10 @@
             <tr><th scope="row">C. Diverse Pareto set</th><td>1,000</td></tr>
             <tr><th scope="row">D. Physics surrogate</th><td>100</td></tr>
             <tr><th scope="row">E. Full simulation</th><td>10</td></tr>
-            <tr><th scope="row">F. Delivery constraints</th><td>1</td></tr>
+            <tr><th scope="row">F. Final selection</th><td>1</td></tr>
           </tbody>
         </table>
-        <p class="result__src"><a class="src" href="read.html?doc=full&amp;page=34" data-doc="full" data-page="34">Algorithm 6</a></p>
+        <p class="result__src"><a class="src" href="read.html?doc=full&amp;page=33" data-doc="full" data-page="33">&sect;10.5</a> <a class="src" href="read.html?doc=full&amp;page=34" data-doc="full" data-page="34">Algorithm 6</a></p>
       </div>
     </div>
   </div>
@@ -516,29 +524,29 @@
   <div class="wrap result result--eval">
     <div class="result__head">
       <p class="label result__kicker">HYDRA-BERT evaluation <span aria-hidden="true">/</span> 60 models, each paired with its own untreated run</p>
-      <h3>In surrogate evaluation, the selected gels improved pump function</h3>
+      <h3>Surrogate evaluation predicts better pump function on sixty models. Direct solves have not confirmed it.</h3>
     </div>
     <dl class="trio">
       <div>
-        <dt>Ejection fraction</dt>
+        <dt>Predicted ejection-fraction change</dt>
         <dd>+9.1<span class="trio__pm">&plusmn;&nbsp;0.4</span><span class="trio__u">points</span></dd>
         <dd class="trio__ctx">p&nbsp;&lt;&nbsp;0.0001, Cohen&rsquo;s d&nbsp;=&nbsp;1.87</dd>
       </div>
       <div>
-        <dt>Border-zone wall stress</dt>
+        <dt>Predicted border-zone wall stress</dt>
         <dd>&minus;30.1<span class="trio__pm">&plusmn;&nbsp;0.4</span><span class="trio__u">%</span></dd>
         <dd class="trio__ctx">Against each model&rsquo;s untreated evaluation</dd>
       </div>
       <div>
-        <dt>Strain homogeneity</dt>
+        <dt>Predicted strain homogeneity</dt>
         <dd>+17.3<span class="trio__pm">&plusmn;&nbsp;0.8</span><span class="trio__u">%</span></dd>
         <dd class="trio__ctx">Each &plusmn; is a standard deviation over models</dd>
       </div>
     </dl>
     <div class="result__body result__body--cols">
       <div>
-        <p>The search did not collapse onto one answer. Six distinct polymer chemistries were selected across the ten patient-derived models. Their stiffness converged to 14.9 to 16.2&nbsp;kPa, the middle of the allowed range, with degradation half-lives of 45 to 85 days.</p>
-        <p>For the two models assigned conductive gels, border-zone conduction velocity rose from 28.3 to 48.2&nbsp;cm/s and the arrhythmia-risk score fell from 0.60 to 0.08. <a class="src" href="read.html?doc=full&amp;page=34" data-doc="full" data-page="34">&sect;10.6&ndash;10.7</a> <a class="src" href="read.html?doc=full&amp;page=35" data-doc="full" data-page="35">Table 7</a></p>
+        <p>The search did not collapse onto a single chemistry. Six distinct polymer chemistries were selected across the ten patient-derived models. Their moduli sat at 14.9 to 16.2&nbsp;kPa, the middle of the admissible range, with degradation half-lives of 45 to 85 days.</p>
+        <p>For the two models assigned conductive gels, the same evaluation predicted border-zone conduction velocity rising from 28.3 to 48.2&nbsp;cm/s and an arrhythmia-risk score falling from 0.60 to 0.08. That is two models. The finite-element program measured no electrophysiological quantity. <a class="src" href="read.html?doc=full&amp;page=34" data-doc="full" data-page="34">&sect;10.6&ndash;10.7</a> <a class="src" href="read.html?doc=full&amp;page=35" data-doc="full" data-page="35">Table 7</a></p>
       </div>
       <aside class="scope" aria-label="How to read these numbers">
         <p class="label">How to read these numbers</p>
@@ -546,6 +554,7 @@
           <li>They come from forward evaluation by physics-based surrogate models, not from direct simulation of each design.</li>
           <li>Of the 60 models, 10 are patient-derived and 50 are synthetic draws from a distribution fitted to those ten. Ten is the number of independent anatomies.</li>
           <li>They are predictions on models. Nothing here has been synthesized or tested in a lab or in a patient.</li>
+          <li>The finite-element program re-measures none of these figures. Its own direct solves, on six patients at the catheter dose, are reported next.</li>
         </ul>
         <p><a class="src" href="read.html?doc=full&amp;page=50" data-doc="full" data-page="50">&sect;13</a></p>
       </aside>
@@ -557,7 +566,7 @@
     <div class="wrap result result--direct">
       <div class="result__head">
         <p class="label result__kicker">Finite-element program <span aria-hidden="true">/</span> direct solves at the catheter dose</p>
-        <h3>The direct solves found a smaller effect, and explained it</h3>
+        <h3>At the catheter dose, direct solves found a small, mostly unfavourable effect, and a testable account of why</h3>
         <p>Solved directly on six personalized ventricles, at the dose the registered catheter route allows, the gel&rsquo;s effect was small and mostly unfavourable. Ejection fraction fell in all 210 verification arms. End-systolic volume improved in 14 of them. The paper makes no claim of functional improvement from this program. <a class="src" href="read.html?doc=full&amp;page=40" data-doc="full" data-page="40">&sect;11.7</a></p>
       </div>
       <div class="direct__grid">
@@ -575,10 +584,10 @@
           <p class="result__src"><a class="src" href="read.html?doc=full&amp;page=41" data-doc="full" data-page="41">&sect;11.8, Table 12</a></p>
         </div>
         <div class="direct__copy">
-          <p><strong>The mechanism.</strong> A gel depot is incompressible. To eject blood the wall must thicken, and the depot gets in the way. A gel with almost no stiffness still raised end-systolic volume by 0.613 to 1.474&nbsp;mL. Raising stiffness five-hundred-fold removed almost all of that penalty and turned it into a benefit in 4 of 6 patients. In all six, the effect fell in step with stiffness: rank correlation exactly &minus;1.</p>
-          <p><strong>The comparison.</strong> Against a clinical-style 4&nbsp;kPa alginate on the same route, the optimized design was better in all six patients by an estimated 0.817&nbsp;mL (exact p&nbsp;=&nbsp;0.03125, the smallest value possible with six patients). It was slightly worse than the stiffest gel, by 0.056&nbsp;mL. <a class="src" href="read.html?doc=full&amp;page=42" data-doc="full" data-page="42">Table 13</a></p>
+          <p><strong>The proposed mechanism.</strong> In the model, a gel depot is given the tissue&rsquo;s bulk modulus, so it is as incompressible as the muscle around it. To eject blood the wall must thicken, and the depot gets in the way. A gel with almost no stiffness still raised end-systolic volume by 0.613 to 1.474&nbsp;mL. Raising stiffness five-hundred-fold removed almost all of that penalty and turned it into a benefit in 4 of 6 patients. In all six, the change in end-systolic volume fell at every step up in stiffness: rank correlation exactly &minus;1. <a class="src" href="read.html?doc=full&amp;page=41" data-doc="full" data-page="41">&sect;11.8</a></p>
+          <p><strong>The comparison.</strong> Against a clinical-style 4&nbsp;kPa alginate on the same route, the optimized design (drawn from this program&rsquo;s own design space, not a HYDRA-BERT selection) had the lower change in end-systolic volume in all six patients, by an estimated 0.817&nbsp;mL (exact p&nbsp;=&nbsp;0.03125, the smallest value possible with six patients). It was worse than the stiffest registered gel, 50&nbsp;kPa, by 0.056&nbsp;mL at the same exact p. Less harm is not benefit: the top-ranked design lowered end-systolic volume in 2 of 6 patients. <a class="src" href="read.html?doc=full&amp;page=42" data-doc="full" data-page="42">Table 13</a> <a class="src" href="read.html?doc=full&amp;page=41" data-doc="full" data-page="41">&sect;11.7</a> <a class="src" href="read.html?doc=ieee&amp;page=3" data-doc="ieee" data-page="3">IEEE &sect;III-B</a></p>
           <p><strong>Where the load went.</strong> Border-zone fibre stress at end systole fell in 4 of 6 patients, by up to 10.8 percent. Stress in remote muscle rose in all six, by 1.6 to 8.9 percent. At this dose the gel moves load off the infarct border and onto the muscle still working. <a class="src" href="read.html?doc=full&amp;page=42" data-doc="full" data-page="42">&sect;11.10</a></p>
-          <p><strong>The test that would prove it wrong.</strong> Give the depot a bulk modulus well below the tissue&rsquo;s. If volume displacement is the mechanism, the penalty must fall with it. That experiment has not been run. <a class="src" href="read.html?doc=full&amp;page=41" data-doc="full" data-page="41">&sect;11.8</a></p>
+          <p><strong>The test that would prove it wrong.</strong> Give the depot a bulk modulus well below the tissue&rsquo;s. If volume displacement is the mechanism, the penalty must fall with it. That experiment has not been run. <a class="src" href="read.html?doc=full&amp;page=41" data-doc="full" data-page="41">&sect;11.8</a> <a class="src" href="read.html?doc=full&amp;page=50" data-doc="full" data-page="50">&sect;13</a></p>
         </div>
       </div>
       <figure class="evidence">
@@ -586,9 +595,9 @@
           <source type="image/webp" srcset="assets/figures/fig5-fiber-stress-640.webp 640w, assets/figures/fig5-fiber-stress-1280.webp 1280w, assets/figures/fig5-fiber-stress-2000.webp 2000w" sizes="(min-width: 70rem) 62rem, 92vw">
           <img src="assets/figures/original/fig5-fiber-stress.png" width="3270" height="2620" loading="lazy" decoding="async" alt="A grid of twelve ventricle models coloured by fibre stress, three patients in rows and four states in columns: untreated and treated at end diastole, untreated and treated at end systole. Within each row the treated and untreated models look almost identical.">
         </picture>
-        <figcaption>Paper Fig.&nbsp;5. Fibre stress on the solved, deformed geometries for three patients, untreated and treated. The bulk fields are nearly identical: the whole-mesh median differs by at most 1.69 percent. A therapy occupying a few percent of the wall shifts regional averages and leaves the rest where it was. <a class="src" href="read.html?doc=full&amp;page=43" data-doc="full" data-page="43">Fig. 5</a> <a href="assets/figures/original/fig5-fiber-stress.png" download>Original PNG</a></figcaption>
+        <figcaption>Paper Fig.&nbsp;5. Fibre stress on the solved, deformed geometries for three patients, untreated and treated. The bulk fields are nearly identical: the whole-mesh median differs by at most 1.69 percent. A therapy occupying a few percent of the wall shifts regional averages and leaves the rest where it was. <a class="src" href="read.html?doc=full&amp;page=43" data-doc="full" data-page="43">Fig. 5</a> <a class="src" href="read.html?doc=full&amp;page=42" data-doc="full" data-page="42">&sect;11.10</a> <a href="assets/figures/original/fig5-fiber-stress.png" download>Original PNG</a></figcaption>
       </figure>
-      <p class="direct__close">The two programs differ in cohort, forward model, dose and convention. The paper does not combine them, and names the experiment that would connect them: solve the HYDRA-BERT selections directly, on the personalized models, at the catheter dose. That is the first item in <a href="#roadmap">the roadmap</a>. <a class="src" href="read.html?doc=full&amp;page=50" data-doc="full" data-page="50">&sect;13</a></p>
+      <p class="direct__close">The two programs differ in cohort, forward model, dose and convention. The paper does not combine them, and names the experiment that would connect them: solve the HYDRA-BERT selections directly, on the personalized models, at the catheter dose and in the matched-pressure convention. That comparison has not been made. It is the first item in <a href="#roadmap">the roadmap</a>. <a class="src" href="read.html?doc=full&amp;page=50" data-doc="full" data-page="50">&sect;13</a></p>
     </div>
   </div>
 
@@ -602,7 +611,7 @@
     <div class="general">
       <article class="general__item">
         <h4>1. The training target decided whether designs could be ranked at all</h4>
-        <p>Designs for one patient differ by about a millilitre. Patients differ from each other by one to two orders of magnitude more. A surrogate trained to predict absolute volume learned to recognize the patient and could not order designs in any fold. Trained on the difference from that patient&rsquo;s own untreated solve, with the same features and solver, it ranked them at 0.9517. The change cost one extra simulation per patient.</p>
+        <p>Designs for one patient differ by about a millilitre. Patients differ from each other by one to two orders of magnitude more. A surrogate trained to predict absolute volume learned to recognize the patient and could not order designs in any fold. Trained on the difference from that patient&rsquo;s own untreated solve, with the same features and solver, it ranked them at a held-out rank correlation of 0.9517. The change cost one extra simulation per patient.</p>
         <div class="chart" data-chart="target">
           <h5 class="chart__title">Held-out error as a multiple of the spread it must resolve</h5>
           <p class="chart__sub">Each dot is one held-out patient. Log scale. Below 0.5 a ranking is usable.</p>
@@ -620,12 +629,12 @@
             </tbody>
           </table>
         </div>
-        <p class="general__note">Pooled, the ratio is 20.50 against 0.138, a factor of 149. The two fits cover different patients and are not matched cohorts. The construction applies wherever a per-subject intervention is small against the variation between subjects. <a class="src" href="read.html?doc=full&amp;page=38" data-doc="full" data-page="38">Table 8</a> <a class="src" href="read.html?doc=full&amp;page=47" data-doc="full" data-page="47">&sect;12.1</a></p>
+        <p class="general__note">The pooled ratio for the absolute target is 20.50, against a mean of 0.138 for the relative one, a factor of 149. The two fits are not matched cohorts: three patients over fourteen volume targets, against four patients on the change in end-systolic volume. The construction applies wherever a per-subject intervention is small against the variation between subjects. <a class="src" href="read.html?doc=full&amp;page=38" data-doc="full" data-page="38">Table 8</a> <a class="src" href="read.html?doc=full&amp;page=47" data-doc="full" data-page="47">&sect;12.1</a></p>
       </article>
 
       <article class="general__item">
         <h4>2. Whether a design can be delivered is itself a result</h4>
-        <p>Two of eight personalized ventricles could not receive a deliverable, scoreable design. No property of any material was involved. The limit was the thickness of the border zone, which can be measured from the same images the model is built from. A system that answers &ldquo;this patient cannot receive this design&rdquo; is more useful than an efficacy estimate for a gel that cannot be placed.</p>
+        <p>Two of eight personalized ventricles could not receive a deliverable, scoreable design, for two different reasons. In one the border zone is too thin: it holds 2 depots against a minimum of 8, and that thickness can be measured from the same images the model is built from. The other admits only a layout the ranking surrogate has too few examples to score. No property of any material enters either case. In the paper&rsquo;s words, a system that answers &ldquo;this patient cannot receive this design space&rdquo; is more useful than one that returns an efficacy estimate for a design that cannot be placed.</p>
         <div class="chart chart--patients" data-chart="patients">
           <h5 class="chart__title">Eight ventricles: how many depots the border zone can hold</h5>
           <p class="chart__sub">Non-overlapping depots at 5&nbsp;mm spacing. The registered minimum is eight. Select a patient for the full record.</p>
@@ -633,20 +642,40 @@
             <caption>Border-zone capacity and outcome, by patient (Tables 15 and 16)</caption>
             <thead><tr><th scope="col">Patient</th><th scope="col">Depots held at 5 mm</th><th scope="col">Border-zone sites clearing the 6 mm floor</th><th scope="col">Outcome</th></tr></thead>
             <tbody>
-              <tr><th scope="row">SCD 0000101</th><td>28</td><td>11.1%</td><td>Designed and verified</td></tr>
-              <tr><th scope="row">SCD 0000301</th><td>19</td><td>6.2%</td><td>Designed and verified</td></tr>
-              <tr><th scope="row">SCD 0000401</th><td>15</td><td>7.7%</td><td>Designed and verified</td></tr>
+              <tr><th scope="row">SCD 0000101</th><td>28</td><td>11.1%</td><td>Carried into design and verification</td></tr>
+              <tr><th scope="row">SCD 0000301</th><td>19</td><td>6.2%</td><td>Carried into design and verification</td></tr>
+              <tr><th scope="row">SCD 0000401</th><td>15</td><td>7.7%</td><td>Carried into design and verification</td></tr>
               <tr><th scope="row">SCD 0000601</th><td>2</td><td>2.5%</td><td>No feasible design, any layout</td></tr>
-              <tr><th scope="row">SCD 0000801</th><td>13</td><td>31.3%</td><td>Designed and verified</td></tr>
-              <tr><th scope="row">SCD 0001001</th><td>43</td><td>28.2%</td><td>Designed and verified</td></tr>
-              <tr><th scope="row">SCD 0001101</th><td>10</td><td>8.9%</td><td>Designed and verified</td></tr>
+              <tr><th scope="row">SCD 0000801</th><td>13</td><td>31.3%</td><td>Carried into design and verification</td></tr>
+              <tr><th scope="row">SCD 0001001</th><td>43</td><td>28.2%</td><td>Carried into design and verification</td></tr>
+              <tr><th scope="row">SCD 0001101</th><td>10</td><td>8.9%</td><td>Carried into design and verification</td></tr>
               <tr><th scope="row">SCD 0001201</th><td>10</td><td>82.8%</td><td>Feasible but not scoreable</td></tr>
             </tbody>
           </table>
         </div>
-        <p class="general__note"><a class="src" href="read.html?doc=full&amp;page=44" data-doc="full" data-page="44">&sect;11.11, Table 15</a> <a class="src" href="read.html?doc=full&amp;page=45" data-doc="full" data-page="45">Table 16</a> <a class="src" href="read.html?doc=full&amp;page=30" data-doc="full" data-page="30">Table 5</a></p>
+        <p class="caveat"><strong>Stated limit.</strong> These counts depend on how wall thickness is measured. The paper&rsquo;s two thickness measures differ by about a factor of two and are not reconciled. Every delivery constraint uses the more permissive one; on the other, the 6&nbsp;mm floor would exclude the entire wall. The border zone itself is inferred from wall thinning. <a class="src" href="read.html?doc=full&amp;page=22" data-doc="full" data-page="22">&sect;5.4, Table 2</a> <a class="src" href="read.html?doc=full&amp;page=49" data-doc="full" data-page="49">&sect;13</a></p>
+        <p class="general__note"><a class="src" href="read.html?doc=full&amp;page=44" data-doc="full" data-page="44">&sect;11.11, Table 15</a> <a class="src" href="read.html?doc=full&amp;page=45" data-doc="full" data-page="45">Tables 16, 17</a> <a class="src" href="read.html?doc=full&amp;page=48" data-doc="full" data-page="48">&sect;12.4</a> <a class="src" href="read.html?doc=full&amp;page=30" data-doc="full" data-page="30">Table 5</a> <a class="src" href="read.html?doc=full&amp;page=40" data-doc="full" data-page="40">Table 11</a></p>
       </article>
     </div>
+  </div>
+
+  <!-- limits -->
+  <div class="wrap result result--limits">
+    <div class="result__head">
+      <p class="label result__kicker">Limits that apply to every result above</p>
+      <h3>What this work does not establish</h3>
+    </div>
+    <ul class="limits">
+      <li>All results are computational. Nothing is validated in vitro or in vivo, and no formulation has been synthesized.</li>
+      <li>Scar is inferred from wall thinning. The database has no scar imaging.</li>
+      <li>One public, single-centre database; one expert observer&rsquo;s contours; eight personalized ventricles, six with a design. No between-patient claim is available.</li>
+      <li>Only peak active tension is fitted per patient. Passive stiffness is the published set, unscaled, for everyone.</li>
+      <li>The models hold one instant. There is no growth or remodeling law, so the remodeling the therapy targets lies outside them.</li>
+      <li>End systole is solved with the whole muscle activated at once. A full heartbeat has not been validated.</li>
+      <li>The chosen mesh passes an agreement test against the finest of three. No resolution is shown to be converged in the strict sense.</li>
+      <li>The two programs are not on a common footing: different cohorts, forward models, doses and conventions.</li>
+    </ul>
+    <p class="result__src"><a class="src" href="read.html?doc=full&amp;page=49" data-doc="full" data-page="49">&sect;13 Limitations</a> <a class="src" href="read.html?doc=full&amp;page=50" data-doc="full" data-page="50">&sect;13, continued</a></p>
   </div>
 
   <!-- IEEE figure -->
@@ -656,7 +685,7 @@
         <source type="image/webp" srcset="assets/figures/ieee-fig1-imaging-to-mechanics-640.webp 640w, assets/figures/ieee-fig1-imaging-to-mechanics-1280.webp 1280w, assets/figures/ieee-fig1-imaging-to-mechanics-2000.webp 2000w" sizes="(min-width: 86rem) 76rem, 92vw">
         <img src="assets/figures/original/ieee-fig1-imaging-to-mechanics.png" width="3764" height="1355" loading="lazy" decoding="async" alt="Eight panels for one patient. A: an MRI slice with the heart wall traced in orange and blue. B: a ventricle model with grey healthy muscle, an ochre border zone and crimson scar. C: teal gel depots along the border zone. D: a cut-away showing depots in the middle of the wall. E to H: the ventricle coloured by fibre stress, without and with the design, at end diastole and end systole.">
       </picture>
-      <figcaption>The whole chain for one patient, from the IEEE short paper&rsquo;s Fig.&nbsp;1. A: MRI with expert contours. B: tissue tags. C, D: gel depots at mid-wall in the border zone. E to H: fibre stress without and with the design, at matched end-diastolic and end-systolic pressure. <a class="src" href="read.html?doc=ieee&amp;page=1" data-doc="ieee" data-page="1">IEEE Fig. 1</a> <a href="assets/figures/original/ieee-fig1-imaging-to-mechanics.png" download>Original PNG</a></figcaption>
+      <figcaption>From imaging to delivery and mechanics for one patient (SCD&nbsp;0000101), the short paper&rsquo;s Fig.&nbsp;1. A: MRI with expert contours. B: tissue tags. C, D: gel depots of the top-ranked verification design, not a HYDRA-BERT selection, at mid-wall in the border zone and clear of the scar. E to H: fibre stress without and with that design, at matched end-diastolic and end-systolic pressure; the bulk fields are nearly identical. <a class="src" href="read.html?doc=ieee&amp;page=1" data-doc="ieee" data-page="1">IEEE Fig. 1</a> <a href="assets/figures/original/ieee-fig1-imaging-to-mechanics.png" download>Original PNG</a></figcaption>
     </figure>
   </div>
 </section>
@@ -667,7 +696,7 @@
     <header class="sec-head">
       <p class="sec-num" aria-hidden="true">04</p>
       <h2 id="posters-title">The posters</h2>
-      <p class="sec-lede">Two panels, prepared for the Texas Science and Engineering Fair in 2026. Zoom to read any block at full resolution.</p>
+      <p class="sec-lede">Two panels, prepared for the Texas Science and Engineering Fair. Zoom to read any block at full resolution.</p>
     </header>
     <div data-posters>
       <div class="posters__fallback">
@@ -682,7 +711,8 @@
         <p><a class="btn" href="assets/docs/potluri-2026-txsef-poster.pdf" download>Poster PDF</a></p>
       </div>
     </div>
-    <p class="posters__note"><strong>A note on dates.</strong> The posters are an earlier snapshot of this project. The paper came later, after the design ranking was re-tested with direct finite-element solves, and some of its numbers and conclusions differ from the posters&rsquo;. Where they differ, the paper is the current record.</p>
+    <!-- TODO(krishiv): confirm the fair date and add it here. -->
+    <p class="posters__note"><strong>Read these with the paper.</strong> The posters come from an earlier stage of the project. Some of their numbers were later revised: for example they give a hold-out R<sup>2</sup> of 0.86 and a fibre rotation of 115.3&nbsp;&plusmn;&nbsp;2.1&deg;, where the paper gives 0.89 and 117.2&nbsp;&plusmn;&nbsp;3.1&deg;. They also describe the predicted benefit more strongly than the paper does. The paper adds a finite-element program that tests a design ranking directly, and it makes no claim of functional improvement. Where the two differ, the paper is the current record.</p>
   </div>
 </section>
 
@@ -705,7 +735,7 @@
         <h3 class="label">Download</h3>
         <ul class="downloads">
           <li><a class="btn btn--solid" href="assets/docs/potluri-2026-second-beat-full-paper.pdf" download>Full paper <span class="mono">PDF, 64 pp., 10.6&nbsp;MB</span></a></li>
-          <li><a class="btn" href="assets/docs/potluri-2026-ieee-bibm-short-paper.pdf" download>IEEE short paper <span class="mono">PDF, 3 pp., 3.2&nbsp;MB</span></a></li>
+          <li><a class="btn" href="assets/docs/potluri-2026-ieee-short-paper.pdf" download>Short paper, IEEE format <span class="mono">PDF, 3 pp., 3.2&nbsp;MB</span></a></li>
           <li><a class="btn" href="assets/docs/potluri-2026-txsef-poster.pdf" download>Posters <span class="mono">PDF, 2 panels, 7.4&nbsp;MB</span></a></li>
         </ul>
 
@@ -733,7 +763,7 @@
         </div>
 
         <h3 class="label" id="code">Code and data</h3>
-        <p class="paper__code">The analysis code sits in two repositories, one for the inverse-design model and one for the modelling, mechanics and delivery pipeline. They are not yet public and are available on request. Heart geometries derive from the Sunnybrook Cardiac MR Database, released under a public-domain dedication. <a class="src" href="read.html?doc=full&amp;page=52" data-doc="full" data-page="52">&sect;15</a></p>
+        <p class="paper__code">The analysis code is held in two repositories, one for the inverse-design model and one for the modelling, mechanics and delivery pipeline, with a third holding the per-solve records. None has been pushed to a public remote; they are available on request. Heart geometries derive from the Sunnybrook Cardiac MR Database, released under a public-domain dedication. The derived meshes, fibre fields and tissue labels are not redistributed. <a class="src" href="read.html?doc=full&amp;page=52" data-doc="full" data-page="52">&sect;15</a></p>
         <!-- TODO(krishiv): add public repository links here when the code is released. -->
         <p><a class="btn" href="#contact">Request the code</a></p>
       </div>
@@ -745,7 +775,7 @@
         <p>The reader needs JavaScript. You can open the PDFs directly:</p>
         <ul>
           <li><a href="assets/docs/potluri-2026-second-beat-full-paper.pdf">Full paper (PDF, 64 pages)</a></li>
-          <li><a href="assets/docs/potluri-2026-ieee-bibm-short-paper.pdf">IEEE short paper (PDF, 3 pages)</a></li>
+          <li><a href="assets/docs/potluri-2026-ieee-short-paper.pdf">Short paper, IEEE format (PDF, 3 pages)</a></li>
         </ul>
       </div>
     </div>
@@ -764,12 +794,12 @@
     <ol class="horizons">
       <li class="horizon">
         <p class="label horizon__when"><i class="sw sw--ink"></i>Shown now</p>
-        <h3>The route from image to verified design exists</h3>
+        <h3>The route from image to a checked design ranking runs end to end</h3>
         <ul>
-          <li>A clinical image becomes a simulation-ready, personalized heart model with no manual editing.</li>
-          <li>A fast model can order candidate designs for a patient, and the ordering survives direct physics on anatomy it never trained on.</li>
-          <li>The same images show, before any gel is chosen, which patients a catheter route cannot treat.</li>
-          <li>Every component is checked against a reference the pipeline did not produce.</li>
+          <li>Cine MRI with expert contours becomes a simulation-ready, personalized left-ventricle model with no manual mesh editing. Ten of twelve cases were meshed and eight were personalized.</li>
+          <li>A physics-based surrogate, separate from HYDRA-BERT, orders deliverable designs within a patient. That ordering held in sealed finite-element tests on two patients it never trained on (0.981 and 0.983). The predicted level did not transfer.</li>
+          <li>Two of eight personalized ventricles admitted no deliverable, scoreable design under the registered catheter route. For one, the reason is border-zone thickness, measurable from the same images before any gel is chosen.</li>
+          <li>The mechanics is checked against closed-form solutions and a second implementation, and the design ranking against solves whose predictions were sealed first. HYDRA-BERT&rsquo;s predicted outcomes have not yet been solved directly.</li>
         </ul>
         <p><a class="src" href="read.html?doc=full&amp;page=51" data-doc="full" data-page="51">&sect;14</a></p>
       </li>
@@ -778,16 +808,16 @@
         <h3>From a ranking to a prescription someone can test</h3>
         <ul>
           <li>Put the two programs on one footing, so the predicted benefit is confirmed or corrected by direct simulation.</li>
-          <li>Run the falsifying experiment on the mechanism. If it holds, it points to a design rule: a compressible gel should lose less.</li>
+          <li>Run the experiment that could falsify the mechanism: give the gel a bulk modulus below the tissue&rsquo;s. If the account is right, the volume penalty falls.</li>
           <li>Move from eight ventricles to cohorts with real scar imaging, where a between-patient claim becomes possible.</li>
           <li>Synthesize the leading formulations and measure them on the bench.</li>
         </ul>
-        <p>Each of these is named in the paper as work not yet done. <a class="src" href="read.html?doc=full&amp;page=49" data-doc="full" data-page="49">&sect;13</a></p>
+        <p>Each of these is named in the paper as work not yet done. <a class="src" href="read.html?doc=full&amp;page=49" data-doc="full" data-page="49">&sect;13</a> <a class="src" href="read.html?doc=ieee&amp;page=3" data-doc="ieee" data-page="3">IEEE &sect;IV</a></p>
       </li>
       <li class="horizon horizon--vision">
         <p class="label horizon__when"><i class="sw sw--gel"></i>Vision</p>
         <h3>Design materials that help the heart rebuild</h3>
-        <p>The paper&rsquo;s direction is &ldquo;mechanical first.&rdquo; Relieving stress at the infarct border interrupts the loop between wall stress and dilation and preserves the chamber geometry around an implant. That stability is the condition a regenerative material needs in order to act at all.</p>
+        <p>The paper&rsquo;s direction is &ldquo;mechanical first.&rdquo; In its account, relieving stress in the infarct and its border zone interrupts the loop between wall stress and dilation and preserves the chamber geometry an implanted material sits in. That is the condition the material&rsquo;s bio-instructive properties need in order to act at all. In this paper&rsquo;s own direct solves at the catheter dose that relief was partial: border-zone stress fell in 4 of 6 patients and remote stress rose in all 6.</p>
         <p>Hydrogels can carry more than stiffness: electrical conduction, a degradation schedule, cells, drugs, support for new blood vessels. The mechanics in this paper has no term for those. The design space already has axes for conductivity and degradation for that reason.</p>
         <p>The long-term aim is a design loop that treats those biological properties the way this work treats mechanics: specific to one patient, checked before anything is injected. This paper assembles the computational groundwork such a therapy would need. It does not show regeneration. <a class="src" href="read.html?doc=full&amp;page=47" data-doc="full" data-page="47">&sect;12.3</a> <a class="src" href="read.html?doc=full&amp;page=51" data-doc="full" data-page="51">&sect;14</a></p>
       </li>
@@ -839,15 +869,15 @@
             <li>
               <button class="road__step" type="button" aria-expanded="false" aria-controls="rs-4"><span class="road__dot" aria-hidden="true"></span><span class="road__name">Real scar maps and a larger, external cohort</span><span class="road__tag">From the paper</span></button>
               <div class="road__detail" id="rs-4" hidden>
-                <p>Replace scar inferred from wall thinning with scar measured by late gadolinium enhancement, using public infarct-segmentation datasets and automatic segmentation to scale beyond one database and one observer. Eight ventricles support a within-patient ranking claim. They do not support a between-patient one.</p>
-                <p><a class="src" href="read.html?doc=full&amp;page=15" data-doc="full" data-page="15">&sect;3.1</a> <a class="src" href="read.html?doc=full&amp;page=49" data-doc="full" data-page="49">&sect;13</a></p>
+                <p>Replace scar inferred from wall thinning with scar measured by late gadolinium enhancement, using public infarct-segmentation datasets and automatic segmentation to scale beyond one database and one observer. Eight ventricles support a within-patient ranking claim. They do not support a between-patient efficacy claim.</p>
+                <p><a class="src" href="read.html?doc=full&amp;page=15" data-doc="full" data-page="15">&sect;3.1</a> <a class="src" href="read.html?doc=full&amp;page=16" data-doc="full" data-page="16">&sect;3.2</a> <a class="src" href="read.html?doc=full&amp;page=49" data-doc="full" data-page="49">&sect;13</a></p>
               </div>
             </li>
             <li>
               <button class="road__step" type="button" aria-expanded="false" aria-controls="rs-5"><span class="road__dot" aria-hidden="true"></span><span class="road__name">A full heartbeat, with electrophysiology measured directly</span><span class="road__tag">From the paper</span></button>
               <div class="road__detail" id="rs-5" hidden>
                 <p>Validate a full cardiac cycle with an electrophysiologically derived activation sequence and coupled ejection, and personalize the afterload. Resolve the border-zone conduction calibration, which currently blocks, so that conduction and arrhythmia outcomes can be measured by the finite-element program and not only predicted.</p>
-                <p><a class="src" href="read.html?doc=full&amp;page=46" data-doc="full" data-page="46">&sect;11.13</a> <a class="src" href="read.html?doc=full&amp;page=25" data-doc="full" data-page="25">&sect;7.4</a></p>
+                <p><a class="src" href="read.html?doc=full&amp;page=46" data-doc="full" data-page="46">&sect;11.13</a> <a class="src" href="read.html?doc=full&amp;page=25" data-doc="full" data-page="25">&sect;7.4</a> <a class="src" href="read.html?doc=full&amp;page=13" data-doc="full" data-page="13">&sect;2.13</a></p>
               </div>
             </li>
             <li>
@@ -861,7 +891,7 @@
         </li>
 
         <li class="road__phase">
-          <p class="label road__phaselabel">Phase 3 <span>Toward the bench, and toward regeneration</span></p>
+          <p class="label road__phaselabel">Phase 3 <span>Toward the bench, and toward regenerative design</span></p>
           <ol class="road__steps">
             <li>
               <button class="road__step" type="button" aria-expanded="false" aria-controls="rs-7"><span class="road__dot" aria-hidden="true"></span><span class="road__name">Make the leading gels and measure them</span><span class="road__tag">From the paper</span></button>
@@ -874,14 +904,14 @@
             <li>
               <button class="road__step" type="button" aria-expanded="false" aria-controls="rs-8"><span class="road__dot" aria-hidden="true"></span><span class="road__name">Screen patients for deliverability from routine imaging</span><span class="road__tag road__tag--ext">Extension</span></button>
               <div class="road__detail" id="rs-8" hidden>
-                <p>The paper found that border-zone thickness, measured from the same images the model is built from, decided who could receive a design. Packaged on its own, that check could tell a clinician whether a catheter route is workable for a patient before any material is considered.</p>
+                <p>In the paper, one of eight personalized ventricles could hold no deliverable design because its border zone was too thin, a quantity measurable from the same images the model is built from. Packaged on its own, that check might indicate whether the registered catheter route is workable for a patient before any material is considered.</p>
                 <p>Builds on <a class="src" href="read.html?doc=full&amp;page=48" data-doc="full" data-page="48">&sect;12.4</a></p>
               </div>
             </li>
             <li>
               <button class="road__step" type="button" aria-expanded="false" aria-controls="rs-9"><span class="road__dot" aria-hidden="true"></span><span class="road__name">Add regenerative objectives to the design loop</span><span class="road__tag road__tag--ext">Extension</span></button>
               <div class="road__detail" id="rs-9" hidden>
-                <p>Extend the design space from mechanics toward the properties that could support new tissue: conduction across the scar, a degradation schedule matched to healing, and delivery of cells or drugs. The paper cites these as mechanisms its mechanics has no term for. Giving them terms, each with a check of its own, is the step from stabilizing a damaged heart toward helping it repair.</p>
+                <p>Extend the design space from mechanics toward the properties that could support new tissue: conduction across the scar, a degradation schedule matched to healing, and delivery of cells or drugs. The paper cites these as mechanisms its mechanics has no term for. Giving them terms, each with a check of its own, is the step from modelling mechanical support toward modelling repair.</p>
                 <p>Builds on <a class="src" href="read.html?doc=full&amp;page=47" data-doc="full" data-page="47">&sect;12.3</a></p>
               </div>
             </li>
@@ -908,7 +938,7 @@
       <div class="about__text">
         <h3>Krishiv Potluri</h3>
         <p class="about__role">Independent researcher, Austin, Texas</p>
-        <p>I work on computational models of the heart after a heart attack. For this project I built the pipeline end to end: the mesh generation, the fibre and tissue fields, the mechanics and its verification, the HYDRA-BERT design model, and the sealed test of its rankings.</p>
+        <p>I work on computational models of the heart after a heart attack. For this project I built the pipeline end to end: the mesh generation, the fibre and tissue fields, the mechanics and its verification, the HYDRA-BERT design model, and a separate ranking surrogate whose predictions were sealed before being tested against 210 finite-element solves.</p>
         <p>I care about results that hold up when someone checks them. That is why the paper names every excluded patient, seals its predictions before testing them, and reports the results that went against the model alongside the ones that favoured it.</p>
         <!-- TODO(krishiv): add one or two sentences in your own words: background, what you are studying, what you want to work on next. -->
 
@@ -936,7 +966,7 @@
     </div>
     <div>
       <p class="label">Sources</p>
-      <p>Every number on this page comes from the paper and is traced in <a href="https://github.com/kishpish/ai-heart-repair/blob/main/CONTENT.md">CONTENT.md</a>. Select any grey tag to open the paper at that page.</p>
+      <p>Every research number on this page comes from the full paper or the short paper, and each is traced in <a href="https://github.com/kishpish/ai-heart-repair/blob/main/CONTENT.md">CONTENT.md</a>. Select any grey tag to open the paper at that page.</p>
       <p>Imaging data: Sunnybrook Cardiac MR Database (Radau et al., 2009), public-domain dedication.</p>
     </div>
     <div>

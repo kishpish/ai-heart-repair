@@ -45,7 +45,7 @@ export const PATIENTS = [
     efUntreated: 35.6,
     bzSites: 1355, clearFloor: 34, clearFloorPct: 2.5, bzMedian: 5.13, bzMax: 6.66, depots5: 2, depots10: 1,
     scattered: [0, 16200], longitudinal: [0, 1200], circumferential: [0, 1200], arms: 0,
-    outcome: "none", note: "No feasible design in any layout. The border zone holds 2 depots; the minimum is 8.",
+    outcome: "none", note: "No feasible design in any registered layout. The border zone holds 2 depots at 5 mm spacing; the minimum is 8.",
   },
   {
     id: "SCD 0000801", elements: 622, scar: 1.5, bz: 2.2, wall: 7.3,
@@ -96,13 +96,13 @@ export const SEALED_SUMMARY = {
 
 // Algorithm 6 (p. 34): the six-stage screening cascade, per patient
 export const CASCADE = [
-  { exp: 7, name: "Candidates", detail: "Ten million formulations proposed per patient by the reinforcement-learning policy." },
+  { exp: 7, name: "Candidates", detail: "Ten million candidate formulations per patient enter the cascade." },
   { exp: 5, name: "A. Therapeutic threshold", detail: "Keep candidates predicted to raise ejection fraction by at least 3.0 points, cut border-zone stress by at least 10%, with optimality probability of at least 0.30." },
   { exp: 4, name: "B. Composite score", detail: "Rank by a weighted score of the three predicted outcomes and keep the top decile." },
   { exp: 3, name: "C. Diverse Pareto set", detail: "Take successive non-dominated fronts, rejecting near-duplicate chemistries, so the costly stages see different designs." },
-  { exp: 2, name: "D. Physics surrogate", detail: "Evaluate each survivor through the mechanical surrogate on that patient's own model and keep the best hundred." },
+  { exp: 2, name: "D. Physics surrogate", detail: "Evaluate each survivor through the mechanical surrogate at that patient's substrate and keep the best hundred." },
   { exp: 1, name: "E. Full simulation", detail: "Solve the survivors on the patient's model and keep the best ten." },
-  { exp: 0, name: "F. Delivery constraints", detail: "Reject any design the catheter route cannot place. Return the highest-ranked survivor, or no design and the reason." },
+  { exp: 0, name: "F. Final selection", detail: "Among the ten, reject any design that violates the delivery constraints. Return the highest-ranked survivor, or no design and the binding constraint." },
 ];
 
 // Table 8 (p. 38): held-out error divided by the within-patient design spread

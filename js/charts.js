@@ -99,6 +99,14 @@ function sealed(root) {
       "Spearman rank correlation, sealed prediction against solved outcome (axis starts at 0.70)"
     )
   );
+  const S = SEALED_SUMMARY;
+  body.append(
+    h(
+      "p",
+      { class: "cx-note" },
+      `Pooled, where each patient\u2019s offset counts against the score: all ${S.pooled.arms} arms ${S.pooled.rho.toFixed(3)}; the four training patients ${S.training.rho.toFixed(3)} (${S.training.arms} arms, bias ${signed(S.training.bias)} mL); the two patients absent from training ${S.unseen.rho.toFixed(3)} (${S.unseen.arms} arms, bias ${signed(S.unseen.bias)} mL).`
+    )
+  );
 }
 
 // ---------------------------------------------------------------- cascade (Algorithm 6)
@@ -185,7 +193,7 @@ function target(root) {
         "span",
         { class: "cx-track", style: "height:4.2rem" },
         pts.map((p) => h("i", { class: `cx-dot cx-dot--${kind}`, style: `left:${pct(x(p.ratio))}`, title: `${p.id}: error ${p.error} mL, ${p.ratio} of the spread` })),
-        h("b", { class: "cx-val cx-val--above", style: `left:${pct(x(pooled))}` }, `pooled ${pooled}`)
+        h("b", { class: "cx-val cx-val--above", style: `left:${pct(x(pooled.v))}` }, `${pooled.word} ${pooled.v.toFixed(pooled.digits)}`)
       ),
       h("span")
     );
@@ -199,8 +207,8 @@ function target(root) {
   );
   const list = h("div", { class: "cx-rows", role: "list" });
   list.append(
-    lane("Absolute", "0 of 3 folds usable", T.absolute, "bad", T.pooled.absolute),
-    lane("Relative", "4 of 4 usable", T.relative, "good", T.pooled.relative),
+    lane("Absolute", "0 of 3 folds usable", T.absolute, "bad", { v: T.pooled.absolute, word: "pooled", digits: 2 }),
+    lane("Relative", "all 4 folds below 0.5", T.relative, "good", { v: T.pooled.relative, word: "mean", digits: 3 }),
     h(
       "div",
       { class: "cx-ref", "aria-hidden": "true" },
@@ -225,11 +233,11 @@ function target(root) {
 // ---------------------------------------------------------------- patients (Tables 5, 11, 15, 16, 17)
 function patients(root) {
   const body = prepare(root);
-  const verdict = { designed: "Designed and verified", none: "No deliverable design", unscoreable: "Deliverable, but not scoreable" };
+  const verdict = { designed: "Carried into design and verification", none: "No feasible design, any layout", unscoreable: "Feasible but not scoreable" };
   const card = h("div", { class: "pt__card", "aria-live": "polite" });
   const list = h("ol", { class: "pt__list" });
   const buttons = [];
-  const pool = ([a, b]) => `${a} of ${b.toLocaleString("en-US")}`;
+  const pool = ([a, b]) => `${a} / ${b.toLocaleString("en-US")}`;
 
   const show = (i) => {
     const p = PATIENTS[i];
@@ -237,7 +245,7 @@ function patients(root) {
     const cell = (k, v, small) => h("div", {}, h("dt", {}, k), h("dd", {}, v, small ? h("small", {}, ` ${small}`) : null));
     const why =
       p.outcome === "designed"
-        ? `${p.arms} verification arms solved. Sealed prediction against outcome: rank correlation ${p.rho.toFixed(3)}${p.role === "unseen" ? ", with no training data from this patient" : ""}.`
+        ? `${p.arms} verification arms solved. The ranking surrogate\u2019s sealed prediction against outcome: rank correlation ${p.rho.toFixed(3)}${p.role === "unseen" ? ", with no training data from this patient" : ""}. What was checked is the ordering of designs, not a benefit.`
         : p.note;
     card.replaceChildren(
       h("h6", {}, p.id),
@@ -247,14 +255,14 @@ function patients(root) {
         "dl",
         { class: "pt__grid" },
         cell("Depots the border zone holds", String(p.depots5), `at 5 mm spacing; ${p.depots10} at 10 mm`),
-        cell("Border-zone sites over 6 mm thick", `${p.clearFloorPct}%`, `${p.clearFloor.toLocaleString("en-US")} of ${p.bzSites.toLocaleString("en-US")}`),
+        cell("Border-zone mid-wall sites clearing the 6 mm floor", `${p.clearFloorPct}%`, `${p.clearFloor.toLocaleString("en-US")} of ${p.bzSites.toLocaleString("en-US")}`),
         cell("Border-zone thickness", `${p.bzMedian.toFixed(2)} mm`, `median; max ${p.bzMax.toFixed(2)}`),
-        cell("Scar / border zone", `${p.scar}% / ${p.bz}%`, "of wall volume"),
-        cell("Baseline ejection fraction", `${p.efUntreated}%`, "model, matched pressures"),
+        cell("Scar / border zone", `${p.scar}% / ${p.bz}%`, "of myocardial volume, rebuilt mesh"),
         cell("Fitted peak tension", `${p.t0} kPa`),
-        cell("End-diastolic volume", `${p.edvModel.toFixed(1)} mL`, `model; imaged ${p.edvImaged.toFixed(1)}`),
-        cell("End-systolic volume", `${p.esvModel.toFixed(1)} mL`, `model; imaged ${p.esvImaged.toFixed(1)}`),
-        cell("Feasible scattered designs", pool(p.scattered), "drawn")
+        cell("Scattered layout: feasible pool", pool(p.scattered), "feasible / candidates drawn and gated, all budgets"),
+        cell("End-diastolic volume", `${p.edvModel.toFixed(1)} mL`, `model; imaged ${p.edvImaged.toFixed(1)}, over the slices the mesh covers`),
+        cell("End-systolic volume", `${p.esvModel.toFixed(1)} mL`, `model; imaged ${p.esvImaged.toFixed(1)}, same slices`),
+        cell("Untreated ejection fraction", `${p.efUntreated}%`, "closed-cavity reading at matched pressures (Table 17); not comparable with the volumes beside it")
       )
     );
   };
@@ -286,7 +294,7 @@ function patients(root) {
           "ul",
           { class: "pt__keys" },
           h("li", {}, h("i", { class: "k-min" }), `Minimum of ${MIN_DEPOTS}`),
-          h("li", {}, h("i", {}), "Designed"),
+          h("li", {}, h("i", {}), "Carried into design"),
           h("li", {}, h("i", { class: "k-none" }), "No feasible design"),
           h("li", {}, h("i", { class: "k-uns" }), "Not scoreable")
         )

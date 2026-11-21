@@ -35,7 +35,7 @@ FIG = ROOT / "assets" / "figures"
 POSTERS = ROOT / "assets" / "posters"
 
 PAPER = DOCS / "potluri-2026-second-beat-full-paper.pdf"
-IEEE = DOCS / "potluri-2026-ieee-bibm-short-paper.pdf"
+IEEE = DOCS / "potluri-2026-ieee-short-paper.pdf"
 POSTER = DOCS / "potluri-2026-txsef-poster.pdf"
 
 # pdfimages index -> output name. Index 2 is the soft mask of Fig. 2.
