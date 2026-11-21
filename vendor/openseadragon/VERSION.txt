@@ -1,0 +1,1 @@
+openseadragon 6.1.1, https://openseadragon.github.io, BSD-3-Clause

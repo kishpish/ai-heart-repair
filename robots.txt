@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://kishpish.github.io/ai-heart-repair/sitemap.xml

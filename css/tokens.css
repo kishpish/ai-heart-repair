@@ -1,0 +1,126 @@
+/* ==========================================================================
+   AI Heart Repair — design tokens
+   Identity: "tissue legend". The palette is sampled from the legend of the
+   paper's own Fig. 4, so colour carries meaning everywhere on the site:
+     scar  (crimson)  = damage
+     bz    (ochre)    = border zone, the tissue at risk and the therapy's target
+     gel   (teal)     = the intervention; also every interactive element
+     myo   (grey)     = healthy myocardium / neutral
+   Dark "film" bands hold the code-drawn visuals (they read like MRI film on a
+   lightbox); reading sections sit on "paper".
+   ========================================================================== */
+
+@font-face {
+  font-family: "Archivo Variable";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 900;
+  font-stretch: 62% 125%;
+  src: url("../vendor/fonts/archivo-latin-wdth-normal.woff2") format("woff2-variations");
+}
+@font-face {
+  font-family: "Newsreader Variable";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 200 800;
+  src: url("../vendor/fonts/newsreader-latin-opsz-normal.woff2") format("woff2-variations");
+}
+@font-face {
+  font-family: "Newsreader Variable";
+  font-style: italic;
+  font-display: swap;
+  font-weight: 200 800;
+  src: url("../vendor/fonts/newsreader-latin-opsz-italic.woff2") format("woff2-variations");
+}
+/* Greek letters (rho, sigma, Delta) for every family: Newsreader, Archivo and Plex ship no Greek subset here. */
+@font-face {
+  font-family: "Site Greek";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 200 900;
+  src: url("../vendor/fonts/source-serif-4-greek-wght-normal.woff2") format("woff2-variations");
+  unicode-range: U+0370-03FF;
+}
+@font-face {
+  font-family: "IBM Plex Mono";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 400;
+  src: url("../vendor/fonts/ibm-plex-mono-latin-400-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "IBM Plex Mono";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 500;
+  src: url("../vendor/fonts/ibm-plex-mono-latin-500-normal.woff2") format("woff2");
+}
+
+:root {
+  /* tissue legend (sampled from Fig. 4) */
+  --scar: #b3123f;
+  --bz: #d1731a;
+  --gel: #0d7d7d;
+  --myo: #c9c9c9;
+  --endo: #1f6feb; /* endocardial contour blue, used only inside figures */
+
+  /* tints for use on dark film */
+  --scar-lt: #e8547a;
+  --bz-lt: #f0a04b;
+  --gel-lt: #45c4bd;
+
+  /* text-safe darks for use on paper (AA on --paper) */
+  --scar-ink: #9c0f36;
+  --bz-ink: #8f4a08;
+  --gel-ink: #075f5f;
+
+  /* surfaces */
+  --film: #0d0c0b;
+  --film-2: #181614;
+  --film-3: #24211e;
+  --film-rule: #3a3531;
+  --paper: #f5f4f0;
+  --paper-2: #ebe9e3;
+  --card: #fcfbf9;
+  --rule: #d5d1c8;
+  --rule-strong: #1b1917;
+
+  /* text */
+  --ink: #1b1917;
+  --ink-2: #4d4842;
+  --ink-3: #6f6961;
+  --on-film: #f1eee8;
+  --on-film-2: #b9b2a8;
+  --on-film-3: #8c857b;
+
+  /* type */
+  --f-display: "Archivo Variable", "Site Greek", "Arial Narrow", "Helvetica Neue", Arial, sans-serif;
+  --f-text: "Newsreader Variable", "Site Greek", "Iowan Old Style", Georgia, "Times New Roman", serif;
+  --f-mono: "IBM Plex Mono", "Site Greek", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+
+  --t-micro: 0.72rem;
+  --t-small: 0.84rem;
+  --t-body: clamp(1.06rem, 0.98rem + 0.3vw, 1.2rem);
+  --t-lead: clamp(1.25rem, 1.08rem + 0.75vw, 1.6rem);
+  --t-h3: clamp(1.35rem, 1.15rem + 0.9vw, 1.9rem);
+  --t-h2: clamp(2.3rem, 1.4rem + 4.2vw, 5rem);
+  --t-h1: clamp(2.9rem, 1.3rem + 7.4vw, 7.6rem);
+  --t-figure: clamp(3.2rem, 1.6rem + 7vw, 7.5rem);
+
+  /* layout */
+  --gutter: clamp(1.1rem, 0.5rem + 2.6vw, 3rem);
+  --max: 82rem;
+  --measure: 38rem;
+  --section: clamp(4rem, 2.5rem + 6vw, 8rem);
+  --radius: 2px;
+
+  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --focus: 0 0 0 3px var(--paper), 0 0 0 6px var(--gel);
+}
+
+/* On film surfaces components read these instead */
+.film {
+  --focus: 0 0 0 3px var(--film), 0 0 0 6px var(--gel-lt);
+  background: var(--film);
+  color: var(--on-film);
+}

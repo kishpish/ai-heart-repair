@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Read the paper | AI Heart Repair</title>
+    <meta
+      name="description"
+      content="Read the full paper and the IEEE short paper in the browser, page by page, on any device."
+    />
+    <meta name="theme-color" content="#0d0c0b" />
+    <link rel="icon" href="favicon.svg" />
+    <link rel="stylesheet" href="css/tokens.css" />
+    <link rel="stylesheet" href="css/base.css" />
+    <link rel="stylesheet" href="css/reader.css" />
+  </head>
+  <body class="read">
+    <header class="read__head film">
+      <a class="read__home" href="./#paper">AI Heart Repair</a>
+      <h1 class="read__title" data-doc-title>
+        A Second Beat for the Broken Heart: AI-Driven Inverse Design of Bio-Instructive Hydrogels for Post-Infarction
+        Myocardial Regeneration
+      </h1>
+    </header>
+
+    <main class="read__main">
+      <div class="read__reader" data-reader>
+        <div class="read__fallback">
+          <p>The paper opens here once the reader has loaded. The PDFs also open directly:</p>
+          <ul>
+            <li>
+              <a href="assets/docs/potluri-2026-second-beat-full-paper.pdf">Full paper (PDF, 64 pages)</a>
+            </li>
+            <li>
+              <a href="assets/docs/potluri-2026-ieee-bibm-short-paper.pdf">IEEE short paper (PDF, 3 pages)</a>
+            </li>
+          </ul>
+          <noscript>
+            <p>The reader needs JavaScript, which is turned off in this browser. The links above still work.</p>
+          </noscript>
+        </div>
+      </div>
+    </main>
+
+    <script type="module">
+      import { mountReader } from './js/reader.js';
+      import { DOCS } from './data/docs.js';
+
+      const root = document.querySelector('[data-reader]');
+      const titleEl = document.querySelector('[data-doc-title]');
+      const params = new URLSearchParams(location.search);
+      const doc = DOCS.find((d) => d.id === params.get('doc')) || DOCS[0];
+      const page = Math.max(1, parseInt(params.get('page'), 10) || 1);
+
+      let shownDoc = '';
+      const showTitle = (id) => {
+        if (id === shownDoc) return;
+        shownDoc = id;
+        const found = DOCS.find((d) => d.id === id);
+        if (!found) return;
+        titleEl.textContent = found.title;
+        titleEl.title = found.title;
+      };
+      showTitle(doc.id);
+
+      // Keep the address in step with the page on screen. Debounced: Safari
+      // refuses more than 100 history updates in 30 seconds.
+      let timer = 0;
+      root.addEventListener('reader:page', (event) => {
+        const { doc: id, page: n } = event.detail;
+        showTitle(id);
+        clearTimeout(timer);
+        timer = setTimeout(() => {
+          const query = '?doc=' + encodeURIComponent(id) + '&page=' + n;
+          if (location.search === query) return;
+          try {
+            history.replaceState(null, '', query + location.hash);
+          } catch (_) {
+            /* the address stays as it was */
+          }
+        }, 250);
+      });
+
+      mountReader(root, {
+        base: new URL('./', document.baseURI).href,
+        doc: doc.id,
+        page,
+        standalone: true,
+        lazy: false,
+      });
+    </script>
+  </body>
+</html>

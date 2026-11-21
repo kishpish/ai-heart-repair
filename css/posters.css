@@ -1,0 +1,484 @@
+/* Poster viewer (js/posters.js). One film block: panel switcher, stage, controls, caption.
+   Colour and type come from tokens.css only. The block is .poster-viewer, not .posters:
+   the page's own section uses that name. */
+
+.poster-viewer {
+  --focus: 0 0 0 3px var(--film), 0 0 0 6px var(--gel-lt);
+  --pv-hit: 2.75rem; /* 44px touch target */
+  box-sizing: border-box;
+  container: poster-viewer / inline-size;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--film-rule);
+  border-radius: var(--radius);
+  background: var(--film);
+  color: var(--on-film);
+  font-family: var(--f-display);
+  line-height: 1.3;
+  text-align: left;
+}
+.poster-viewer *,
+.poster-viewer *::before,
+.poster-viewer *::after {
+  box-sizing: border-box;
+}
+.poster-viewer [hidden] {
+  display: none !important;
+}
+
+.poster-viewer__sr {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* --- panel switcher --------------------------------------------------------- */
+
+.poster-viewer__head {
+  display: flex;
+  align-items: stretch;
+  border-bottom: 1px solid var(--film-rule);
+}
+.poster-viewer__tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.poster-viewer .poster-viewer__tab {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  column-gap: 1rem;
+  row-gap: 0.2rem;
+  align-items: baseline;
+  min-width: 0;
+  min-height: var(--pv-hit);
+  margin: 0;
+  padding: 0.8rem 1rem 0.85rem;
+  border: 0;
+  border-top: 2px solid transparent;
+  border-radius: 0;
+  background: transparent;
+  color: var(--on-film-2);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  transition: background-color 0.15s var(--ease), color 0.15s var(--ease), border-color 0.15s var(--ease);
+}
+.poster-viewer .poster-viewer__tab + .poster-viewer__tab {
+  border-left: 1px solid var(--film-rule);
+}
+.poster-viewer .poster-viewer__tab:hover {
+  background: var(--film-2);
+  color: var(--on-film);
+}
+.poster-viewer .poster-viewer__tab[aria-pressed="true"] {
+  border-top-color: var(--gel-lt);
+  background: var(--film-2);
+  color: var(--on-film);
+}
+.poster-viewer__tab-label {
+  font-stretch: 78%;
+  font-weight: 600;
+  font-size: var(--t-small);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.poster-viewer__tab[aria-pressed="true"] .poster-viewer__tab-label {
+  color: var(--gel-lt);
+}
+.poster-viewer__tab-cap {
+  min-width: 0;
+  font-family: var(--f-text);
+  font-size: var(--t-small);
+  line-height: 1.35;
+  color: var(--on-film-2);
+}
+.poster-viewer__tab[aria-pressed="true"] .poster-viewer__tab-cap {
+  color: var(--on-film);
+}
+
+/* --- stage -------------------------------------------------------------------- */
+
+.poster-viewer__stage {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  min-height: 15rem;
+  /* Tall, but never so tall that the control row falls below the fold. */
+  max-height: min(86vh, 100vh - 14rem);
+  overflow: hidden;
+  background: var(--film);
+}
+.poster-viewer__preview,
+.poster-viewer__osd {
+  position: absolute;
+  inset: 0;
+}
+/* Same placement as OpenSeadragon's home view, so tiles land exactly on top of it. */
+.poster-viewer__preview img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  object-fit: contain;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+.poster-viewer[data-input="coarse"][data-mode="inline"] .poster-viewer__osd {
+  display: none;
+}
+.poster-viewer__osd .openseadragon-canvas {
+  outline: none;
+  box-shadow: none;
+  cursor: grab;
+}
+.poster-viewer__osd .openseadragon-canvas:active {
+  cursor: grabbing;
+}
+/* The canvas fills the stage edge to edge, so its focus ring is drawn just inside it. */
+.poster-viewer__stage::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+}
+.poster-viewer__stage:has(.openseadragon-canvas:focus-visible)::after {
+  box-shadow: inset 0 0 0 3px var(--gel-lt), inset 0 0 0 6px var(--film);
+}
+
+/* Overview map: OpenSeadragon's navigator, squared off and only shown while zoomed in. */
+.poster-viewer__osd .navigator {
+  margin: 0 0.75rem 0.75rem 0 !important;
+  border-width: 1px !important;
+  border-radius: var(--radius);
+  box-shadow: none !important;
+}
+.poster-viewer__osd .navigator.is-idle {
+  visibility: hidden;
+}
+.poster-viewer__osd .navigator .displayregion {
+  border-width: 1px !important;
+}
+
+.poster-viewer .poster-viewer__explore {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 2;
+  display: none;
+  align-items: center;
+  gap: 0.6em;
+  min-height: 3rem;
+  margin: 0;
+  padding: 0 1.1rem;
+  transform: translate(-50%, -50%);
+  border: 1px solid var(--on-film);
+  border-radius: var(--radius);
+  background: var(--film);
+  color: var(--on-film);
+  font-family: var(--f-display);
+  font-stretch: 78%;
+  font-weight: 600;
+  font-size: var(--t-small);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+.poster-viewer[data-input="coarse"][data-mode="inline"] .poster-viewer__explore {
+  display: inline-flex;
+}
+.poster-viewer .poster-viewer__explore:hover,
+.poster-viewer .poster-viewer__explore:active {
+  border-color: var(--gel-lt);
+  color: var(--gel-lt);
+}
+/* While it only holds the preview, the stage hugs the poster's own 4:3. */
+.poster-viewer[data-input="coarse"][data-mode="inline"] .poster-viewer__stage {
+  aspect-ratio: 4 / 3;
+  min-height: 0;
+}
+
+.poster-viewer__hint {
+  position: absolute;
+  left: 0.75rem;
+  bottom: 0.75rem;
+  z-index: 2;
+  max-width: calc(100% - 1.5rem);
+  margin: 0;
+  padding: 0.5rem 0.7rem;
+  border: 1px solid var(--film-rule);
+  border-radius: var(--radius);
+  background: var(--film);
+  color: var(--on-film);
+  font-stretch: 78%;
+  font-weight: 600;
+  font-size: var(--t-micro);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  pointer-events: none;
+  visibility: hidden;
+}
+.poster-viewer__hint.is-shown {
+  visibility: visible;
+}
+
+/* --- controls ----------------------------------------------------------------- */
+
+.poster-viewer__bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem 1.5rem;
+  padding: 0.5rem;
+  border-top: 1px solid var(--film-rule);
+}
+.poster-viewer__tools,
+.poster-viewer__links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.375rem;
+  min-width: 0;
+}
+.poster-viewer[data-input="coarse"][data-mode="inline"] .poster-viewer__tools {
+  display: none;
+}
+
+.poster-viewer .poster-viewer__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55em;
+  min-width: var(--pv-hit);
+  min-height: var(--pv-hit);
+  margin: 0;
+  padding: 0 0.85rem;
+  border: 1px solid var(--film-rule);
+  border-radius: var(--radius);
+  background: transparent;
+  color: var(--on-film);
+  font-family: var(--f-display);
+  font-stretch: 78%;
+  font-weight: 600;
+  font-size: var(--t-small);
+  line-height: 1.2;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  transition: background-color 0.15s var(--ease), color 0.15s var(--ease), border-color 0.15s var(--ease);
+}
+.poster-viewer .poster-viewer__btn:hover {
+  border-color: var(--on-film-2);
+  background: var(--film-3);
+}
+.poster-viewer .poster-viewer__btn:active {
+  border-color: var(--gel-lt);
+  color: var(--gel-lt);
+}
+.poster-viewer .poster-viewer__btn[aria-disabled="true"] {
+  border-color: var(--film-rule);
+  background: transparent;
+  color: var(--on-film-3);
+  cursor: default;
+}
+.poster-viewer .poster-viewer__btn--icon {
+  width: var(--pv-hit);
+  padding: 0;
+}
+.poster-viewer .poster-viewer__link:hover {
+  border-color: var(--gel-lt);
+  background: transparent;
+  color: var(--gel-lt);
+}
+.poster-viewer__icon {
+  display: inline-flex;
+  flex: none;
+}
+.poster-viewer__icon svg {
+  display: block;
+  width: 1rem;
+  height: 1rem;
+  overflow: visible;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-linecap: square;
+  stroke-linejoin: miter;
+}
+
+.poster-viewer__zoom {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  min-width: 5ch;
+  min-height: var(--pv-hit);
+  padding: 0 0.6rem 0 0.35rem;
+  color: var(--on-film-2);
+  font-family: var(--f-mono);
+  font-size: var(--t-small);
+  font-feature-settings: "zero" 1;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Close sits at the end of the switcher row and only exists in full screen / full window. */
+.poster-viewer .poster-viewer__close {
+  flex: none;
+  align-self: stretch;
+  border: 0;
+  border-left: 1px solid var(--film-rule);
+  border-radius: 0;
+  padding: 0 1.1rem;
+}
+.poster-viewer .poster-viewer__close:hover {
+  background: var(--film-3);
+}
+
+/* Focus rings sit outside the control, above its neighbours. */
+.poster-viewer .poster-viewer__tab:focus-visible,
+.poster-viewer .poster-viewer__btn:focus-visible,
+.poster-viewer .poster-viewer__explore:focus-visible {
+  z-index: 4;
+  outline: none;
+  box-shadow: var(--focus);
+  border-radius: var(--radius);
+}
+.poster-viewer .poster-viewer__tab:focus-visible,
+.poster-viewer .poster-viewer__btn:focus-visible {
+  position: relative;
+}
+
+/* --- caption ------------------------------------------------------------------ */
+
+.poster-viewer__caption {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.25rem 1rem;
+  margin: 0;
+  padding: 0.7rem 1rem 0.8rem;
+  border-top: 1px solid var(--film-rule);
+  color: var(--on-film-2);
+  font-family: var(--f-text);
+  font-size: var(--t-small);
+  line-height: 1.4;
+}
+.poster-viewer__caption-text {
+  flex: 1 1 14rem;
+  min-width: 0;
+}
+.poster-viewer__caption-n,
+.poster-viewer__caption-px {
+  color: var(--on-film-3);
+  font-family: var(--f-mono);
+  font-size: var(--t-micro);
+  font-feature-settings: "zero" 1;
+  white-space: nowrap;
+}
+
+/* --- full screen (Fullscreen API) and full window (fallback, touch) -------------- */
+
+.poster-viewer.is-full {
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  background: var(--film);
+  color: var(--on-film);
+  overflow: hidden;
+}
+.poster-viewer.is-window {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483000;
+  padding: env(safe-area-inset-top, 0px) env(safe-area-inset-right, 0px) env(safe-area-inset-bottom, 0px)
+    env(safe-area-inset-left, 0px);
+  overscroll-behavior: contain;
+}
+.poster-viewer.is-window::backdrop,
+.poster-viewer.is-full::backdrop {
+  background: var(--film);
+}
+.poster-viewer.is-full .poster-viewer__stage {
+  flex: 1 1 0;
+  min-height: 0;
+  max-height: none;
+  aspect-ratio: auto;
+}
+.poster-viewer.is-full .poster-viewer__caption {
+  display: none;
+}
+.poster-viewer.is-full .poster-viewer__stage:has(.openseadragon-canvas:focus-visible)::after {
+  box-shadow: inset 0 0 0 3px var(--gel-lt);
+}
+
+/* --- narrow frames (phones, narrow columns) -------------------------------------- */
+
+@container poster-viewer (max-width: 46rem) {
+  .poster-viewer .poster-viewer__tab {
+    grid-template-columns: 1fr;
+    align-content: center;
+    padding: 0.7rem 0.8rem 0.75rem;
+  }
+  /* Two wrapped captions side by side crowd a phone; the caption row under the stage
+     carries the selected one. Still read out as part of the button's name. */
+  .poster-viewer__tab-cap {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  .poster-viewer__stage {
+    aspect-ratio: 4 / 5;
+  }
+  .poster-viewer .poster-viewer__btn--label {
+    width: var(--pv-hit);
+    padding: 0;
+  }
+  .poster-viewer .poster-viewer__btn--label .poster-viewer__btn-text {
+    display: none;
+  }
+  .poster-viewer__links {
+    flex: 1 1 100%;
+  }
+  .poster-viewer .poster-viewer__link {
+    flex: 1 1 auto;
+  }
+  .poster-viewer__caption {
+    padding-inline: 0.8rem;
+  }
+  .poster-viewer.is-full .poster-viewer__bar {
+    gap: 0.375rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .poster-viewer .poster-viewer__tab,
+  .poster-viewer .poster-viewer__btn {
+    transition: none;
+  }
+}

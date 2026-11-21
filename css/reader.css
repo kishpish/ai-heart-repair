@@ -1,0 +1,642 @@
+/* ==========================================================================
+   Reader: the embedded PDF reader (js/reader.js) and the standalone
+   read.html shell. Colour, type and spacing come from tokens.css only.
+   Chrome sits on film; pages sit on paper-2.
+   ========================================================================== */
+
+.reader {
+  --reader-cell: 2.75rem; /* 44px touch target */
+  --focus: 0 0 0 3px var(--film), 0 0 0 6px var(--gel-lt);
+  container: reader / inline-size;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  border: 1px solid var(--film-rule);
+  border-radius: var(--radius);
+  background: var(--film);
+  color: var(--on-film);
+  font-family: var(--f-display);
+  line-height: 1.2;
+}
+
+.reader--standalone {
+  flex: 1 1 auto;
+  min-height: 0;
+  border: 0;
+  border-radius: 0;
+}
+
+/* --- toolbar -------------------------------------------------------------- */
+
+/* Narrow (default): two rows. Row a = documents + links, row b = page + zoom. */
+.reader__bar {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.reader__row {
+  display: flex;
+  align-items: stretch;
+  gap: 0.5rem;
+  min-width: 0;
+  /* the padding also gives focus rings room inside the scrolling row */
+  padding: 0.5rem;
+}
+.reader__row--a {
+  padding-bottom: 0;
+}
+.reader__row--b {
+  justify-content: space-between;
+  gap: 0.25rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+  overscroll-behavior-x: contain;
+}
+.reader__row--b::-webkit-scrollbar {
+  display: none;
+}
+
+.reader__group {
+  display: flex;
+  flex: none;
+  align-items: stretch;
+}
+.reader__group > * + * {
+  margin-left: -1px; /* neighbouring cells share one rule */
+}
+
+.reader__docs {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.reader__docs .reader__btn {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.reader__note {
+  display: none;
+  min-width: 0;
+  overflow: hidden;
+  color: var(--on-film-2);
+  font-family: var(--f-text);
+  font-size: var(--t-small);
+  line-height: 1.3;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Every control is a square, ruled cell. */
+.reader .reader__btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-width: var(--reader-cell);
+  min-height: var(--reader-cell);
+  margin-block: 0;
+  padding: 0.25rem 0.7rem;
+  border: 1px solid var(--film-rule);
+  border-radius: var(--radius);
+  background: transparent;
+  color: var(--on-film);
+  font-family: var(--f-display);
+  font-stretch: 78%;
+  font-weight: 600;
+  font-size: var(--t-micro);
+  letter-spacing: 0.08em;
+  line-height: 1.15;
+  text-align: center;
+  text-decoration: none;
+  text-transform: uppercase;
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  transition: background-color 0.15s var(--ease), border-color 0.15s var(--ease), color 0.15s var(--ease);
+}
+.reader .reader__btn--icon {
+  flex: none;
+  width: var(--reader-cell);
+  padding: 0;
+}
+.reader__btn svg {
+  flex: none;
+  width: 1rem;
+  height: 1rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-linecap: square;
+  stroke-linejoin: miter;
+}
+.reader__btn-text {
+  display: none; /* icon-only until there is room; the accessible name stays on the control */
+}
+
+@media (hover: hover) {
+  .reader .reader__btn:hover {
+    z-index: 1;
+    border-color: var(--on-film-3);
+    background: var(--film-3);
+  }
+  .reader .reader__btn[aria-disabled="true"]:hover {
+    border-color: var(--film-rule);
+    background: transparent;
+  }
+}
+.reader .reader__btn:active {
+  background: var(--film-3);
+}
+.reader .reader__btn[aria-pressed="true"] {
+  z-index: 1;
+  border-color: var(--gel-lt);
+  color: var(--gel-lt);
+}
+.reader .reader__btn[aria-disabled="true"] {
+  color: var(--film-rule);
+  cursor: default;
+}
+.reader .reader__btn[aria-disabled="true"]:active {
+  background: transparent;
+}
+.reader .reader__btn:focus-visible,
+.reader .reader__input:focus-visible {
+  z-index: 2;
+  box-shadow: var(--focus);
+}
+
+/* "Page [n] / N" */
+.reader__field {
+  display: flex;
+  align-items: stretch;
+  border: 1px solid var(--film-rule);
+}
+.reader__field-label {
+  /* hidden visually when narrow, still the input's label */
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  color: var(--on-film-2);
+  font-stretch: 78%;
+  font-weight: 600;
+  font-size: var(--t-micro);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.reader .reader__input {
+  position: relative;
+  width: var(--reader-cell);
+  min-height: var(--reader-cell);
+  margin: -1px 0; /* sits on the field's rules, so the input itself is a full 44px target */
+  padding: 0;
+  border: 0;
+  border-block: 1px solid var(--film-rule);
+  border-radius: 0;
+  background: var(--film-2);
+  color: var(--on-film);
+  font-family: var(--f-mono);
+  font-size: 1rem; /* 16px or more: iOS Safari zooms the page on smaller inputs */
+  font-feature-settings: "zero" 1;
+  line-height: 1;
+  text-align: center;
+  -webkit-appearance: none;
+  appearance: none;
+}
+.reader .reader__input:focus-visible {
+  border-radius: var(--radius);
+}
+.reader__total,
+.reader__pct {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--on-film-2);
+  font-family: var(--f-mono);
+  font-size: var(--t-small);
+  font-feature-settings: "zero" 1;
+  white-space: nowrap;
+}
+.reader__total {
+  min-width: 2.25rem;
+  padding: 0 0.4rem;
+  border-left: 1px solid var(--film-rule);
+}
+.reader__slash {
+  margin-right: 0.3em;
+}
+.reader__pct {
+  display: none;
+  min-width: 3.5rem;
+  border-block: 1px solid var(--film-rule);
+}
+
+/* Slim progress line under the toolbar: current page / total. */
+.reader__progress {
+  flex: none;
+  height: 2px;
+  background: var(--film-rule);
+}
+.reader__progress > span {
+  display: block;
+  width: 0;
+  height: 100%;
+  background: var(--gel-lt);
+  transition: width 0.2s var(--ease);
+}
+
+/* The toolbar adapts to the reader's own width (not the window's), so it
+   also behaves inside a narrow column. Browsers without container queries
+   keep the two-row layout above at every width.
+
+     under 28rem   two rows, icons only
+     28rem         "Page" label and zoom percentage appear
+     38rem         two rows, text labels on Fit width / Download / Open full page
+     44rem         one row (icons only again, so it fits)
+     64rem         one row with text labels
+     74rem         the document note joins the row                            */
+@container reader (min-width: 28rem) {
+  .reader__field-label {
+    position: static;
+    display: inline-flex;
+    align-items: center;
+    width: auto;
+    height: auto;
+    padding: 0 0.6rem;
+    overflow: visible;
+    clip: auto;
+    clip-path: none;
+  }
+  .reader__pct {
+    display: inline-flex;
+  }
+}
+@container reader (min-width: 38rem) {
+  .reader__docs {
+    flex: 0 1 auto;
+  }
+  .reader__links {
+    margin-left: auto;
+  }
+  .reader__pages {
+    padding: 0.75rem;
+  }
+}
+@container reader (min-width: 38rem) and (max-width: 43.999rem) {
+  .reader__btn-text {
+    display: inline;
+  }
+  .reader .reader__btn--labelled {
+    width: auto;
+    padding: 0.25rem 0.8rem;
+  }
+}
+@container reader (min-width: 44rem) {
+  .reader__bar {
+    flex-direction: row;
+    align-items: stretch;
+    gap: 0.5rem 1rem;
+    padding: 0.5rem 0.75rem;
+  }
+  .reader__row {
+    display: contents;
+  }
+  .reader__docs {
+    order: 1;
+    flex: none;
+    margin-right: auto;
+  }
+  .reader__note {
+    order: 2;
+  }
+  .reader__pager {
+    order: 3;
+  }
+  .reader__zoom {
+    order: 4;
+  }
+  .reader__links {
+    order: 5;
+    margin-left: 0;
+  }
+}
+@container reader (min-width: 44rem) and (max-width: 49.999rem) {
+  .reader__pct {
+    display: none;
+  }
+}
+@container reader (min-width: 64rem) {
+  .reader__btn-text {
+    display: inline;
+  }
+  .reader .reader__btn--labelled {
+    width: auto;
+    padding: 0.25rem 0.8rem;
+  }
+}
+@container reader (min-width: 74rem) {
+  .reader__docs {
+    margin-right: 0;
+  }
+  .reader__note {
+    display: -webkit-box;
+    flex: 1 1 0;
+    align-self: center;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    white-space: normal;
+  }
+}
+
+/* --- viewport ------------------------------------------------------------- */
+
+.reader__viewport {
+  --focus: inset 0 0 0 3px var(--gel);
+  position: relative;
+  height: clamp(28rem, 82vh, 60rem);
+  overflow: auto;
+  overflow-y: scroll;
+  overflow-anchor: none; /* the reader keeps its own place when pages resize */
+  -webkit-overflow-scrolling: touch;
+  background: var(--paper-2);
+  color: var(--ink);
+}
+.reader--standalone .reader__viewport {
+  flex: 1 1 auto;
+  height: auto;
+  min-height: 0;
+}
+.reader__viewport:focus-visible {
+  border-radius: 0;
+  box-shadow: var(--focus);
+}
+
+.reader__pages {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  box-sizing: border-box;
+  width: max-content;
+  min-width: 100%;
+  padding: 0.5rem;
+}
+.reader__pages:empty {
+  display: none;
+}
+
+.reader__page {
+  position: relative;
+  box-sizing: content-box;
+  flex: none;
+  overflow: hidden;
+  border: 1px solid var(--rule);
+  background: #fff;
+}
+.reader__page-num {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  color: var(--ink-3);
+  font-family: var(--f-mono);
+  font-size: var(--t-small);
+  text-align: center;
+  -webkit-user-select: none;
+  user-select: none;
+}
+.reader__page.is-rendered .reader__page-num {
+  display: none;
+}
+.reader__canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+}
+
+/* Loading, idle and error text inside the viewport. */
+.reader__notice {
+  max-width: var(--measure);
+  margin: 0 auto;
+  padding: clamp(2rem, 8vh, 5rem) 1.25rem;
+  color: var(--ink-2);
+  text-align: center;
+}
+.reader__notice[hidden] {
+  display: none;
+}
+.reader__notice-line {
+  font-family: var(--f-display);
+  font-stretch: 78%;
+  font-weight: 600;
+  font-size: var(--t-small);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.reader__notice-num {
+  margin-left: 0.6em;
+  color: var(--ink-3);
+  font-family: var(--f-mono);
+  font-weight: 400;
+  letter-spacing: 0;
+}
+.reader__notice--error {
+  text-align: left;
+}
+.reader__notice--error .reader__notice-line {
+  color: var(--scar-ink);
+}
+.reader__notice-text {
+  margin-top: 0.75rem;
+  font-family: var(--f-text);
+  font-size: 1.05rem;
+  line-height: 1.5;
+}
+.reader__notice-links {
+  margin: 0.5rem 0 0;
+  padding: 0;
+  font-family: var(--f-text);
+  font-size: 1.05rem;
+  list-style: none;
+}
+.reader__notice-links a {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--reader-cell);
+  color: var(--gel-ink);
+}
+
+/* Line added under the original fallback when the reader cannot start. */
+.reader-fail {
+  margin-top: 0.75rem;
+  color: var(--scar-ink);
+  font-family: var(--f-text);
+}
+.film .reader-fail {
+  color: var(--scar-lt);
+}
+
+/* --- PDF.js text layer (the minimum it needs) ------------------------------
+   Transparent, selectable text positioned over the canvas. The whole layer is
+   translucent so a selection reads as a tint and the page stays legible. */
+
+.reader .textLayer {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  overflow: hidden;
+  overflow: clip;
+  opacity: 0.3;
+  line-height: 1;
+  text-align: initial;
+  -webkit-text-size-adjust: none;
+  text-size-adjust: none;
+  forced-color-adjust: none;
+  transform-origin: 0 0;
+}
+.reader .textLayer :is(span, br) {
+  position: absolute;
+  color: transparent;
+  white-space: pre;
+  cursor: text;
+  transform-origin: 0% 0%;
+}
+.reader .textLayer > :not(.markedContent),
+.reader .textLayer .markedContent span:not(.markedContent) {
+  z-index: 1;
+}
+.reader .textLayer span.markedContent {
+  top: 0;
+  height: 0;
+}
+.reader .textLayer ::selection {
+  background: var(--gel);
+  color: transparent;
+}
+.reader .textLayer br::selection {
+  background: transparent;
+}
+.reader .textLayer .endOfContent {
+  position: absolute;
+  inset: 100% 0 0;
+  z-index: 0;
+  display: block;
+  cursor: default;
+  -webkit-user-select: none;
+  user-select: none;
+}
+.reader .textLayer.selecting .endOfContent {
+  top: 0;
+}
+.reader .textLayer[data-main-rotation="90"] {
+  transform: rotate(90deg) translateY(-100%);
+}
+.reader .textLayer[data-main-rotation="180"] {
+  transform: rotate(180deg) translate(-100%, -100%);
+}
+.reader .textLayer[data-main-rotation="270"] {
+  transform: rotate(270deg) translateX(-100%);
+}
+
+/* PDF.js measures text on a canvas it appends to <body>; keep it out of the page. */
+.hiddenCanvasElement {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+/* --- read.html: the standalone, full-window reader ------------------------ */
+
+.read {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  background: var(--film);
+}
+
+.read__head {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 0.25rem 1rem;
+  min-width: 0;
+  min-height: 3rem;
+  padding: 0 0.75rem;
+  border-bottom: 1px solid var(--film-rule);
+}
+.read__home {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  min-height: 2.75rem;
+  font-family: var(--f-display);
+  font-stretch: 78%;
+  font-weight: 600;
+  font-size: var(--t-small);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.read__title {
+  min-width: 0;
+  overflow: hidden;
+  padding-left: 1rem;
+  border-left: 1px solid var(--film-rule);
+  color: var(--on-film-2);
+  font-family: var(--f-text);
+  font-size: var(--t-small);
+  font-weight: 400;
+  line-height: 1.3;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.read__main {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-height: 0;
+}
+.read__reader {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-height: 0;
+  background: var(--paper);
+}
+.read__fallback {
+  max-width: calc(var(--measure) + 2 * var(--gutter));
+  padding: var(--gutter);
+  color: var(--ink);
+}
+.read__fallback ul {
+  margin-top: 0.5rem;
+  padding: 0;
+  list-style: none;
+}
+.read__fallback li a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reader .reader__btn,
+  .reader__progress > span {
+    transition: none;
+  }
+}
