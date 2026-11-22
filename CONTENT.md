@@ -57,7 +57,7 @@ The hero drawing is a schematic. Its geometry is not data. Its beat follows the 
 
 ## 02 Method
 
-"Six stages" is the site's own grouping of the paper's contributions (Full §1.4, p. 5). It is not a count from the paper and is distinct from the paper's eight-stage mesh pipeline and six-stage screening cascade. The lede says the solver is checked against closed-form solutions and a second implementation, the patient fit against the imaged volumes, and the ranking against solves whose predictions were sealed first; this restates Full §12, p. 46 and §12.6, p. 48.
+"Six stages" is the site's own grouping of the paper's contributions (Full §1.4, p. 5). It is not a count from the paper and is distinct from the paper's eight-stage mesh pipeline and six-stage screening cascade. The lede's gloss of "sealed" (written to a file and hashed before any verification solve) restates Full §11.3, p. 36.
 
 ### Stage 1, Image to model
 | On the site | Value | Source |

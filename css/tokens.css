@@ -88,7 +88,7 @@
   /* text */
   --ink: #1b1917;
   --ink-2: #4d4842;
-  --ink-3: #6f6961;
+  --ink-3: #6a645c;
   --on-film: #f1eee8;
   --on-film-2: #b9b2a8;
   --on-film-3: #8c857b;
@@ -98,7 +98,7 @@
   --f-text: "Newsreader Variable", "Site Greek", "Iowan Old Style", Georgia, "Times New Roman", serif;
   --f-mono: "IBM Plex Mono", "Site Greek", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
 
-  --t-micro: 0.72rem;
+  --t-micro: 0.78rem;
   --t-small: 0.84rem;
   --t-body: clamp(1.06rem, 0.98rem + 0.3vw, 1.2rem);
   --t-lead: clamp(1.25rem, 1.08rem + 0.75vw, 1.6rem);

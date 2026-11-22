@@ -57,7 +57,7 @@ function sealed(root) {
   const x = (v) => (v - lo) / (hi - lo);
   const rows = PATIENTS.filter((p) => p.outcome === "designed").sort((a, b) => (a.role === b.role ? b.rho - a.rho : a.role === "unseen" ? -1 : 1));
 
-  body.style.setProperty("--cx-aside", "12.5rem");
+  body.classList.add("chart__body--aside");
   body.append(
     h(
       "ul",
@@ -170,7 +170,7 @@ function stiffness(root) {
   body.append(list);
   body.append(
     axis(
-      [-0.5, 0, 0.5, 1.0, 1.5].map((v) => ({ v, label: v === 0 ? "0 (no change)" : signed(v, 1) })),
+      [-0.5, 0, 0.5, 1.0, 1.5].map((v) => ({ v, label: v === 0 ? "0" : signed(v, 1) })),
       x,
       "Change in end-systolic volume, mL. Left of zero is the favourable direction on this target."
     )

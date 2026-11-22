@@ -302,6 +302,8 @@
     align-items: stretch;
     gap: 0.5rem 1rem;
     padding: 0.5rem 0.75rem;
+    flex-wrap: wrap;
+    row-gap: 0.5rem;
   }
   .reader__row {
     display: contents;

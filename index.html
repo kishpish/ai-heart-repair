@@ -22,6 +22,7 @@
   <meta name="twitter:title" content="A Second Beat for the Broken Heart">
   <meta name="twitter:description" content="From cardiac MRI to a patient-specific hydrogel design, with a separate design ranking checked by 210 finite-element solves. Computational research by Krishiv Potluri.">
   <meta name="twitter:image" content="https://kishpish.github.io/ai-heart-repair/assets/meta/og.png">
+  <meta name="twitter:image:alt" content="A short-axis cross-section of a left ventricle drawn in fine lines: grey healthy muscle, a crimson scar, ochre border zones and teal gel depots, beside the title A Second Beat for the Broken Heart.">
 
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="icon" href="favicon.ico" sizes="32x32">
@@ -51,10 +52,10 @@
   }
   </script>
 </head>
-<body>
+<body id="top">
 <a class="skip" href="#main">Skip to content</a>
 
-<header class="nav film" id="top">
+<header class="nav film">
   <div class="wrap nav__in">
     <a class="nav__mark" href="#top" aria-label="AI Heart Repair, back to top">
       <svg viewBox="0 0 32 32" width="26" height="26" aria-hidden="true"><use href="#mark"/></svg>
@@ -130,6 +131,16 @@
   <div class="wrap">
     <dl class="facts" aria-label="At a glance">
       <div>
+        <dt><span class="facts__prog">Finite-element program</span>Rank agreement between a separate model&rsquo;s predictions, fixed in advance, and 210 direct simulations, within each of six patients. 1 is perfect ordering.</dt>
+        <dd>0.929&ndash;0.983</dd>
+        <dd class="facts__src"><a class="src" href="read.html?doc=full&amp;page=40" data-doc="full" data-page="40">Table 11</a></dd>
+      </div>
+      <div>
+        <dt><span class="facts__prog">Finite-element program</span>Verification solves that converged (211 queued; one left no record and is excluded)</dt>
+        <dd>210 of 210</dd>
+        <dd class="facts__src"><a class="src" href="read.html?doc=full&amp;page=40" data-doc="full" data-page="40">&sect;11.6</a></dd>
+      </div>
+      <div>
         <dt><span class="facts__prog">HYDRA-BERT</span>Formulations screened per patient</dt>
         <dd>10<sup>7</sup></dd>
         <dd class="facts__src"><a class="src" href="read.html?doc=full&amp;page=2" data-doc="full" data-page="2">Abstract</a></dd>
@@ -138,16 +149,6 @@
         <dt><span class="facts__prog">HYDRA-BERT pipeline</span>End-to-end time for a new patient</dt>
         <dd>~37 min</dd>
         <dd class="facts__src"><a class="src" href="read.html?doc=full&amp;page=34" data-doc="full" data-page="34">&sect;10.6</a></dd>
-      </div>
-      <div>
-        <dt><span class="facts__prog">Finite-element program</span>Rank agreement between a separate surrogate&rsquo;s sealed predictions and solved outcomes, within each patient</dt>
-        <dd>0.929&ndash;0.983</dd>
-        <dd class="facts__src"><a class="src" href="read.html?doc=full&amp;page=40" data-doc="full" data-page="40">Table 11</a></dd>
-      </div>
-      <div>
-        <dt><span class="facts__prog">Finite-element program</span>Verification solves that converged (211 queued; one left no record and is excluded)</dt>
-        <dd>210 of 210</dd>
-        <dd class="facts__src"><a class="src" href="read.html?doc=full&amp;page=40" data-doc="full" data-page="40">&sect;11.6</a></dd>
       </div>
     </dl>
   </div>
@@ -209,9 +210,17 @@
   <div class="wrap">
     <header class="sec-head">
       <p class="sec-num" aria-hidden="true">02</p>
-      <h2 id="method-title">From image to design, then a sealed test of a ranking</h2>
-      <p class="sec-lede">Five stages run from image to a selected formulation. A sixth runs beside them: a sealed test of a design ranking by direct finite-element solves. The solver is checked against closed-form solutions and a second implementation, the patient fit against that patient&rsquo;s imaged volumes, and the ranking against finite-element solves whose predictions were sealed first. Select a stage.</p>
+      <h2 id="method-title">Six stages, from MRI to a checked ranking</h2>
+      <p class="sec-lede">Five stages run from image to a selected formulation. A sixth runs beside them: a test of a design ranking by direct finite-element solves, with the predictions sealed (written to a file and hashed) before any of those solves ran. Select a stage.</p>
     </header>
+
+    <figure class="evidence evidence--paper">
+      <picture>
+        <source type="image/webp" srcset="assets/figures/ieee-fig1-imaging-to-mechanics-640.webp 640w, assets/figures/ieee-fig1-imaging-to-mechanics-1280.webp 1280w, assets/figures/ieee-fig1-imaging-to-mechanics-2000.webp 2000w" sizes="(min-width: 86rem) 76rem, 92vw">
+        <img src="assets/figures/original/ieee-fig1-imaging-to-mechanics.png" width="3764" height="1355" loading="lazy" decoding="async" alt="Eight panels for one patient. A: an MRI slice with the heart wall traced in orange and blue. B: a ventricle model with grey healthy muscle, an ochre border zone and crimson scar. C: teal gel depots along the border zone. D: a cut-away showing depots in the middle of the wall. E to H: the ventricle coloured by fibre stress, without and with the design, at end diastole and end systole.">
+      </picture>
+      <figcaption>From imaging to delivery and mechanics for one patient (SCD&nbsp;0000101), the short paper&rsquo;s Fig.&nbsp;1. A: MRI with expert contours. B: tissue tags. C, D: gel depots of the top-ranked verification design, not a HYDRA-BERT selection, at mid-wall in the border zone and clear of the scar. E to H: fibre stress without and with that design, at matched end-diastolic and end-systolic pressure; the bulk fields are nearly identical. <a class="src" href="read.html?doc=ieee&amp;page=1" data-doc="ieee" data-page="1">IEEE Fig. 1</a> <a href="assets/figures/original/ieee-fig1-imaging-to-mechanics.png" download>Original PNG</a></figcaption>
+    </figure>
 
     <div class="pipe" data-pipeline>
       <div class="pipe__rail" role="tablist" aria-label="Pipeline stages">
@@ -428,7 +437,7 @@
   <!-- R1 -->
   <div class="wrap result result--lead">
     <div class="result__head">
-      <p class="label result__kicker">Finite-element program <span aria-hidden="true">/</span> 6 patients, 210 solves <span aria-hidden="true">/</span> ranking surrogate, not HYDRA-BERT</p>
+      <p class="label result__kicker">Finite-element program <span aria-hidden="true">/</span> 6 patients, 210 solves <span aria-hidden="true">/</span> ranking surrogate</p>
       <h3>A sealed design ranking held up, including on two hearts the surrogate had never seen</h3>
     </div>
     <div class="result__figure">
@@ -472,7 +481,7 @@
     <div class="wrap result result--split">
       <div class="result__head">
         <p class="label result__kicker">HYDRA-BERT <span aria-hidden="true">/</span> hold-out set of 44,748 samples from patient models held out of training</p>
-        <h3>A chemical language model that predicts, fast enough to search</h3>
+        <h3>HYDRA-BERT predicts a gel&rsquo;s effect fast enough to search ten million designs</h3>
         <p>The hold-out is split by patient model, so these scores measure transfer to a model the network has not seen, not to a new gel on a familiar one. The targets it predicts come from physics-based surrogate models, validated against 500 full simulations, not from a direct solve of each design. <a class="src" href="read.html?doc=full&amp;page=32" data-doc="full" data-page="32">&sect;10.2</a></p>
       </div>
       <dl class="tiles">
@@ -491,11 +500,7 @@
           <dd>19,608</dd>
           <dd class="tile__ctx">2.2&nbsp;&times;&nbsp;10<sup>5</sup> times the throughput of direct finite-element evaluation</dd>
         </div>
-        <div class="tile">
-          <dt>New patient, end to end</dt>
-          <dd>~37<span class="tile__u">min</span></dd>
-          <dd class="tile__ctx">10<sup>7</sup> candidates screened, one design returned</dd>
-        </div>
+
       </dl>
       <p class="result__src"><a class="src" href="read.html?doc=full&amp;page=34" data-doc="full" data-page="34">&sect;10.6</a> <a class="src" href="read.html?doc=full&amp;page=35" data-doc="full" data-page="35">Table 7</a></p>
 
@@ -605,7 +610,7 @@
   <div class="wrap result result--general">
     <div class="result__head">
       <p class="label result__kicker">Two findings that reach beyond this therapy</p>
-      <h3>What to predict matters more than how. And anatomy decides first.</h3>
+      <h3>Train on the change from each patient&rsquo;s own baseline. Check first that a design can be delivered.</h3>
     </div>
 
     <div class="general">
@@ -678,16 +683,6 @@
     <p class="result__src"><a class="src" href="read.html?doc=full&amp;page=49" data-doc="full" data-page="49">&sect;13 Limitations</a> <a class="src" href="read.html?doc=full&amp;page=50" data-doc="full" data-page="50">&sect;13, continued</a></p>
   </div>
 
-  <!-- IEEE figure -->
-  <div class="wrap">
-    <figure class="evidence evidence--paper">
-      <picture>
-        <source type="image/webp" srcset="assets/figures/ieee-fig1-imaging-to-mechanics-640.webp 640w, assets/figures/ieee-fig1-imaging-to-mechanics-1280.webp 1280w, assets/figures/ieee-fig1-imaging-to-mechanics-2000.webp 2000w" sizes="(min-width: 86rem) 76rem, 92vw">
-        <img src="assets/figures/original/ieee-fig1-imaging-to-mechanics.png" width="3764" height="1355" loading="lazy" decoding="async" alt="Eight panels for one patient. A: an MRI slice with the heart wall traced in orange and blue. B: a ventricle model with grey healthy muscle, an ochre border zone and crimson scar. C: teal gel depots along the border zone. D: a cut-away showing depots in the middle of the wall. E to H: the ventricle coloured by fibre stress, without and with the design, at end diastole and end systole.">
-      </picture>
-      <figcaption>From imaging to delivery and mechanics for one patient (SCD&nbsp;0000101), the short paper&rsquo;s Fig.&nbsp;1. A: MRI with expert contours. B: tissue tags. C, D: gel depots of the top-ranked verification design, not a HYDRA-BERT selection, at mid-wall in the border zone and clear of the scar. E to H: fibre stress without and with that design, at matched end-diastolic and end-systolic pressure; the bulk fields are nearly identical. <a class="src" href="read.html?doc=ieee&amp;page=1" data-doc="ieee" data-page="1">IEEE Fig. 1</a> <a href="assets/figures/original/ieee-fig1-imaging-to-mechanics.png" download>Original PNG</a></figcaption>
-    </figure>
-  </div>
 </section>
 
 <!-- =================================================================== POSTERS -->
@@ -696,8 +691,10 @@
     <header class="sec-head">
       <p class="sec-num" aria-hidden="true">04</p>
       <h2 id="posters-title">The posters</h2>
-      <p class="sec-lede">Two panels, prepared for the Texas Science and Engineering Fair. Zoom to read any block at full resolution.</p>
+      <p class="sec-lede">Two panels from the Texas Science and Engineering Fair, made at an earlier stage of the project. Zoom to read any block at full resolution.</p>
     </header>
+    <!-- TODO(krishiv): confirm the fair date and add it here. -->
+    <p class="posters__note"><strong>Read these with the paper.</strong> The posters come from an earlier stage of the project. Some of their numbers were later revised: for example they give a hold-out R<sup>2</sup> of 0.86 and a fibre rotation of 115.3&nbsp;&plusmn;&nbsp;2.1&deg;, where the paper gives 0.89 and 117.2&nbsp;&plusmn;&nbsp;3.1&deg;. They also describe the predicted benefit more strongly than the paper does. The paper adds a finite-element program that tests a design ranking directly, and it makes no claim of functional improvement from that program. Where the two differ, the paper is the current record.</p>
     <div data-posters>
       <div class="posters__fallback">
         <figure>
@@ -711,8 +708,7 @@
         <p><a class="btn" href="assets/docs/potluri-2026-txsef-poster.pdf" download>Poster PDF</a></p>
       </div>
     </div>
-    <!-- TODO(krishiv): confirm the fair date and add it here. -->
-    <p class="posters__note"><strong>Read these with the paper.</strong> The posters come from an earlier stage of the project. Some of their numbers were later revised: for example they give a hold-out R<sup>2</sup> of 0.86 and a fibre rotation of 115.3&nbsp;&plusmn;&nbsp;2.1&deg;, where the paper gives 0.89 and 117.2&nbsp;&plusmn;&nbsp;3.1&deg;. They also describe the predicted benefit more strongly than the paper does. The paper adds a finite-element program that tests a design ranking directly, and it makes no claim of functional improvement from that program. Where the two differ, the paper is the current record.</p>
+    
   </div>
 </section>
 
@@ -793,7 +789,7 @@
 
     <ol class="horizons">
       <li class="horizon">
-        <p class="label horizon__when"><i class="sw sw--ink"></i>Shown now</p>
+        <p class="label horizon__when">Shown now</p>
         <h3>The route from image to a checked design ranking runs end to end</h3>
         <ul>
           <li>Cine MRI with expert contours becomes a simulation-ready, personalized left-ventricle model with no manual mesh editing. Ten of twelve cases were meshed and eight were personalized.</li>
@@ -804,7 +800,7 @@
         <p><a class="src" href="read.html?doc=full&amp;page=51" data-doc="full" data-page="51">&sect;14</a> <a class="src" href="read.html?doc=full&amp;page=17" data-doc="full" data-page="17">Table 1</a> <a class="src" href="read.html?doc=full&amp;page=40" data-doc="full" data-page="40">Table 11</a> <a class="src" href="read.html?doc=full&amp;page=50" data-doc="full" data-page="50">&sect;13</a></p>
       </li>
       <li class="horizon">
-        <p class="label horizon__when"><i class="sw sw--bz"></i>Next few years</p>
+        <p class="label horizon__when">Next few years</p>
         <h3>From a ranking to a prescription someone can test</h3>
         <ul>
           <li>Put the two programs on one footing, so the predicted benefit is confirmed or corrected by direct simulation.</li>
@@ -815,7 +811,7 @@
         <p>Each of these is named in the paper as work not yet done. <a class="src" href="read.html?doc=full&amp;page=49" data-doc="full" data-page="49">&sect;13</a> <a class="src" href="read.html?doc=full&amp;page=50" data-doc="full" data-page="50">&sect;13, continued</a> <a class="src" href="read.html?doc=ieee&amp;page=3" data-doc="ieee" data-page="3">IEEE &sect;IV</a></p>
       </li>
       <li class="horizon horizon--vision">
-        <p class="label horizon__when"><i class="sw sw--gel"></i>Vision</p>
+        <p class="label horizon__when">Vision, not shown</p>
         <h3>Design materials that help the heart rebuild</h3>
         <p>The paper&rsquo;s direction is &ldquo;mechanical first.&rdquo; In its account, relieving stress in the infarct and its border zone interrupts the loop between wall stress and dilation and preserves the chamber geometry an implanted material sits in. That is the condition the material&rsquo;s bio-instructive properties need in order to act at all. In this paper&rsquo;s own direct solves at the catheter dose that relief was partial: at end systole, border-zone fibre stress fell in 4 of 6 patients and remote stress rose in all 6. <a class="src" href="read.html?doc=full&amp;page=42" data-doc="full" data-page="42">&sect;11.10</a></p>
         <p>Hydrogels can carry more than stiffness: electrical conduction, a degradation schedule, cells, drugs, support for new blood vessels. The mechanics in this paper has no term for those. The design space already has axes for conductivity and degradation for that reason.</p>

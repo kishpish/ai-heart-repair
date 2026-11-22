@@ -120,7 +120,7 @@
 
 /* ----------------------------------------------------------------- hero */
 .hero {
-  padding-top: clamp(2.2rem, 1rem + 5vw, 5rem);
+  padding-top: clamp(2rem, 1rem + 3vw, 3.5rem);
   padding-bottom: clamp(2rem, 1rem + 3vw, 3.5rem);
   overflow: hidden;
 }
@@ -128,7 +128,7 @@
   display: grid;
   grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
   gap: clamp(1.5rem, 4vw, 4rem);
-  align-items: center;
+  align-items: start;
 }
 .hero__eyebrow {
   color: var(--on-film-2);
@@ -139,13 +139,13 @@
   color: var(--on-film-3);
 }
 .hero h1 {
-  font-size: var(--t-h1);
+  font-size: clamp(2.9rem, 1.3rem + 5.2vw, 5.6rem);
   font-stretch: 62%;
   font-weight: 760;
   line-height: 0.88;
   letter-spacing: -0.012em;
   text-wrap: balance;
-  max-width: 11ch;
+  max-width: 16ch;
 }
 .hero__sub {
   max-width: 34rem;
@@ -158,10 +158,10 @@
   line-height: 1.25;
 }
 .hero__plain {
-  max-width: 35rem;
+  max-width: 38rem;
   margin-top: 1.4rem;
-  font-size: var(--t-lead);
-  line-height: 1.38;
+  font-size: clamp(1.15rem, 1rem + 0.6vw, 1.4rem);
+  line-height: 1.4;
 }
 .hero__scope {
   max-width: 35rem;
@@ -201,6 +201,13 @@
 
 .hero__fig {
   min-width: 0;
+}
+@media (min-width: 56.01rem) {
+  .hero__fig {
+    max-width: 27rem;
+    margin-top: 1.2rem;
+    justify-self: end;
+  }
 }
 .ventricle {
   width: 100%;
@@ -254,7 +261,7 @@
 
 .facts {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: minmax(0, 1.7fr) repeat(3, minmax(0, 1fr));
   margin: clamp(2.2rem, 1rem + 4vw, 4.5rem) 0 0;
   border-top: 1px solid var(--film-rule);
 }
@@ -277,7 +284,7 @@
 .facts__prog {
   display: block;
   margin-bottom: 0.25rem;
-  color: var(--gel-lt);
+  color: var(--on-film-2);
   font-family: var(--f-display);
   font-stretch: 78%;
   font-weight: 600;
@@ -404,13 +411,13 @@ section {
   .sec-head {
     grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
     column-gap: clamp(1.5rem, 4vw, 4.5rem);
-    align-items: end;
+    align-items: start;
   }
   .sec-num {
     grid-column: 1 / -1;
   }
   .sec-lede {
-    margin: 0 0 0.35rem;
+    margin: 0.5rem 0 0;
     font-size: clamp(1.1rem, 0.95rem + 0.5vw, 1.35rem);
     line-height: 1.42;
   }
@@ -460,7 +467,13 @@ section {
   transition: opacity 0.3s var(--ease);
 }
 .js .step:not([data-active="true"]) {
-  opacity: 0.42;
+  opacity: 0.7;
+}
+.js .step:focus-within {
+  opacity: 1;
+}
+.step .src {
+  color: var(--on-film-2);
 }
 .step h3 {
   font-size: clamp(1.7rem, 1.2rem + 2vw, 2.9rem);
@@ -485,7 +498,6 @@ section {
   gap: 0.5em;
   font-size: 1.7rem;
   font-style: italic;
-  color: var(--bz-lt) !important;
 }
 .eq__frac {
   display: inline-flex;
@@ -512,10 +524,17 @@ section {
     border-bottom: 1px solid var(--film-rule);
   }
   .story__sticky {
+    max-width: none;
+  }
+  .story__sticky .ventricle {
     max-width: min(17rem, 38vh);
+    margin-inline: auto;
+  }
+  .story__readout {
+    min-height: 3.1em;
   }
   .step {
-    min-height: 62vh;
+    min-height: 46vh;
     justify-content: flex-start;
     padding-top: 3rem;
   }
@@ -624,7 +643,7 @@ section {
   font-size: var(--t-small);
   letter-spacing: 0.09em;
   text-transform: uppercase;
-  color: var(--gel-ink);
+  color: var(--ink-3);
 }
 .checks dd {
   margin: 0;
@@ -698,6 +717,10 @@ details > div {
   color: var(--ink-2);
   font-size: 0.95em;
 }
+.film details > p,
+.film details > div {
+  color: var(--on-film-2);
+}
 
 .pipe__fig {
   min-width: 0;
@@ -726,6 +749,9 @@ figcaption {
   color: var(--on-film-3);
 }
 
+.pipe__fig--ledger {
+  overflow-x: auto;
+}
 .ledger {
   width: 100%;
   border-collapse: collapse;
@@ -784,7 +810,7 @@ figcaption {
 }
 .hashes dd {
   margin: 0.25rem 0 0;
-  color: var(--gel-lt);
+  color: var(--on-film);
   font-size: 0.8rem;
   line-height: 1.5;
   word-break: break-all;
@@ -903,10 +929,10 @@ figcaption {
 }
 .result__kicker {
   margin-bottom: 0.9rem;
-  color: var(--gel-ink);
+  color: var(--ink-2);
 }
 .film .result__kicker {
-  color: var(--gel-lt);
+  color: var(--on-film-2);
 }
 .result__kicker span {
   margin-inline: 0.3em;
@@ -1043,7 +1069,7 @@ figcaption {
 /* tiles */
 .tiles {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   margin: 2rem 0 0;
   border-top: 2px solid var(--rule-strong);
 }
@@ -1067,7 +1093,7 @@ figcaption {
   font-family: var(--f-display);
   font-stretch: 62%;
   font-weight: 760;
-  font-size: clamp(2.8rem, 1.6rem + 4.2vw, 5.4rem);
+  font-size: clamp(2.4rem, 1.5rem + 2.6vw, 3.8rem);
   line-height: 0.9;
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
@@ -1117,11 +1143,12 @@ figcaption {
 }
 .trio dd {
   margin: 0.5rem 0 0;
+  color: var(--ink-2);
   font-family: var(--f-display);
   font-stretch: 62%;
-  font-weight: 780;
-  font-size: var(--t-figure);
-  line-height: 0.86;
+  font-weight: 760;
+  font-size: clamp(2.6rem, 1.6rem + 3vw, 4.2rem);
+  line-height: 0.9;
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
@@ -1175,7 +1202,7 @@ figcaption {
 
 /* direct solves, on film */
 .result--direct .result__head h3 {
-  max-width: 20ch;
+  max-width: 30ch;
 }
 .direct__grid {
   display: grid;
@@ -1191,7 +1218,7 @@ figcaption {
   font-family: var(--f-display);
   font-stretch: 80%;
   font-weight: 650;
-  color: var(--bz-lt);
+  color: var(--on-film);
 }
 .direct__close {
   max-width: 46rem;
@@ -1209,13 +1236,14 @@ figcaption {
   background: #fff;
 }
 .evidence--paper {
-  padding-bottom: var(--section);
+  margin-top: 0;
+  padding-bottom: 2.5rem;
 }
 .evidence--paper img {
   border: 1px solid var(--rule);
 }
 .result--direct .evidence {
-  max-width: 62rem;
+  max-width: 48rem;
 }
 .evidence figcaption {
   max-width: 50rem;
@@ -1399,6 +1427,9 @@ figcaption {
   background: var(--gel);
 }
 
+.chart__body--aside {
+  --cx-aside: 12.5rem;
+}
 .cx-rows {
   position: relative;
 }
@@ -1908,7 +1939,7 @@ figcaption {
 }
 .posters__note {
   max-width: 46rem;
-  margin-top: 1.6rem;
+  margin: 0 0 1.6rem;
   padding: 0.8rem 1rem;
   border-left: 3px solid var(--bz-lt);
   background: var(--film-2);
@@ -1947,9 +1978,9 @@ figcaption {
   margin-top: 2.2rem;
 }
 .abstract p {
+  max-width: 38rem;
   font-size: 1.02rem;
   line-height: 1.6;
-  hyphens: auto;
 }
 .abstract__kw {
   margin-top: 1rem;
@@ -1980,6 +2011,9 @@ figcaption {
   font-size: 0.72rem;
   font-weight: 400;
   opacity: 0.85;
+}
+.downloads .btn--solid .mono {
+  opacity: 1;
 }
 .cite__tabs {
   display: flex;
@@ -2093,7 +2127,6 @@ pre.cite__text {
 .horizon--vision {
   padding-right: clamp(1rem, 2.4vw, 2.2rem);
   background: var(--card);
-  border-bottom: 5px solid var(--gel);
 }
 
 /* -------------------------------------------------------------- roadmap */
@@ -2177,7 +2210,7 @@ pre.cite__text {
   font-size: var(--t-micro);
 }
 .road__tag--ext {
-  color: var(--bz-lt);
+  color: var(--on-film);
 }
 .road__detail {
   padding: 0 0 1.1rem 1.7rem;
@@ -2190,6 +2223,17 @@ pre.cite__text {
 }
 .no-js .road__detail[hidden] {
   display: block;
+}
+.no-js .cite__tabs,
+.no-js .cite__copy {
+  display: none;
+}
+.no-js .cite [role="tabpanel"][hidden] {
+  display: block;
+  margin-top: 0.6rem;
+}
+.no-js .chart {
+  overflow-x: auto;
 }
 
 /* ---------------------------------------------------------------- about */
@@ -2322,14 +2366,15 @@ pre.cite__text {
     border-top: 1px solid var(--rule);
   }
   .tiles {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: minmax(0, 1fr);
   }
-  .tile:nth-child(3) {
+  .tile + .tile {
     padding-left: 0;
     border-left: 0;
-  }
-  .tile:nth-child(n + 3) {
     border-top: 1px solid var(--rule);
+  }
+  .tile dt {
+    min-height: 0;
   }
   .horizons,
   .road__track,
@@ -2351,7 +2396,7 @@ pre.cite__text {
     max-width: 20ch;
   }
 }
-@media (max-width: 40rem) {
+@media (max-width: 52rem) {
   .trio {
     grid-template-columns: minmax(0, 1fr);
   }
@@ -2360,6 +2405,8 @@ pre.cite__text {
     border-left: 0;
     border-top: 1px solid var(--rule);
   }
+}
+@media (max-width: 40rem) {
   .robust {
     grid-template-columns: minmax(0, 1fr);
   }
@@ -2368,11 +2415,42 @@ pre.cite__text {
     border-left: 0;
     border-top: 1px solid var(--rule);
   }
+  .chart__body--aside,
   .cx-row,
   .cx-axis,
   .cx-ref {
     --cx-label: 5.6rem;
+    --cx-aside: 0px;
     gap: 0.5rem;
+  }
+  .cx-axis__name {
+    grid-column: 1 / -1;
+  }
+  .chart--onfilm .cx-tick:nth-child(odd) {
+    display: none;
+  }
+  .ledger thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+  .ledger tbody tr {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+    column-gap: 0.8rem;
+    padding: 0.55rem 0;
+    border-top: 1px solid var(--rule);
+  }
+  .ledger tbody th {
+    grid-column: 1 / -1;
+    padding: 0 0 0.15rem;
+    border: 0;
+  }
+  .ledger tbody td {
+    padding: 0;
+    border: 0;
   }
   .cx-aside {
     display: none;
@@ -2417,5 +2495,35 @@ pre.cite__text {
   .step {
     min-height: 0;
     opacity: 1 !important;
+  }
+}
+
+/* Keep each chart beside the text that explains it on wide screens */
+@media (min-width: 62.01rem) {
+  .direct__grid > .chart {
+    position: sticky;
+    top: 5rem;
+  }
+  .general__item:first-child {
+    position: sticky;
+    top: 5rem;
+    align-self: start;
+  }
+}
+/* A phone held sideways has no room for a pinned drawing */
+@media (max-width: 56rem) and (max-height: 30rem) {
+  .story__stage {
+    position: static;
+  }
+}
+@media (pointer: coarse) {
+  .pipe__src,
+  .result__src {
+    gap: 0.6rem;
+  }
+  figcaption a:not(.src),
+  .foot a {
+    display: inline-block;
+    padding-block: 0.5rem;
   }
 }

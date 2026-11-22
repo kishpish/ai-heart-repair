@@ -763,6 +763,9 @@ function createReader(root, opts) {
         const task = lib.getDocument({
           url: new URL(doc.src, base).href,
           enableXfa: false,
+          // Fetch only the pages being read (range requests), not the whole file in the background.
+          disableAutoFetch: true,
+          disableStream: true,
           isEvalSupported: false,
         });
         loadingTask = task;

@@ -40,7 +40,9 @@ img {
 h1,
 h2,
 h3,
-h4 {
+h4,
+h5,
+h6 {
   margin: 0;
   font-family: var(--f-display);
   font-weight: 700;
@@ -234,6 +236,18 @@ a.src:hover {
 .film a.src:hover {
   border-color: var(--gel-lt);
   color: var(--gel-lt);
+}
+
+/* Bigger tap area for the small tags and inline links on touch screens, without changing their look */
+@media (pointer: coarse) {
+  a.src {
+    position: relative;
+  }
+  a.src::after {
+    content: "";
+    position: absolute;
+    inset: -0.7rem -0.15rem;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

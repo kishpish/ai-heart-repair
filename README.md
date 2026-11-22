@@ -19,14 +19,13 @@ After that, every push to `main` redeploys. The `.nojekyll` file tells Pages to 
 
 ## Preview on your computer
 
-The site must be served over HTTP (the PDF reader and the scripts will not run from a `file://` path). To reproduce the GitHub Pages subpath, serve the **parent** folder:
+The site must be served over HTTP (the PDF reader and the scripts will not run from a `file://` path). To reproduce the GitHub Pages subpath, serve the **parent** folder. Run this from the project folder:
 
 ```bash
-cd ..
-python3 -m http.server 8765
+python3 -m http.server 8765 --directory ..
 ```
 
-Then open <http://localhost:8765/ai-heart-repair/>.
+Then open <http://localhost:8765/ai-heart-repair/>. This assumes the project folder is named `ai-heart-repair`. Leave the server running and use a second terminal, in the project folder, for any of the commands further down.
 
 ## Where things are
 
@@ -57,7 +56,7 @@ tools/                scripts that rebuild images, icons and screenshots
 
 ## Things still to fill in
 
-Search the project for `TODO(krishiv)` to find each one in `index.html`.
+Search the project for `TODO(krishiv)` to find each one.
 
 | What | Where |
 |---|---|
@@ -69,6 +68,8 @@ Search the project for `TODO(krishiv)` to find each one in `index.html`.
 | Public code links | `index.html`, Paper section, "Code and data". |
 | Lab partner or mentor, if any | `index.html`, Next steps, "Make the leading gels and measure them". |
 | Roadmap dates, if the fellowship wants them | `index.html`, Next steps. |
+| Fair date for the posters | `index.html`, Posters section, the note above the viewer. |
+| Short paper venue and status | `data/docs.js`, the `note` of the `ieee` entry, and the download label in `index.html`. |
 
 ## Editing content
 
@@ -94,7 +95,11 @@ Search the project for `TODO(krishiv)` to find each one in `index.html`.
 
 ## Rebuilding generated files
 
-You only need this when a source PDF or the drawing changes. It needs Python 3 with Pillow, `poppler-utils` and, for the icons and screenshots, Node with Playwright.
+You only need this when a source PDF or the drawing changes. It needs Python 3 with Pillow, `poppler-utils` and, for the icons and screenshots, Node with Playwright. If Playwright is not installed, run this once in the project folder (`node_modules/` is already ignored by git):
+
+```bash
+npm install playwright && npx playwright install chromium
+```
 
 ```bash
 python3 tools/build_assets.py

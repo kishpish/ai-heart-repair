@@ -124,6 +124,6 @@ export const TARGET_DEFINITION = {
 
 // Section 11.8 (p. 41): change in end-systolic volume at the two ends of the stiffness series
 export const STIFFNESS = [
-  { modulus: "0.1 kPa", role: "volume control: same dose, same sites, negligible stiffness", lo: 0.613, hi: 1.474 },
+  { modulus: "0.1 kPa", role: "volume control", lo: 0.613, hi: 1.474 },
   { modulus: "50 kPa", role: "stiffest registered gel", lo: -0.156, hi: 0.365 },
 ];

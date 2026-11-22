@@ -28,7 +28,15 @@ safely("nav", () => {
     toggle.setAttribute("aria-expanded", String(open));
   });
   list.addEventListener("click", (e) => e.target.closest("a") && close());
-  document.addEventListener("keydown", (e) => e.key === "Escape" && close());
+  const nav = toggle.closest(".nav");
+  document.addEventListener("keydown", (e) => {
+    if (e.key !== "Escape" || list.dataset.open !== "true") return;
+    const inside = list.contains(document.activeElement);
+    close();
+    if (inside) toggle.focus();
+  });
+  nav.addEventListener("focusout", (e) => e.relatedTarget && !nav.contains(e.relatedTarget) && close());
+  document.addEventListener("click", (e) => !nav.contains(e.target) && close());
 
   // mark the section in view
   const links = new Map($$("a", list).map((a) => [a.getAttribute("href").slice(1), a]));
@@ -45,6 +53,9 @@ safely("nav", () => {
     const sec = document.getElementById(id);
     if (sec) io.observe(sec);
   });
+  // the hero has no nav entry: crossing it clears the marker
+  const hero = $(".hero");
+  if (hero) io.observe(hero);
 });
 
 // ------------------------------------------------------------------ tabs (pipeline, citation)
@@ -168,7 +179,8 @@ safely("reader", async () => {
   const root = $("[data-reader]");
   if (!root) return;
   const { mountReader } = await import("./reader.js");
-  const reader = mountReader(root, { base: BASE, doc: "full", page: 1, standalone: false, lazy: true });
+  // Open on the abstract (PDF page 2); the title page is one step up.
+  const reader = mountReader(root, { base: BASE, doc: "full", page: 2, standalone: false, lazy: true });
 
   // A source tag opens the paper at that page, here on the page.
   document.addEventListener("click", (e) => {
@@ -182,4 +194,24 @@ safely("reader", async () => {
       location.href = tag.href;
     });
   });
+});
+
+// ------------------------------------------------------------------ deep links
+// The poster viewer and reader change the page height after the browser has scrolled
+// to #hash, so line the target up again once they are in place.
+safely("hash", () => {
+  if (location.hash.length < 2) return;
+  let touched = false;
+  for (const type of ["wheel", "touchstart", "keydown", "pointerdown"]) addEventListener(type, () => (touched = true), { once: true, passive: true });
+  const align = () => {
+    if (touched) return;
+    let target = null;
+    try {
+      target = document.querySelector(location.hash);
+    } catch {
+      /* not a selector */
+    }
+    if (target) target.scrollIntoView({ behavior: "instant", block: "start" });
+  };
+  addEventListener("load", () => [500, 1500, 3000].forEach((ms) => setTimeout(align, ms)));
 });
