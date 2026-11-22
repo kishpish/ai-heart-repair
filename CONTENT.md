@@ -7,7 +7,7 @@ This file maps each number and factual claim on the site to its source in the au
 | Key | Document | File on the site |
 |---|---|---|
 | **Full** | K. Potluri, *A Second Beat for the Broken Heart: AI-Driven Inverse Design of Bio-Instructive Hydrogels for Post-Infarction Myocardial Regeneration*, manuscript, 64 pp. | `assets/docs/potluri-2026-second-beat-full-paper.pdf` |
-| **IEEE** | K. Potluri, *AI-Driven Inverse Design of Patient-Specific Hydrogels for Post-Infarction Cardiac Repair*, 3-page IEEE-format short paper (uploaded as `bibm2026_P229_kpfinal_2026424087.pdf`). The site calls it an "IEEE conference submission"; venue and acceptance status are **TODO: confirm**. | `assets/docs/potluri-2026-ieee-short-paper.pdf` |
+| **IEEE** | K. Potluri, *AI-Driven Inverse Design of Patient-Specific Hydrogels for Post-Infarction Cardiac Repair*, 3-page IEEE-format short paper (uploaded as `bibm2026_P229_kpfinal_2026424087.pdf`). The site labels it "Short paper (IEEE format)"; venue and acceptance status are **TODO: confirm**. | `assets/docs/potluri-2026-ieee-short-paper.pdf` |
 | **Poster** | TXSEF poster, two panels (page 3 of the uploaded PDF, an administrative form, is not published) | `assets/docs/potluri-2026-txsef-poster.pdf` |
 
 **Page numbers.** The full manuscript has two unnumbered front pages (title, abstract). "p." below is the **PDF page**; the printed page number is the PDF page minus 2. The grey source tags on the site open the reader at these PDF pages.
@@ -57,15 +57,15 @@ The hero drawing is a schematic. Its geometry is not data. Its beat follows the 
 
 ## 02 Method
 
-"Six stages" is the site's own grouping of the paper's contributions (Full §1.4, p. 5). It is not a count from the paper and is distinct from the paper's eight-stage mesh pipeline and six-stage screening cascade. The lede's claim that the solver, the patient fit and the ranking are checked against independent references restates Full §12.6, p. 48.
+"Six stages" is the site's own grouping of the paper's contributions (Full §1.4, p. 5). It is not a count from the paper and is distinct from the paper's eight-stage mesh pipeline and six-stage screening cascade. The lede says the solver is checked against closed-form solutions and a second implementation, the patient fit against the imaged volumes, and the ranking against solves whose predictions were sealed first; this restates Full §12, p. 46 and §12.6, p. 48.
 
 ### Stage 1, Image to model
 | On the site | Value | Source |
 |---|---|---|
 | Eight automated stages, no manual intervention | 8 | Full §4.1, p. 17 |
 | 10 patients; 3,658,183 elements and 677,557 nodes in total | as stated | Full §4.4, p. 19 |
-| Meshes rebuilt at a 77,523-node target for the solves | 40,300 / 77,523 / 149,191 targets; the middle carries every result | Full §4.4, p. 19 |
-| Surface repair returns a closed two-manifold or aborts | qualitative | Full §4.2, pp. 17, 19; Algorithm 2, p. 19 |
+| Meshes rebuilt at a 77,523-node target (the middle of three) for the solves; achieved builds hold 64 to 133 thousand nodes | 40,300 / 77,523 / 149,191 targets; the middle carries every result; 64 to 133 × 10^3 nodes | Full §4.4, p. 19 |
+| Surface repair returns a closed two-manifold or aborts | qualitative | Full §4.2, pp. 17–18; Algorithm 2, p. 19 |
 | Zero inverted elements in every mesh | 0 | Full §4.4, p. 19 |
 | About fifteen minutes per patient | ~15 min | Full §4.4, p. 19 |
 | Roughly sixty-node cubic Hermite atlas fits; three rounds of Loop subdivision; seven-operator surface repair | 60; 3; 7 | Full §1.3, p. 4; §4.1–4.2, p. 17; Algorithm 2, p. 19 |
@@ -93,7 +93,7 @@ The hero drawing is a schematic. Its geometry is not data. Its beat follows the 
 | Anisotropy factor bounded to [1, 2.5] | as stated | Full §2.8, pp. 9–10 |
 | Heat method, three sparse solves reusing the Laplacian of the transmural coordinate | 3 | Full §2.9, p. 10 |
 | Sites scored on stress, border-zone membership and geodesic spacing; greedy selection | qualitative | Full §6 and Algorithm 3, p. 22 |
-| Fig. 3 | image | Full Fig. 3, p. 21 |
+| Fig. 3: ten-case build, tissue classes inferred from wall thinning, continuous colour scale; shows tissue classes, not stress or sites | image and caption | Full Fig. 3 caption, p. 21 |
 
 ### Stage 4, Fit to the patient
 | On the site | Value | Source |
@@ -159,7 +159,7 @@ The hero drawing is a schematic. Its geometry is not data. Its beat follows the 
 | Pooled correlation 0.765; out-of-sample patients 0.727 (68 arms, bias −0.197 mL); training patients 0.858 (142 arms, bias +0.102 mL) | as stated | Full §11.6 and Table 11, p. 40 |
 | "The ordering transfers to unseen anatomy; the location does not." | near-verbatim | Full §11.6, p. 40 |
 | Chart rows: arms, ρ, bias, RMSE per patient | Table 11 verbatim | Full Table 11, p. 40 |
-| Scope of the next three rows: nested leave-one-patient-out on 188 screening designs from 4 patients, before sealing | 188; 4 | Full Table 10 caption, p. 39 |
+| Scope of the next three rows: nested leave-one-patient-out on 188 screening designs from 4 patients | 188; 4 | Full Table 10 caption, p. 39 |
 | Permutation p = 1.0 × 10^−4, one-sided, 10,000 within-patient shuffles | as stated | Full §11.5 and Table 10, p. 39 |
 | Held-out mean ρ 0.9517; bootstrap 95% interval [0.919, 0.965]; four training patients do not yet show whether more would help | as stated | Full §11.5 and Table 10, p. 39 |
 | Ordering by gel modulus alone: \|ρ\| = 0.916; regret 0.898 mL vs 0.028 mL | as stated | Full §11.5 and Table 10, p. 39 |
@@ -176,6 +176,7 @@ The hero drawing is a schematic. Its geometry is not data. Its beat follows the 
 | ~37 min per new patient; 10^7 screened to one | as stated | Full §10.6, p. 34; Table 7, p. 35 |
 | Cascade 10^7 → 10^5 → 10^4 → 10^3 → 10^2 → 10 → 1 and stage definitions (≥ 3.0 pp, ≥ 10%, ≥ 0.30; top decile; best hundred; best ten; final selection) | as stated | Full Algorithm 6, p. 34 |
 | "Each stage costs more per candidate and is more accurate than the one before it" | near-verbatim | Full §10.5, p. 33 |
+| Stage E is part of the HYDRA-BERT cascade, not the FE verification program | qualitative | Full §10.1, p. 31; §11.1, p. 35; Algorithm 6, p. 34 |
 
 ### HYDRA-BERT evaluation outcomes
 | On the site | Value | Source |
@@ -225,7 +226,7 @@ The hero drawing is a schematic. Its geometry is not data. Its beat follows the 
 | 2 of 8 personalized ventricles admitted no deliverable, scoreable design, for two different reasons | as stated | Full §11.11, p. 44; §12.4, p. 48 |
 | One: border zone too thin (2 depots vs minimum 8), measurable from the same images. Other: only a layout the surrogate cannot score | as stated | Full §11.11, p. 44; §12.4, p. 48 |
 | Quotation: "this patient cannot receive this design space" | verbatim | Full §12.4, p. 48 |
-| Stated limit: two thickness measurands differ by about a factor of two; constraints use the permissive one; on the other the 6 mm floor excludes the entire myocardium | as stated | Full §5.4 and Table 2, p. 22; §13, p. 49 |
+| Stated limit: two thickness measurands differ by about a factor of two; constraints use the permissive one; on the other the 6 mm floor excludes the entire myocardium | as stated | Full §5.4, p. 21; Table 2, p. 22; §13, p. 49 |
 | Patient explorer: depots held at 5 and 10 mm; sites clearing the 6 mm floor; median and max border-zone thickness | Table 16 verbatim | Full Table 16, p. 45 |
 | Patient explorer: scar %, border zone % (of myocardial volume, rebuilt substrate), modelled and imaged EDV/ESV (truncation-consistent, over the slices the mesh covers), fitted T0 | Table 5 verbatim | Full Table 5, p. 30 |
 | Patient explorer: untreated ejection fraction, closed-cavity reading at matched pressures; not comparable with the Table 5 volumes | Table 17, "untreated" column | Full Table 17 and caption, p. 45 |
@@ -247,7 +248,7 @@ Each line restates Full §13 (Limitations), pp. 49–50: computational only, not
 | Two panels, prepared for the Texas Science and Engineering Fair | as stated | Uploaded poster PDF title ("TXSEF …") and its page 3, the TXSEF abstract form (2025–2026 rules), which is not published |
 | "The posters come from an earlier stage of the project" | inference | The form cites the 2025–2026 fair rules; the manuscript's predictions were sealed 2026-11-04 (Full §15, p. 52). **TODO: confirm the fair date.** |
 | Poster values quoted as later revised: hold-out R² 0.86; rotation 115.3 ± 2.1° | as printed on the poster | Poster panel 1, "Validation & Results" (1) item 1, and "Fiber Direction/Sheet Assignment" result line; against Full §10.6, p. 34 (0.89) and §5.2, p. 20 (117.2 ± 3.1°) |
-| "it makes no claim of functional improvement" | verbatim in substance | Full §11.7, p. 41 |
+| "it makes no claim of functional improvement from that program" | scoped to the finite-element program, as in the paper | Full §11.7, p. 41 |
 
 ## 05 Paper
 | On the site | Value | Source |
@@ -260,7 +261,7 @@ Each line restates Full §13 (Limitations), pp. 49–50: computational only, not
 | Sunnybrook Cardiac MR Database, public-domain dedication | as stated | Full §3.1, p. 15; §15, p. 52 |
 
 ## 06 Impact
-"Shown now" restates Full §14 (Conclusions), p. 51, with its counts: ten of twelve cases meshed, eight personalized (Table 1, p. 17); 0.981 and 0.983 on two patients absent from training (Table 11, p. 40); two of eight with no deliverable, scoreable design, one for border-zone thickness (§11.11, p. 44); and the note that HYDRA-BERT's predicted outcomes have not been solved directly (§13, p. 50). "Next few years" restates gaps named in Full §13, pp. 49–50. "If the account is right, the volume penalty falls" follows Full §11.8, p. 41 and IEEE §IV, p. 3: "a gel with a bulk modulus below that of tissue should reduce the volume penalty." The "Vision" column paraphrases Full §12.3, p. 47 and the final paragraph of §14, p. 51; reports the partial relief measured in the direct solves (border-zone stress fell in 4 of 6, remote rose in all 6; §11.10, p. 42); and states on the page that the paper does not show regeneration.
+"Shown now" restates Full §14 (Conclusions), p. 51, with its counts: ten of twelve cases meshed, eight personalized (Table 1, p. 17); 0.981 and 0.983 on two patients absent from training (Table 11, p. 40); two of eight with no deliverable, scoreable design, one for border-zone thickness (§11.11, p. 44); and the note that HYDRA-BERT's selected formulations have not been re-solved directly on the personalized models at the catheter dose (§13, p. 50). "Next few years" restates gaps named in Full §13, pp. 49–50. "If the account is right, the volume penalty falls" follows Full §11.8, p. 41 and IEEE §IV, p. 3: "a gel with a bulk modulus below that of tissue should reduce the volume penalty." The "Vision" column paraphrases Full §12.3, p. 47 and the final paragraph of §14, p. 51; reports the partial relief measured in the direct solves (border-zone stress fell in 4 of 6, remote rose in all 6; §11.10, p. 42); and states on the page that the paper does not show regeneration.
 
 ## 07 Next steps
 | Step | Basis |

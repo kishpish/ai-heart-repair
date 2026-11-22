@@ -17,10 +17,10 @@ export const DOCS = [
   },
   {
     id: "ieee",
-    label: "IEEE short paper",
+    label: "Short paper (IEEE format)",
     title: "AI-Driven Inverse Design of Patient-Specific Hydrogels for Post-Infarction Cardiac Repair",
     // TODO(krishiv): replace with the venue and status once confirmed (for example "Accepted at ...").
-    note: "IEEE conference submission, 3 pages",
+    note: "3 pages, IEEE conference format",
     pages: 3,
     src: "assets/docs/potluri-2026-ieee-short-paper.pdf",
     download: "potluri-2026-ieee-short-paper.pdf",

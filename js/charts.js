@@ -172,7 +172,7 @@ function stiffness(root) {
     axis(
       [-0.5, 0, 0.5, 1.0, 1.5].map((v) => ({ v, label: v === 0 ? "0 (no change)" : signed(v, 1) })),
       x,
-      "Change in end-systolic volume, mL. Left of zero is a benefit."
+      "Change in end-systolic volume, mL. Left of zero is the favourable direction on this target."
     )
   );
 }
