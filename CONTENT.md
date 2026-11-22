@@ -289,4 +289,4 @@ Phases carry no dates on purpose. **TODO: add timing if the fellowship asks for 
 
 ## Poster discrepancies (for your attention, not shown on the site)
 
-The posters come from an earlier stage of the project and several of their numbers and claims differ from the manuscript. The site shows the posters as documents and carries a note, with two examples, that the paper is the current record. The item-by-item cross-check is in [`docs/poster-vs-paper.md`](docs/poster-vs-paper.md).
+The posters come from an earlier stage of the project and several of their numbers and claims differ from the manuscript. The site shows the posters as documents and carries a note, with two examples, that the paper is the current record. An item-by-item comparison was prepared for the author and is not part of this repository.

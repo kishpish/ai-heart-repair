@@ -124,7 +124,7 @@ takes desktop and phone screenshots of every section and reports console errors,
 
 - The uploaded poster PDF had a third page, the science-fair abstract form, which carries a third party's signature and a school name. Only the two poster panels are published.
 - The IEEE short paper prints an email address in its author block. That PDF is published as supplied.
-- The posters are an earlier snapshot of the project and some of their numbers differ from the paper. The site says so next to them. `docs/poster-vs-paper.md` lists the differences.
+- The posters come from an earlier stage of the project and some of their numbers and claims differ from the paper. The site says so next to them, with two examples. An item-by-item comparison was prepared for the author and is not part of this repository.
 
 ## Credits and licences
 
