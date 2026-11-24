@@ -39,19 +39,21 @@ css/base.css          typography and shared pieces (buttons, source tags)
 css/site.css          layout of each section and the charts
 css/reader.css        PDF reader
 css/posters.css       poster viewer
-js/main.js            page behaviour: navigation, tabs, roadmap, source tags
-js/ventricle.js       the heart cross-section drawing (hero and scroll story)
+js/main.js            page behaviour: navigation, tabs, source tags
+js/heart3d.js         the 3D heart in the hero (WebGL)
+js/ventricle.js       the heart cross-section in the scroll story (also the fallback when WebGL is unavailable)
 js/charts.js          charts, built from data/results.js
 js/reader.js          PDF reader (uses vendor/pdfjs)
 js/posters.js         poster zoom viewer (uses vendor/openseadragon)
 data/results.js       the numbers behind the charts, copied from the paper's tables
-data/docs.js          list of PDFs and poster panels
+data/docs.js          list of PDFs and posters
 assets/docs/          the PDFs people download
 assets/figures/       figures from the papers (WebP for the page, original PNGs for download)
 assets/posters/       poster previews, full-size JPEGs and zoom tiles
-assets/meta/          share image and icons
+assets/heart/         geometry for the 3D heart (heart.bin) and a still image of it
+assets/meta/          share image, icons and the headshot
 vendor/               PDF.js, OpenSeadragon and fonts, stored locally (no CDN)
-tools/                scripts that rebuild images, icons and screenshots
+tools/                scripts that rebuild images, the 3D heart, icons and screenshots
 ```
 
 ## Things still to fill in
@@ -60,16 +62,11 @@ Search the project for `TODO(krishiv)` to find each one.
 
 | What | Where |
 |---|---|
-| Headshot | `index.html`, About section. Save a photo as `assets/meta/headshot.jpg` (about 800 × 1000 px) and replace the `about__photo` block with the `<img>` shown in the comment above it. |
-| Contact email | `index.html`, About section, the line with "address to be added". |
-| LinkedIn, Google Scholar or ORCID | `index.html`, About section. Fill in or delete the lines. |
-| A sentence or two of bio in your own words | `index.html`, About section. |
+| Bio: edit it so it sounds like you | `index.html`, About section. |
 | Citation details (venue, DOI) | `index.html`, Paper section, both the Text and BibTeX versions. |
-| Public code links | `index.html`, Paper section, "Code and data". |
-| Lab partner or mentor, if any | `index.html`, Next steps, "Make the leading gels and measure them". |
-| Roadmap dates, if the fellowship wants them | `index.html`, Next steps. |
-| Fair date for the posters | `index.html`, Posters section, the note above the viewer. |
-| Short paper venue and status | `data/docs.js`, the `note` of the `ieee` entry, and the download label in `index.html`. |
+| Public code links, when the code is released | `index.html`, Paper section, "Code and data". |
+
+To change the headshot, replace `assets/meta/headshot.jpg`, `headshot-480.webp` and `headshot-960.webp` (4:5 portrait). To change contact links, edit the list under "Contact" in the About section.
 
 ## Editing content
 
@@ -91,23 +88,33 @@ Search the project for `TODO(krishiv)` to find each one.
 
 **Replacing a PDF.** Save the new file over the old one in `assets/docs/`, keeping the name. If page numbers shift, update the source tags. If figures changed, rebuild the images (below).
 
-**Colours and fonts.** All in `css/tokens.css`. The palette is sampled from the legend of the paper's Fig. 4 and means the same thing everywhere: crimson is scar, ochre is border zone, teal is the gel and anything you can press.
+**Colours and fonts.** All in `css/tokens.css`. The palette is sampled from the legend of the paper's Fig. 4 and means the same thing everywhere: crimson is scar, ochre is border zone, teal is the gel and anything you can press. The 3D heart uses the same colours; they are set in the shaders at the top of `js/heart3d.js`.
 
 ## Rebuilding generated files
 
-You only need this when a source PDF or the drawing changes. It needs Python 3 with Pillow, `poppler-utils` and, for the icons and screenshots, Node with Playwright. If Playwright is not installed, run this once in the project folder (`node_modules/` is already ignored by git):
+You only need this when a source PDF or one of the drawings changes. It needs Python 3 with Pillow, numpy and scikit-image, `poppler-utils` and, for the icons and screenshots, Node with Playwright. If Playwright is not installed, run this once in the project folder (`node_modules/` is already ignored by git):
 
 ```bash
 npm install playwright && npx playwright install chromium
 ```
 
+Figures and poster zoom tiles, from the PDFs in `assets/docs/`:
+
 ```bash
 python3 tools/build_assets.py
 ```
 
-rebuilds the figures and the poster zoom tiles from the PDFs in `assets/docs/`.
+To rebuild only one poster, name it (for example `python3 tools/build_assets.py posters bibm`). To add a poster, put its PDF in `assets/docs/`, add a line to `POSTER_PAGES` in `tools/build_assets.py`, run the script, then add an entry to `POSTER_PANELS` in `data/docs.js`.
 
-With the local server running (see above):
+The 3D heart's geometry (`assets/heart/heart.bin`):
+
+```bash
+python3 tools/build_heart.py
+```
+
+Its shape, the position of the scar and the number of depots are set near the top of that script. Open `tools/heart.html` through the local server to preview it on its own.
+
+With the local server running (see above), the share image, the still of the heart and the icons:
 
 ```bash
 node tools/make_meta.mjs
@@ -117,19 +124,16 @@ node tools/make_meta.mjs
 python3 tools/make_ico.py
 ```
 
-rebuild the share image and icons, and
+and desktop and phone screenshots of every section, with a report of console errors, failed requests and sideways overflow:
 
 ```bash
 node tools/shots.mjs shots
 ```
 
-takes desktop and phone screenshots of every section and reports console errors, failed requests and sideways overflow.
-
 ## Notes on what is and is not published
 
-- The uploaded poster PDF had a third page, the science-fair abstract form, which carries a third party's signature and a school name. Only the two poster panels are published.
-- The IEEE short paper prints an email address in its author block. That PDF is published as supplied.
-- The posters come from an earlier stage of the project and some of their numbers and claims differ from the paper. The site says so next to them, with two examples. An item-by-item comparison was prepared for the author and is not part of this repository.
+- The first poster PDF that was supplied had a third page, an abstract form carrying a third party's signature. Only the two poster pages are published.
+- The short paper and the BIBM poster print a contact email address. Both are published as supplied.
 
 ## Credits and licences
 

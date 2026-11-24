@@ -2,7 +2,9 @@
 """Rebuild the site's image assets from the source PDFs.
 
 Usage:
-    python3 tools/build_assets.py
+    python3 tools/build_assets.py                  # everything
+    python3 tools/build_assets.py figures          # paper figures only
+    python3 tools/build_assets.py posters bibm     # only posters whose name contains "bibm"
 
 Needs: poppler-utils (pdftoppm, pdfimages) and Pillow.
 
@@ -10,8 +12,8 @@ What it does
   1. Extracts the embedded figures from the two papers at their native
      resolution (assets/figures/original/*.png, kept for download).
   2. Writes responsive WebP copies (assets/figures/*.webp).
-  3. Renders the two TXSEF poster panels at ~8000 px wide and cuts them into
-     Deep Zoom (DZI) tile pyramids for the zoom viewer (assets/posters/).
+  3. Renders each poster page and cuts it into Deep Zoom (DZI) tile pyramids
+     for the zoom viewer (assets/posters/).
 
 Everything it writes is committed, so the site itself has no build step.
 Run it again only when a source PDF changes.
@@ -35,8 +37,14 @@ FIG = ROOT / "assets" / "figures"
 POSTERS = ROOT / "assets" / "posters"
 
 PAPER = DOCS / "potluri-2026-second-beat-full-paper.pdf"
-IEEE = DOCS / "potluri-2026-ieee-short-paper.pdf"
-POSTER = DOCS / "potluri-2026-txsef-poster.pdf"
+IEEE = DOCS / "potluri-2026-ieee-bibm-short-paper.pdf"
+
+# Posters: (pdf, page number, output name, rendered width in px)
+POSTER_PAGES = [
+    (DOCS / "potluri-2026-ieee-bibm-poster.pdf", 1, "ieee-bibm-poster", 6000),
+    (DOCS / "potluri-2026-second-beat-poster.pdf", 1, "second-beat-poster-panel-1", 8000),
+    (DOCS / "potluri-2026-second-beat-poster.pdf", 2, "second-beat-poster-panel-2", 8000),
+]
 
 # pdfimages index -> output name. Index 2 is the soft mask of Fig. 2.
 PAPER_FIGS = {
@@ -59,7 +67,6 @@ CROPS = {
 
 WIDTHS = (640, 1280, 2000)
 TILE = 512
-POSTER_WIDTH = 8000  # px; the poster is 3456 pt wide
 
 
 def run(*cmd: str) -> None:
@@ -113,36 +120,58 @@ def deep_zoom(im: Image.Image, name: str) -> None:
     print("tiles", name, im.size, "levels", max_level + 1)
 
 
+def page_width_pt(pdf: Path, page: int) -> float:
+    out = subprocess.run(["pdfinfo", "-f", str(page), "-l", str(page), str(pdf)], check=True, capture_output=True, text=True).stdout
+    for line in out.splitlines():
+        if line.startswith("Page") and "size:" in line:
+            return float(line.split("size:")[1].split("x")[0])
+    raise RuntimeError(f"no page size for {pdf}")
+
+
+def build_figures(tmp: Path) -> None:
+    extract(PAPER, PAPER_FIGS, tmp, "paper")
+    extract(IEEE, IEEE_FIGS, tmp, "ieee")
+    for name in list(PAPER_FIGS.values()) + list(IEEE_FIGS.values()):
+        responsive(name, Image.open(FIG / "original" / f"{name}.png"))
+    for name, (src, box) in CROPS.items():
+        im = Image.open(FIG / "original" / f"{src}.png").crop(box)
+        for w in (480, 960):
+            ww = min(w, im.width)
+            im.resize((ww, round(im.height * ww / im.width)), Image.LANCZOS).save(
+                FIG / f"{name}-{w}.webp", quality=84, method=6
+            )
+        print("crop", name, im.size)
+
+
+def build_posters(tmp: Path, only: str | None = None) -> None:
+    for pdf, page, name, width in POSTER_PAGES:
+        if only and only not in name:
+            continue
+        dpi = width / (page_width_pt(pdf, page) / 72)
+        stem = tmp / name
+        run("pdftoppm", "-r", f"{dpi:.2f}", "-f", str(page), "-l", str(page), "-singlefile", "-png", str(pdf), str(stem))
+        im = Image.open(f"{stem}.png").convert("RGB")
+        deep_zoom(im, name)
+        # Full-resolution download and light previews for no-JS use
+        im.save(POSTERS / f"{name}-full.jpg", quality=88, optimize=True, progressive=True)
+        for w in (1200, 2400):
+            im.resize((w, round(im.height * w / im.width)), Image.LANCZOS).save(
+                POSTERS / f"{name}-{w}.webp", quality=80, method=6
+            )
+
+
 def main() -> int:
+    """python3 tools/build_assets.py [figures|posters] [name-filter]"""
+    what = sys.argv[1] if len(sys.argv) > 1 else "all"
+    only = sys.argv[2] if len(sys.argv) > 2 else None
     for d in (FIG / "original", POSTERS):
         d.mkdir(parents=True, exist_ok=True)
     with tempfile.TemporaryDirectory() as t:
         tmp = Path(t)
-        extract(PAPER, PAPER_FIGS, tmp, "paper")
-        extract(IEEE, IEEE_FIGS, tmp, "ieee")
-
-        for name in list(PAPER_FIGS.values()) + list(IEEE_FIGS.values()):
-            responsive(name, Image.open(FIG / "original" / f"{name}.png"))
-        for name, (src, box) in CROPS.items():
-            im = Image.open(FIG / "original" / f"{src}.png").crop(box)
-            for w in (480, 960):
-                ww = min(w, im.width)
-                im.resize((ww, round(im.height * ww / im.width)), Image.LANCZOS).save(
-                    FIG / f"{name}-{w}.webp", quality=84, method=6
-                )
-            print("crop", name, im.size)
-
-        dpi = POSTER_WIDTH / (3456 / 72)
-        run("pdftoppm", "-r", f"{dpi:.2f}", "-png", str(POSTER), str(tmp / "poster"))
-        for i, name in ((1, "txsef-panel-1"), (2, "txsef-panel-2")):
-            im = Image.open(tmp / f"poster-{i}.png").convert("RGB")
-            deep_zoom(im, name)
-            # Full-resolution download and light previews for no-JS / social use
-            im.save(POSTERS / f"{name}-full.jpg", quality=88, optimize=True, progressive=True)
-            for w in (1200, 2400):
-                im.resize((w, round(im.height * w / im.width)), Image.LANCZOS).save(
-                    POSTERS / f"{name}-{w}.webp", quality=80, method=6
-                )
+        if what in ("all", "figures"):
+            build_figures(tmp)
+        if what in ("all", "posters"):
+            build_posters(tmp, only)
     return 0
 
 

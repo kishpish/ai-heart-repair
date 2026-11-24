@@ -45,7 +45,7 @@ export const PATIENTS = [
     efUntreated: 35.6,
     bzSites: 1355, clearFloor: 34, clearFloorPct: 2.5, bzMedian: 5.13, bzMax: 6.66, depots5: 2, depots10: 1,
     scattered: [0, 16200], longitudinal: [0, 1200], circumferential: [0, 1200], arms: 0,
-    outcome: "none", note: "No feasible design in any registered layout. The border zone holds 2 depots at 5 mm spacing; the minimum is 8.",
+    outcome: "none", note: "The border zone holds 2 depots at 5 mm spacing, below the minimum of 8, so the pipeline offers no design for this heart.",
   },
   {
     id: "SCD 0000801", elements: 622, scar: 1.5, bz: 2.2, wall: 7.3,
@@ -81,7 +81,7 @@ export const PATIENTS = [
     bzSites: 1060, clearFloor: 878, clearFloorPct: 82.8, bzMedian: 6.64, bzMax: 7.92, depots5: 10, depots10: 5,
     scattered: [0, 16200], longitudinal: [0, 1200], circumferential: [30, 284], arms: 0,
     outcome: "unscoreable",
-    note: "Feasible circumferential designs only, a layout the ranking surrogate has too few examples to score.",
+    note: "Only circumferential layouts fit this anatomy, and the ranking model has not yet been trained to score that layout.",
   },
 ];
 

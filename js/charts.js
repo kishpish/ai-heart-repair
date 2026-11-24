@@ -2,7 +2,7 @@
 // track), so labels stay real text and reflow at any width. Each chart container
 // ships with a <table> of the same numbers; it becomes the "Data table" view.
 
-import { PATIENTS, MIN_DEPOTS, SEALED_SUMMARY, CASCADE, TARGET_DEFINITION, STIFFNESS } from "../data/results.js";
+import { PATIENTS, MIN_DEPOTS, CASCADE, TARGET_DEFINITION, STIFFNESS } from "../data/results.js";
 
 const h = (tag, attrs = {}, ...kids) => {
   const el = document.createElement(tag);
@@ -62,9 +62,8 @@ function sealed(root) {
     h(
       "ul",
       { class: "cx-legend" },
-      h("li", {}, h("i", { class: "cx-key cx-key--unseen" }), "Patient absent from training"),
-      h("li", {}, h("i", { class: "cx-key" }), "Training patient"),
-      h("li", {}, h("i", { class: "cx-key cx-key--line" }), `All 210 arms pooled: ${SEALED_SUMMARY.pooled.rho.toFixed(3)}`)
+      h("li", {}, h("i", { class: "cx-key cx-key--unseen" }), "Patient the model never saw in training"),
+      h("li", {}, h("i", { class: "cx-key" }), "Training patient")
     )
   );
   const list = h("div", { class: "cx-rows", role: "list" });
@@ -73,38 +72,23 @@ function sealed(root) {
       h(
         "div",
         { class: "cx-row", role: "listitem" },
-        h("span", { class: "cx-label" }, p.id, h("small", {}, p.role === "unseen" ? "absent from training" : "training")),
+        h("span", { class: "cx-label" }, p.id, h("small", {}, p.role === "unseen" ? "never seen in training" : "training")),
         h(
           "span",
           { class: "cx-track" },
           h("i", { class: `cx-dot${p.role === "unseen" ? " cx-dot--unseen" : ""}`, style: `left:${pct(x(p.rho))}` }),
           h("b", { class: "cx-val cx-val--left", style: `left:${pct(x(p.rho))}` }, p.rho.toFixed(3))
         ),
-        h("span", { class: "cx-aside" }, `${p.arms} arms · bias ${signed(p.bias)} mL`)
+        h("span", { class: "cx-aside" }, `${p.arms} designs simulated`)
       )
     );
   }
-  list.append(
-    h(
-      "div",
-      { class: "cx-ref", "aria-hidden": "true" },
-      h("div", { class: "cx-ref__track" }, h("i", { class: "cx-ref__line", style: `left:${pct(x(SEALED_SUMMARY.pooled.rho))}` }))
-    )
-  );
   body.append(list);
   body.append(
     axis(
       [0.7, 0.8, 0.9, 1.0].map((v) => ({ v, label: v.toFixed(2) })),
       x,
-      "Spearman rank correlation, sealed prediction against solved outcome (axis starts at 0.70)"
-    )
-  );
-  const S = SEALED_SUMMARY;
-  body.append(
-    h(
-      "p",
-      { class: "cx-note" },
-      `Pooled, where each patient\u2019s offset counts against the score: all ${S.pooled.arms} arms ${S.pooled.rho.toFixed(3)}; the four training patients ${S.training.rho.toFixed(3)} (${S.training.arms} arms, bias ${signed(S.training.bias)} mL); the two patients absent from training ${S.unseen.rho.toFixed(3)} (${S.unseen.arms} arms, bias ${signed(S.unseen.bias)} mL).`
+      "Rank correlation between sealed prediction and simulated outcome (the axis starts at 0.70; 1.00 is a perfect ordering)"
     )
   );
 }
@@ -172,7 +156,7 @@ function stiffness(root) {
     axis(
       [-0.5, 0, 0.5, 1.0, 1.5].map((v) => ({ v, label: v === 0 ? "0" : signed(v, 1) })),
       x,
-      "Change in end-systolic volume, mL. Left of zero is the favourable direction on this target."
+      "Change in end-systolic volume, mL (left of zero is the favourable direction)"
     )
   );
 }
@@ -201,14 +185,14 @@ function target(root) {
     h(
       "ul",
       { class: "cx-legend" },
-      h("li", {}, h("i", { class: "cx-key cx-key--bad" }), "Trained on absolute volume"),
-      h("li", {}, h("i", { class: "cx-key cx-key--good" }), "Trained on change from the patient’s own baseline")
+      h("li", {}, h("i", { class: "cx-key cx-key--bad" }), "Trained to predict raw volume"),
+      h("li", {}, h("i", { class: "cx-key cx-key--good" }), "Trained to predict the change from each patient\u2019s own baseline")
     )
   );
   const list = h("div", { class: "cx-rows", role: "list" });
   list.append(
-    lane("Absolute", "0 of 3 folds usable", T.absolute, "bad", { v: T.pooled.absolute, word: "pooled", digits: 2 }),
-    lane("Relative", "all 4 folds below 0.5", T.relative, "good", { v: T.pooled.relative, word: "mean", digits: 3 }),
+    lane("Raw volume", "cannot rank designs", T.absolute, "bad", { v: T.pooled.absolute, word: "pooled", digits: 2 }),
+    lane("The change", "ranks designs in every fold", T.relative, "good", { v: T.pooled.relative, word: "mean", digits: 3 }),
     h(
       "div",
       { class: "cx-ref", "aria-hidden": "true" },
@@ -225,7 +209,7 @@ function target(root) {
     axis(
       [0.05, 0.5, 5, 50].map((v) => ({ v, label: String(v) })),
       x,
-      "Held-out error ÷ within-patient design spread (log scale)"
+      "Model error \u00f7 how much designs differ within a patient (log scale)"
     )
   );
 }
@@ -233,7 +217,7 @@ function target(root) {
 // ---------------------------------------------------------------- patients (Tables 5, 11, 15, 16, 17)
 function patients(root) {
   const body = prepare(root);
-  const verdict = { designed: "Carried into design and verification", none: "No feasible design, any layout", unscoreable: "Feasible but not scoreable" };
+  const verdict = { designed: "Designed and verified by simulation", none: "Border zone too thin for eight depots", unscoreable: "One feasible layout, not yet scoreable" };
   const card = h("div", { class: "pt__card", "aria-live": "polite" });
   const list = h("ol", { class: "pt__list" });
   const buttons = [];
@@ -245,7 +229,7 @@ function patients(root) {
     const cell = (k, v, small) => h("div", {}, h("dt", {}, k), h("dd", {}, v, small ? h("small", {}, ` ${small}`) : null));
     const why =
       p.outcome === "designed"
-        ? `${p.arms} verification arms solved. The ranking surrogate\u2019s sealed prediction against outcome: rank correlation ${p.rho.toFixed(3)}${p.role === "unseen" ? ", with no training data from this patient" : ""}. What was checked is the ordering of designs, not a benefit.`
+        ? `${p.arms} designs were simulated in full for this heart, and the sealed ranking matched the outcomes at a rank correlation of ${p.rho.toFixed(3)}${p.role === "unseen" ? ", even though the model had no training data from this patient" : ""}.`
         : p.note;
     card.replaceChildren(
       h("h6", {}, p.id),
@@ -294,9 +278,9 @@ function patients(root) {
           "ul",
           { class: "pt__keys" },
           h("li", {}, h("i", { class: "k-min" }), `Minimum of ${MIN_DEPOTS}`),
-          h("li", {}, h("i", {}), "Carried into design"),
-          h("li", {}, h("i", { class: "k-none" }), "No feasible design"),
-          h("li", {}, h("i", { class: "k-uns" }), "Not scoreable")
+          h("li", {}, h("i", {}), "Designed and verified"),
+          h("li", {}, h("i", { class: "k-none" }), "Too thin for eight depots"),
+          h("li", {}, h("i", { class: "k-uns" }), "Layout not yet scoreable")
         )
       ),
       card

@@ -16,7 +16,7 @@ const sizes = [
   { name: "desktop", width: 1440, height: 900, scale: 1 },
   { name: "phone", width: 390, height: 844, scale: 2, mobile: true },
 ];
-const sections = ["top", "problem", "method", "results", "posters", "paper", "impact", "roadmap", "about"];
+const sections = ["top", "problem", "method", "results", "impact", "next", "posters", "paper", "about"];
 
 const browser = await chromium.launch();
 for (const s of sizes) {

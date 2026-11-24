@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>3D heart preview</title>
+<link rel="stylesheet" href="../css/tokens.css">
+<link rel="stylesheet" href="../css/base.css">
+<style>
+  html, body { height: 100%; }
+  body { background: var(--film); display: grid; place-items: center; }
+  canvas { width: min(92vw, 560px); aspect-ratio: 4 / 5; display: block; }
+</style>
+</head>
+<body>
+  <!-- Development preview of the hero heart. Open tools/heart.html?still to freeze it. -->
+  <canvas id="h" tabindex="0" aria-label="3D heart preview"></canvas>
+  <script type="module">
+    import { createHeart } from "../js/heart3d.js";
+    const q = new URLSearchParams(location.search);
+    const heart = await createHeart(document.getElementById("h"), { src: "../assets/heart/heart.bin" });
+    window.heart = heart;
+    if (q.has("still")) heart.snapshot({ yaw: Number(q.get("yaw") ?? -0.18), pitch: Number(q.get("pitch") ?? 0.12), act: Number(q.get("act") ?? 0) });
+    document.body.dataset.ready = "1";
+  </script>
+</body>
+</html>

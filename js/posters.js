@@ -4,14 +4,14 @@
 //   const posters = mountPosters(document.querySelector('[data-posters]'), {
 //     base: new URL('./', document.baseURI).href, // site root; data/docs.js paths resolve against it
 //   });
-//   posters.show('txsef-2'); // switch panel from elsewhere on the page
+//   posters.show('second-beat-2'); // switch panel from elsewhere on the page
 //
 // The root arrives holding no-JS fallback figures. They are replaced by the viewer
 // chrome straight away (with a preview image, so the section paints at once) and
 // OpenSeadragon itself is only fetched when the root comes near the viewport.
 // If OpenSeadragon cannot load or open a panel, the fallback figures are put back.
 
-import { POSTER_PANELS, POSTER_PDF } from '../data/docs.js';
+import { POSTER_PANELS } from '../data/docs.js';
 
 const OSD_SRC = new URL('../vendor/openseadragon/openseadragon.min.js', import.meta.url).href;
 const SITE_ROOT = new URL('../', import.meta.url).href;
@@ -203,7 +203,7 @@ export function mountPosters(root, options = {}) {
 
   const pdfLink = el(
     'a',
-    { class: 'poster-viewer__btn poster-viewer__link', href: url(POSTER_PDF), download: fileName(POSTER_PDF) },
+    { class: 'poster-viewer__btn poster-viewer__link' },
     icon('download'),
     el('span', { text: 'Poster PDF' }),
   );
@@ -211,7 +211,7 @@ export function mountPosters(root, options = {}) {
     'a',
     { class: 'poster-viewer__btn poster-viewer__link' },
     icon('download'),
-    el('span', { text: 'This panel, full-size JPEG' }),
+    el('span', { text: 'Full-size JPEG' }),
   );
   const links = el('div', { class: 'poster-viewer__links' }, pdfLink, jpegLink);
 
@@ -264,6 +264,8 @@ export function mountPosters(root, options = {}) {
     stage.setAttribute('aria-label', p.alt);
     preview.replaceChildren(previewImage(state.index));
     preview.hidden = false;
+    pdfLink.href = url(p.pdf);
+    pdfLink.setAttribute('download', fileName(p.pdf));
     jpegLink.href = url(p.full);
     jpegLink.setAttribute('download', fileName(p.full));
     captionCount.textContent = `${state.index + 1}/${POSTER_PANELS.length}`;

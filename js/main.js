@@ -90,18 +90,6 @@ function tabs(tablist) {
 }
 safely("tabs", () => $$('[role="tablist"]').forEach(tabs));
 
-// ------------------------------------------------------------------ roadmap
-safely("roadmap", () => {
-  const steps = $$(".road__step");
-  for (const btn of steps) {
-    btn.addEventListener("click", () => {
-      const open = btn.getAttribute("aria-expanded") !== "true";
-      btn.setAttribute("aria-expanded", String(open));
-      document.getElementById(btn.getAttribute("aria-controls")).hidden = !open;
-    });
-  }
-});
-
 // ------------------------------------------------------------------ citation copy
 safely("cite", () => {
   const box = $("[data-cite]");
@@ -124,22 +112,43 @@ safely("cite", () => {
   });
 });
 
-// ------------------------------------------------------------------ ventricle drawings and the scroll story
+// ------------------------------------------------------------------ the 3D heart in the hero
+safely("heart", async () => {
+  const box = $("[data-heart]");
+  if (!box) return;
+  const canvas = $("canvas", box);
+  try {
+    const { createHeart } = await import("./heart3d.js");
+    await createHeart(canvas, { src: new URL("assets/heart/heart.bin", BASE).href });
+    box.dataset.ready = "true";
+  } catch (err) {
+    // No WebGL, or the geometry did not load: draw the 2D cross-section instead.
+    console.warn("3D heart unavailable, using the 2D drawing:", err);
+    const { createVentricle } = await import("./ventricle.js");
+    const flat = document.createElement("canvas");
+    flat.className = "ventricle";
+    flat.width = flat.height = 720;
+    flat.setAttribute("role", "img");
+    flat.setAttribute("aria-label", "Animated short-axis cross-section of a left ventricle: grey healthy muscle thickens with each beat, a crimson scar does not move, ochre border zones move less, and teal gel depots sit in the border zones.");
+    box.replaceChildren(flat);
+    box.dataset.fallback = "true";
+    createVentricle(flat, "hero");
+  }
+});
+
+// ------------------------------------------------------------------ the scroll story
 safely("ventricle", async () => {
   const { createVentricle } = await import("./ventricle.js");
-  const hero = $('[data-ventricle="hero"]');
-  if (hero) createVentricle(hero, "hero");
-
   const stage = $('[data-ventricle="story"]');
   if (!stage) return;
   const heart = createVentricle(stage, "healthy");
   const readout = $("[data-story-readout]");
   const lines = {
     healthy: "wall thickens, cavity shrinks",
-    infarct: "scar: no active tension in the model",
+    infarct: "scar does not contract",
     permanent: "under 1% of muscle cells renewed per year",
     remodel: "radius up, wall thinner, stress up",
-    gel: "wall thicker; by Laplace, stress down",
+    gel: "wall thicker, so stress should fall",
     guess: "sites chosen by eye",
   };
   const steps = $$(".step");

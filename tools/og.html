@@ -7,29 +7,30 @@
 <link rel="stylesheet" href="../css/base.css">
 <style>
   html, body { width: 1200px; height: 630px; overflow: hidden; }
-  body { background: var(--film); color: var(--on-film); display: grid; grid-template-columns: 690px 1fr; align-items: center; padding: 0 0 0 72px; }
-  .eyebrow { color: var(--on-film-2); margin-bottom: 26px; font-size: 19px; }
-  h1 { font-size: 112px; font-stretch: 62%; font-weight: 760; line-height: 0.88; letter-spacing: -0.012em; }
-  .sub { margin-top: 30px; max-width: 560px; color: var(--on-film-2); font-family: var(--f-display); font-stretch: 84%; font-weight: 500; font-size: 27px; line-height: 1.22; }
+  body { position: relative; background: var(--film); color: var(--on-film); display: grid; grid-template-columns: 700px 1fr; align-items: center; padding: 0 0 0 72px; }
+  h1 { font-size: 110px; font-stretch: 62%; font-weight: 760; line-height: 0.88; letter-spacing: -0.012em; }
+  .sub { margin-top: 30px; max-width: 580px; color: var(--on-film-2); font-family: var(--f-display); font-stretch: 84%; font-weight: 500; font-size: 27px; line-height: 1.22; }
   .by { margin-top: 30px; font-size: 26px; }
-  canvas { width: 520px; height: 520px; margin-left: -30px; }
+  canvas { width: 470px; height: 588px; margin-left: -10px; }
   .rule { position: absolute; left: 72px; right: 72px; top: 54px; border-top: 2px solid var(--on-film); }
   .mark { position: absolute; left: 72px; bottom: 44px; font-family: var(--f-mono); font-size: 17px; color: var(--on-film-3); }
 </style>
 </head>
 <body>
+  <!-- Template for assets/meta/og.png. Rendered by tools/make_meta.mjs. -->
   <div class="rule"></div>
   <div>
-    <p class="label eyebrow">Computational cardiology / Research</p>
     <h1>A second beat for the broken heart</h1>
-    <p class="sub">From cardiac MRI to a patient-specific hydrogel design, with a design ranking checked by finite-element simulation</p>
+    <p class="sub">AI-designed hydrogels for hearts damaged by a heart attack, from one MRI to one patient-specific design</p>
     <p class="by">Krishiv Potluri</p>
   </div>
-  <canvas id="v" width="1040" height="1040"></canvas>
+  <canvas id="v"></canvas>
   <p class="mark">kishpish.github.io/ai-heart-repair</p>
   <script type="module">
-    import { createVentricle } from "../js/ventricle.js";
-    createVentricle(document.getElementById("v"), "hero");
+    import { createHeart } from "../js/heart3d.js";
+    const heart = await createHeart(document.getElementById("v"), { src: "../assets/heart/heart.bin" });
+    heart.snapshot({ yaw: -0.24, pitch: 0.12, act: 0 });
+    document.body.dataset.ready = "1";
   </script>
 </body>
 </html>

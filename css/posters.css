@@ -482,3 +482,25 @@
     transition: none;
   }
 }
+
+/* --- three posters: label-only tabs; the caption row under the stage names the selected one --- */
+.poster-viewer__tabs {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.poster-viewer .poster-viewer__tab {
+  grid-template-columns: 1fr;
+  align-content: center;
+}
+.poster-viewer__tab-label {
+  white-space: normal;
+  line-height: 1.2;
+}
+.poster-viewer__tab-cap {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
