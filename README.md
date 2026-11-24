@@ -62,7 +62,6 @@ Search the project for `TODO(krishiv)` to find each one.
 
 | What | Where |
 |---|---|
-| Bio: edit it so it sounds like you | `index.html`, About section. |
 | Citation details (venue, DOI) | `index.html`, Paper section, both the Text and BibTeX versions. |
 | Public code links, when the code is released | `index.html`, Paper section, "Code and data". |
 

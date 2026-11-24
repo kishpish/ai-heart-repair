@@ -185,6 +185,6 @@ The 3D heart is an illustration drawn in code (`tools/build_heart.py`, `js/heart
 | On the site | Source |
 |---|---|
 | Name, "Independent researcher, Austin, Texas" | IEEE p. 1; BIBM poster header |
-| "I developed the whole pipeline myself" | sole author on both papers and both posters. **TODO: confirm the wording of the bio.** |
+| Bio paragraph | written by the author, in his own words |
 | Email, LinkedIn, X, portfolio | supplied by the author; the email also appears on the BIBM poster |
 | GitHub | the repository owner |
