@@ -117,10 +117,37 @@ safely("heart", async () => {
   const box = $("[data-heart]");
   if (!box) return;
   const canvas = $("canvas", box);
+  const story = $("[data-heart-story]");
+  const steps = story ? [...story.querySelectorAll("[data-stage]")] : [];
+  const text = story && $(".heart-story__text", story);
+  const pauseBtn = story && $("[data-heart-pause]", story);
+  let shown = -1;
+  const onStage = (stage, progress) => {
+    steps.forEach((b, i) => {
+      b.style.setProperty("--p", i < stage ? 1 : i === stage ? progress.toFixed(3) : 0);
+      if (stage !== shown) b.setAttribute("aria-pressed", String(i === stage));
+    });
+    if (stage !== shown && text) text.textContent = steps[stage]?.dataset.text || "";
+    shown = stage;
+  };
   try {
     const { createHeart } = await import("./heart3d.js");
-    await createHeart(canvas, { src: new URL("assets/heart/heart.bin", BASE).href });
+    const heart = await createHeart(canvas, { src: new URL("assets/heart/heart.bin", BASE).href, onStage });
     box.dataset.ready = "true";
+    if (story) {
+      const label = () => {
+        pauseBtn.dataset.paused = String(!heart.playing);
+        pauseBtn.setAttribute("aria-label", heart.playing ? "Pause the animation" : "Play the animation");
+      };
+      steps.forEach((b, i) => b.addEventListener("click", () => heart.setStage(i)));
+      pauseBtn.addEventListener("click", () => {
+        if (heart.playing) heart.pause();
+        else heart.play();
+        label();
+      });
+      label();
+      story.hidden = false;
+    }
   } catch (err) {
     // No WebGL, or the geometry did not load: draw the 2D cross-section instead.
     console.warn("3D heart unavailable, using the 2D drawing:", err);

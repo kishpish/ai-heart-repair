@@ -38,7 +38,15 @@ This file maps each number and factual claim on the site to its source in the au
 | Fact: 0.60 → 0.08, predicted arrhythmia-risk score, two models given conductive gels | 0.60 to 0.08 | Full §10.7, p. 34; Table 7, p. 35 |
 | Fact: ~37 min from a new patient's MRI to a design, after screening ten million candidates | approximately 37 minutes; 10^7 | Full §10.6, p. 34; Table 7, p. 35 |
 
-The 3D heart is an illustration drawn in code (`tools/build_heart.py`, `js/heart3d.js`). Its anatomy is schematic and is not patient data. Four things in it are taken from the paper: the fibre lines follow the epicardial helix angle of the rule-based field, circumferential in scar and halved in the border zone (Full §2.7, p. 9); scar does not contract and the border zone contracts at 0.67 of remote muscle (Full §2.11, p. 11; Table 3, p. 24); nine depots sit in the border zone, clear of the scar (Full Fig. 4 caption, p. 23); and the infarct lies downstream of a blocked coronary artery (Full §1.1, p. 3). Its beat follows the raised-cosine activation of Full Eq. (45), p. 12, slowed for display. The band of light that sweeps from apex to base at the start of each beat, the course of the coronary arteries and the soft shadowing are illustrative.
+The 3D heart is an illustration drawn in code (`tools/build_heart.py`, `js/heart3d.js`). Its anatomy is schematic and is not patient data. It plays three stages on a loop, with controls to jump between them or pause:
+
+| Stage | On the site | Basis |
+|---|---|---|
+| 1 Scarred | "A blocked artery has left a patch of scar that no longer contracts, and the muscle around it, the border zone, is overloaded." | Full §1.1, p. 3 (occlusion, scar); §2.11, p. 11 (scar 0 and border zone 0.67 of remote active tension) |
+| 2 Hydrogel | "Hydrogel depots designed for this heart are injected into the border zone, where they thicken and support the weakened wall." | Full Fig. 4 caption, p. 23 (nine depots in the border zone, clear of the scar); §1.2, p. 4 (gel thickens the wall) |
+| 3 Restored | "The goal this work points toward: the wall supported while the gel degrades, and the damaged muscle restored." | A vision, labelled as the goal on the page; Full §12.3, p. 47 and §14, p. 51 (mechanical support first, then bio-instructive properties over a longer horizon). The paper does not show healing or regeneration. |
+
+Caption: "As in the paper's model, the scar does not contract and the border zone contracts at two-thirds strength" restates Full §2.11, p. 11 and Table 3, p. 24 (0.67 T0). The beat follows the raised-cosine activation of Full Eq. (45), p. 12, slowed for display. The surface sheen follows the epicardial helix angle of the rule-based fibre field (Full §2.7, p. 9). The thinning of the scar, the bulge of the scar during contraction, the darkened blocked artery, the spread of the gel, the healing front, the band of light that travels with each beat and the soft shadowing are illustrative.
 
 ## 01 The problem
 

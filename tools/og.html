@@ -29,7 +29,7 @@
   <script type="module">
     import { createHeart } from "../js/heart3d.js";
     const heart = await createHeart(document.getElementById("v"), { src: "../assets/heart/heart.bin" });
-    heart.snapshot({ yaw: -0.24, pitch: 0.12, act: 0 });
+    heart.snapshot({ yaw: -0.24, pitch: 0.12, act: 0, time: 6.4 });
     document.body.dataset.ready = "1";
   </script>
 </body>

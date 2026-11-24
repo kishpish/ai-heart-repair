@@ -2503,12 +2503,103 @@ pre.cite__text {
   }
 }
 
-/* legend entry for the blocked coronary artery: a dashed crimson line */
-.sw--blocked,
-.film .sw--blocked {
-  width: 1.5em;
-  height: 0;
-  border-radius: 0;
+
+/* ------------------------------------------------- the heart's three stages */
+.heart-story {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  column-gap: 0.6rem;
+  margin-top: 0.4rem;
+}
+.heart-story[hidden] {
+  display: none;
+}
+.heart-story__steps {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.4rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.heart-story__steps button {
+  --p: 0;
+  position: relative;
+  display: flex;
+  align-items: baseline;
+  gap: 0.45em;
+  width: 100%;
+  min-height: 2.75rem;
+  padding: 0.7rem 0 0.5rem;
+  border: 0;
   background: none;
-  border-top: 2px dashed var(--on-film);
+  color: var(--on-film-3);
+  font-family: var(--f-display);
+  font-stretch: 78%;
+  font-weight: 600;
+  font-size: var(--t-small);
+  letter-spacing: 0.08em;
+  text-align: left;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+.heart-story__steps button::before,
+.heart-story__steps button::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 2px;
+  background: var(--film-rule);
+}
+.heart-story__steps button::after {
+  background: var(--gel-lt);
+  transform: scaleX(var(--p));
+  transform-origin: left center;
+}
+.heart-story__steps button:hover,
+.heart-story__steps button[aria-pressed="true"] {
+  color: var(--on-film);
+}
+.heart-story__n {
+  font-family: var(--f-mono);
+  font-weight: 400;
+  letter-spacing: 0;
+  color: var(--on-film-3);
+}
+.heart-story__steps button[aria-pressed="true"] .heart-story__n {
+  color: var(--gel-lt);
+}
+.heart-story__pause {
+  display: grid;
+  place-items: center;
+  align-self: start;
+  width: 2.75rem;
+  height: 2.75rem;
+  padding: 0;
+  border: 1px solid var(--film-rule);
+  border-radius: var(--radius);
+  background: none;
+  color: var(--on-film-2);
+  cursor: pointer;
+}
+.heart-story__pause:hover {
+  border-color: var(--on-film-2);
+  color: var(--on-film);
+}
+.heart-story__pause .i-play,
+.heart-story__pause[data-paused="true"] .i-pause {
+  display: none;
+}
+.heart-story__pause[data-paused="true"] .i-play {
+  display: block;
+}
+.heart-story__text {
+  grid-column: 1 / -1;
+  min-height: 2.9em;
+  margin-top: 0.15rem;
+  color: var(--on-film);
+  font-size: 0.98rem;
+  line-height: 1.45;
 }

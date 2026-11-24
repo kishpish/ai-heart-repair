@@ -91,7 +91,7 @@ To change the headshot, replace `assets/meta/headshot.jpg`, `headshot-480.webp` 
 
 ## Rebuilding generated files
 
-You only need this when a source PDF or one of the drawings changes. It needs Python 3 with Pillow, numpy and scikit-image, `poppler-utils` and, for the icons and screenshots, Node with Playwright. If Playwright is not installed, run this once in the project folder (`node_modules/` is already ignored by git):
+You only need this when a source PDF or one of the drawings changes. It needs Python 3 with Pillow, numpy, scipy and scikit-image, `poppler-utils` and, for the icons and screenshots, Node with Playwright. If Playwright is not installed, run this once in the project folder (`node_modules/` is already ignored by git):
 
 ```bash
 npm install playwright && npx playwright install chromium
@@ -111,7 +111,7 @@ The 3D heart's geometry (`assets/heart/heart.bin`):
 python3 tools/build_heart.py
 ```
 
-Its shape, the position of the scar and the number of depots are set near the top of that script. Open `tools/heart.html` through the local server to preview it on its own.
+Its shape, the position of the scar, the coronary arteries and the gel depots are set in that script. The three-stage story (scarred, hydrogel, restored), its timing and the lighting are in `js/heart3d.js`; the stage labels and the sentence under each stage are in `index.html`, in the hero. Open `tools/heart.html` through the local server to preview the heart on its own (`tools/heart.html?still&t=6.4` freezes it at a moment of the loop, in seconds).
 
 With the local server running (see above), the share image, the still of the heart and the icons:
 

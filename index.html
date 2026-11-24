@@ -113,18 +113,29 @@
 
     <figure class="hero__fig">
       <div class="heart3d" data-heart>
-        <canvas class="heart3d__canvas" tabindex="0" role="img" aria-label="A three-dimensional heart that beats and can be turned by dragging or with the arrow keys. Fine pale lines wind around the two ventricles the way muscle fibres do, and pale coronary arteries run over the surface. One branch, drawn dashed, is blocked. Below it a crimson patch of scar stays still while the rest of the wall contracts, and a band of light that sweeps up the muscle with each beat passes it by. An ochre rim around the scar marks the border zone, and nine teal beads on that rim are hydrogel depots. The atria and great vessels rise above in a dimmer grey."></canvas>
-        <noscript><img src="assets/heart/heart-still.jpg" width="840" height="1050" alt="A three-dimensional heart drawn in fine lines, with coronary arteries on its surface, a crimson scar on the left ventricle, an ochre border zone around it and nine teal hydrogel depots."></noscript>
+        <canvas class="heart3d__canvas" tabindex="0" role="img" aria-label="A three-dimensional heart that beats and can be turned by dragging or with the arrow keys. It plays a three-part story. First, a patch of crimson scar on the left ventricle, fed by a darkened, blocked artery, stays still while the rest of the wall contracts, with an ochre border zone around it. Next, nine teal hydrogel beads are injected one by one into the border zone and the gel spreads into the wall. Last, the scar heals from its edge inward, the gel fades as it degrades, and the whole wall beats evenly again."></canvas>
+        <noscript><img src="assets/heart/heart-still.jpg" width="840" height="1050" alt="A smooth three-dimensional heart with a crimson scar on the left ventricle, an ochre border zone around it and nine teal hydrogel depots set into the border zone."></noscript>
+      </div>
+      <div class="heart-story" data-heart-story hidden>
+        <ol class="heart-story__steps">
+          <li><button type="button" data-stage="0" aria-pressed="true" data-text="A blocked artery has left a patch of scar that no longer contracts, and the muscle around it, the border zone, is overloaded."><span class="heart-story__n">1</span>Scarred</button></li>
+          <li><button type="button" data-stage="1" aria-pressed="false" data-text="Hydrogel depots designed for this heart are injected into the border zone, where they thicken and support the weakened wall."><span class="heart-story__n">2</span>Hydrogel</button></li>
+          <li><button type="button" data-stage="2" aria-pressed="false" data-text="The goal this work points toward: the wall supported while the gel degrades, and the damaged muscle restored."><span class="heart-story__n">3</span>Restored</button></li>
+        </ol>
+        <button class="heart-story__pause" type="button" data-heart-pause aria-label="Pause the animation">
+          <svg class="i-pause" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 5v14M15 5v14"/></svg>
+          <svg class="i-play" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 5l11 7-11 7z"/></svg>
+        </button>
+        <p class="heart-story__text"></p>
       </div>
       <figcaption>
         <ul class="legend" aria-label="Legend">
           <li><i class="sw sw--myo"></i>Healthy muscle</li>
           <li><i class="sw sw--bz"></i>Border zone</li>
           <li><i class="sw sw--scar"></i>Scar</li>
-          <li><i class="sw sw--gel"></i>Gel depot</li>
-          <li><i class="sw sw--blocked"></i>Blocked artery</li>
+          <li><i class="sw sw--gel"></i>Hydrogel</li>
         </ul>
-        <p>A heart drawn in code, in the style of the paper&rsquo;s fibre maps. A blocked coronary artery leaves scar that no longer contracts, so the light that sweeps through the muscle with each beat passes it by. The border zone around the scar is where surviving muscle is overloaded, and that is where the gel depots go. Drag to turn it. <a class="src" href="read.html?doc=full&amp;page=23" data-doc="full" data-page="23">Fig. 4</a> <a class="src" href="read.html?doc=full&amp;page=11" data-doc="full" data-page="11">&sect;2.11</a></p>
+        <p>Drawn in code. As in the paper&rsquo;s model, the scar does not contract and the border zone contracts at two-thirds strength. Drag to turn the heart. <a class="src" href="read.html?doc=full&amp;page=11" data-doc="full" data-page="11">&sect;2.11</a> <a class="src" href="read.html?doc=full&amp;page=23" data-doc="full" data-page="23">Fig. 4</a> <a class="src" href="read.html?doc=full&amp;page=47" data-doc="full" data-page="47">&sect;12.3</a></p>
       </figcaption>
     </figure>
   </div>
