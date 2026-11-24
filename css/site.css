@@ -2502,3 +2502,13 @@ pre.cite__text {
     grid-template-columns: minmax(0, 1fr);
   }
 }
+
+/* legend entry for the blocked coronary artery: a dashed crimson line */
+.sw--blocked,
+.film .sw--blocked {
+  width: 1.5em;
+  height: 0;
+  border-radius: 0;
+  background: none;
+  border-top: 2px dashed var(--on-film);
+}

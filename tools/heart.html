@@ -19,7 +19,7 @@
     const q = new URLSearchParams(location.search);
     const heart = await createHeart(document.getElementById("h"), { src: "../assets/heart/heart.bin" });
     window.heart = heart;
-    if (q.has("still")) heart.snapshot({ yaw: Number(q.get("yaw") ?? -0.18), pitch: Number(q.get("pitch") ?? 0.12), act: Number(q.get("act") ?? 0) });
+    if (q.has("still")) heart.snapshot({ yaw: Number(q.get("yaw") ?? -0.24), pitch: Number(q.get("pitch") ?? 0.12), act: Number(q.get("act") ?? 0), wave: Number(q.get("wave") ?? 2) });
     document.body.dataset.ready = "1";
   </script>
 </body>
