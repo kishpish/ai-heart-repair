@@ -120,33 +120,57 @@ safely("heart", async () => {
   const story = $("[data-heart-story]");
   const steps = story ? [...story.querySelectorAll("[data-stage]")] : [];
   const text = story && $(".heart-story__text", story);
+  const status = story && $("[data-heart-status]", story);
   const pauseBtn = story && $("[data-heart-pause]", story);
   let shown = -1;
-  const onStage = (stage, progress) => {
+  let picked = false; // the next change of stage is one the visitor asked for
+  const showPlaying = (playing) => {
+    if (!pauseBtn || pauseBtn.dataset.paused === String(!playing)) return;
+    pauseBtn.dataset.paused = String(!playing);
+    pauseBtn.setAttribute("aria-label", playing ? "Pause the animation" : "Play the animation");
+  };
+  const onStage = (stage, progress, playing) => {
     steps.forEach((b, i) => {
       b.style.setProperty("--p", i < stage ? 1 : i === stage ? progress.toFixed(3) : 0);
-      if (stage !== shown) b.setAttribute("aria-pressed", String(i === stage));
+      if (stage !== shown) {
+        if (i === stage) b.setAttribute("aria-current", "step");
+        else b.removeAttribute("aria-current");
+      }
     });
-    if (stage !== shown && text) text.textContent = steps[stage]?.dataset.text || "";
+    if (stage !== shown && text) {
+      [...text.children].forEach((el, i) => el.toggleAttribute("data-on", i === stage));
+      // announce the stages a visitor picks, not every step of the loop
+      if (status) status.textContent = picked ? text.children[stage]?.textContent || "" : "";
+    }
     shown = stage;
+    picked = false;
+    showPlaying(playing);
   };
   try {
+    // fetch the geometry alongside the module rather than ahead of the page's CSS and fonts,
+    // and only where WebGL works
+    const src = new URL("assets/heart/heart.bin.gz", BASE).href;
+    const geometry = canvas.getContext("webgl", { antialias: true, alpha: false, powerPreference: "default" }) ? fetch(src) : null;
+    geometry?.catch(() => {}); // a failure is reported by createHeart
     const { createHeart } = await import("./heart3d.js");
-    const heart = await createHeart(canvas, { src: new URL("assets/heart/heart.bin", BASE).href, onStage });
+    const heart = await createHeart(canvas, { src, geometry, onStage });
     box.dataset.ready = "true";
+    $("[data-heart-hint]")?.removeAttribute("hidden");
     if (story) {
-      const label = () => {
-        pauseBtn.dataset.paused = String(!heart.playing);
-        pauseBtn.setAttribute("aria-label", heart.playing ? "Pause the animation" : "Play the animation");
-      };
-      steps.forEach((b, i) => b.addEventListener("click", () => heart.setStage(i)));
+      steps.forEach((b, i) =>
+        b.addEventListener("click", () => {
+          picked = true;
+          shown = -1;
+          heart.setStage(i);
+        })
+      );
       pauseBtn.addEventListener("click", () => {
         if (heart.playing) heart.pause();
         else heart.play();
-        label();
+        showPlaying(heart.playing);
       });
-      label();
-      story.hidden = false;
+      showPlaying(heart.playing);
+      story.removeAttribute("data-pending");
     }
   } catch (err) {
     // No WebGL, or the geometry did not load: draw the 2D cross-section instead.
@@ -159,7 +183,20 @@ safely("heart", async () => {
     flat.setAttribute("aria-label", "Animated short-axis cross-section of a left ventricle: grey healthy muscle thickens with each beat, a crimson scar does not move, ochre border zones move less, and teal gel depots sit in the border zones.");
     box.replaceChildren(flat);
     box.dataset.fallback = "true";
-    createVentricle(flat, "hero");
+    const flatHeart = createVentricle(flat, "hero");
+    // the 2D drawing beats too, so it keeps a pause button (WCAG 2.2.2)
+    if (story && pauseBtn && flatHeart.playing) {
+      $(".heart-story__steps", story)?.remove();
+      text?.remove();
+      status?.remove();
+      pauseBtn.addEventListener("click", () => {
+        if (flatHeart.playing) flatHeart.pause();
+        else flatHeart.play();
+        showPlaying(flatHeart.playing);
+      });
+      showPlaying(true);
+      story.removeAttribute("data-pending");
+    } else if (story) story.hidden = true;
   }
 });
 

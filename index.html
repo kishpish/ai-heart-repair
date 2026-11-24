@@ -17,12 +17,12 @@
   <meta property="og:image" content="https://kishpish.github.io/ai-heart-repair/assets/meta/og.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
-  <meta property="og:image:alt" content="A heart drawn in fine pale strokes on a dark background, with a crimson scar on the left ventricle, an ochre border zone and teal hydrogel depots, beside the title A Second Beat for the Broken Heart.">
+  <meta property="og:image:alt" content="A heart drawn with its pale muscle fibres on a dark background, with a crimson scar on the left ventricle, an ochre border zone and a fine needle placing teal hydrogel depots, beside the title A Second Beat for the Broken Heart.">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="A Second Beat for the Broken Heart">
   <meta name="twitter:description" content="From one cardiac MRI to a hydrogel designed for that patient's heart, with the design ranking verified by 210 physics simulations. Research by Krishiv Potluri.">
   <meta name="twitter:image" content="https://kishpish.github.io/ai-heart-repair/assets/meta/og.png">
-  <meta name="twitter:image:alt" content="A heart drawn in fine pale strokes on a dark background, with a crimson scar on the left ventricle, an ochre border zone and teal hydrogel depots, beside the title A Second Beat for the Broken Heart.">
+  <meta name="twitter:image:alt" content="A heart drawn with its pale muscle fibres on a dark background, with a crimson scar on the left ventricle, an ochre border zone and a fine needle placing teal hydrogel depots, beside the title A Second Beat for the Broken Heart.">
 
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="icon" href="favicon.ico" sizes="32x32">
@@ -33,7 +33,6 @@
 
   <link rel="preload" href="vendor/fonts/archivo-latin-wdth-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="vendor/fonts/newsreader-latin-opsz-normal.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="preload" href="assets/heart/heart.bin" as="fetch" type="application/octet-stream" crossorigin="anonymous">
   <link rel="stylesheet" href="css/tokens.css">
   <link rel="stylesheet" href="css/base.css">
   <link rel="stylesheet" href="css/site.css">
@@ -113,20 +112,21 @@
 
     <figure class="hero__fig">
       <div class="heart3d" data-heart>
-        <canvas class="heart3d__canvas" tabindex="0" role="img" aria-label="A three-dimensional heart drawn in fine pale fibre lines that beats and can be turned by dragging or with the arrow keys. It plays a three-part story. First, a sunken patch of scar on the left ventricle, matted with wavy crimson strands and fed by a dashed, blocked artery, stays still while the rest of the wall contracts, with ochre border-zone fibres around it. Next, nine teal hydrogel beads are injected one by one into the border zone and the gel spreads along the fibres. Last, a glowing front closes in on the scar, the healthy fibres knit back in behind it, the beads fade as the gel degrades, and the whole wall beats evenly again."></canvas>
-        <noscript><img src="assets/heart/heart-still.jpg" width="840" height="1050" alt="A three-dimensional heart drawn in fine pale fibre lines, with a sunken crimson scar on the left ventricle, ochre border-zone fibres around it and nine teal hydrogel depots set into the border zone."></noscript>
+        <canvas class="heart3d__canvas" tabindex="0" role="img" aria-label="Illustrated 3D heart drawn with its muscle fibres, with a scar on the left ventricle. Turn it by dragging or with the arrow keys." aria-describedby="heart-story-text"></canvas>
+        <noscript><img src="assets/heart/heart-still.jpg" width="840" height="1050" alt="An illustrated three-dimensional heart drawn with its pale muscle fibres, with a crimson scar on the left ventricle below a blocked branch of an artery, ochre border-zone fibres around the scar, and a fine needle placing teal gel depots into the border zone."></noscript>
       </div>
-      <div class="heart-story" data-heart-story hidden>
-        <ol class="heart-story__steps">
-          <li><button type="button" data-stage="0" aria-pressed="true" data-text="A blocked artery has left a patch of scar that no longer contracts, and the muscle around it, the border zone, is overloaded."><span class="heart-story__n">1</span>Scarred</button></li>
-          <li><button type="button" data-stage="1" aria-pressed="false" data-text="Hydrogel depots designed for this heart are injected into the border zone, where they thicken and support the weakened wall."><span class="heart-story__n">2</span>Hydrogel</button></li>
-          <li><button type="button" data-stage="2" aria-pressed="false" data-text="The goal this work points toward: the wall supported while the gel degrades, and the damaged muscle restored."><span class="heart-story__n">3</span>Restored</button></li>
+      <div class="heart-story" data-heart-story data-pending>
+        <ol class="heart-story__steps" aria-label="Stages of the story">
+          <li><button type="button" data-stage="0" aria-current="step"><span class="heart-story__n">1</span>Scar</button></li>
+          <li><button type="button" data-stage="1"><span class="heart-story__n">2</span>Gel</button></li>
+          <li><button type="button" data-stage="2"><span class="heart-story__n">3</span>Goal</button></li>
         </ol>
         <button class="heart-story__pause" type="button" data-heart-pause aria-label="Pause the animation">
           <svg class="i-pause" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 5v14M15 5v14"/></svg>
           <svg class="i-play" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 5l11 7-11 7z"/></svg>
         </button>
-        <p class="heart-story__text"></p>
+        <p class="heart-story__text" id="heart-story-text"><span data-on>A blocked artery has left a patch of scar that cannot contract. Around it, a border zone of weakened muscle is overloaded.</span><span>Gel designed for one patient&rsquo;s heart is injected into the border zone as nine small depots to thicken and brace the wall.</span><span>Where this work is headed: the gel braces the wall, then breaks down as new muscle grows back where the scar was.</span></p>
+        <p class="visually-hidden" role="status" data-heart-status></p>
       </div>
       <figcaption>
         <ul class="legend" aria-label="Legend">
@@ -135,7 +135,7 @@
           <li><i class="sw sw--scar"></i>Scar</li>
           <li><i class="sw sw--gel"></i>Hydrogel</li>
         </ul>
-        <p>Drawn in code. The lines follow the paper&rsquo;s fibre field: healthy muscle winds at &minus;60&deg; at the surface, scar collagen runs around the heart, and the border zone sits in between. As in the paper&rsquo;s model, the scar does not contract and the border zone contracts at two-thirds strength. Drag to turn the heart. <a class="src" href="read.html?doc=full&amp;page=9" data-doc="full" data-page="9">&sect;2.7</a> <a class="src" href="read.html?doc=full&amp;page=11" data-doc="full" data-page="11">&sect;2.11</a> <a class="src" href="read.html?doc=full&amp;page=23" data-doc="full" data-page="23">Fig. 4</a> <a class="src" href="read.html?doc=full&amp;page=47" data-doc="full" data-page="47">&sect;12.3</a></p>
+        <p>A schematic heart drawn in code. On the ventricles its fibres follow the paper&rsquo;s fibre rule: healthy fibres wind at &minus;60&deg; on the outer surface, border-zone fibres at half that angle, and scar collagen runs around the heart. As in the paper&rsquo;s model, the scar does not contract, and the border zone contracts at two-thirds strength and holds the gel depots. Stage&nbsp;3 shows the goal, not a result.<span data-heart-hint hidden> Drag to turn the heart.</span> <a class="src" href="read.html?doc=full&amp;page=9" data-doc="full" data-page="9">&sect;2.7</a> <a class="src" href="read.html?doc=full&amp;page=11" data-doc="full" data-page="11">&sect;2.11</a> <a class="src" href="read.html?doc=full&amp;page=23" data-doc="full" data-page="23">Fig. 4</a> <a class="src" href="read.html?doc=full&amp;page=47" data-doc="full" data-page="47">&sect;12.3</a></p>
       </figcaption>
     </figure>
   </div>

@@ -50,7 +50,7 @@ data/docs.js          list of PDFs and posters
 assets/docs/          the PDFs people download
 assets/figures/       figures from the papers (WebP for the page, original PNGs for download)
 assets/posters/       poster previews, full-size JPEGs and zoom tiles
-assets/heart/         geometry for the 3D heart (heart.bin) and a still image of it
+assets/heart/         geometry for the 3D heart (heart.bin.gz) and a still image of it
 assets/meta/          share image, icons and the headshot
 vendor/               PDF.js, OpenSeadragon and fonts, stored locally (no CDN)
 tools/                scripts that rebuild images, the 3D heart, icons and screenshots
@@ -105,13 +105,13 @@ python3 tools/build_assets.py
 
 To rebuild only one poster, name it (for example `python3 tools/build_assets.py posters bibm`). To add a poster, put its PDF in `assets/docs/`, add a line to `POSTER_PAGES` in `tools/build_assets.py`, run the script, then add an entry to `POSTER_PANELS` in `data/docs.js`.
 
-The 3D heart's geometry (`assets/heart/heart.bin`):
+The 3D heart's geometry (`assets/heart/heart.bin.gz`):
 
 ```bash
 python3 tools/build_heart.py
 ```
 
-Its shape, the fibre lines (a healthy set over the whole heart and an infarct set over the scar and border zone), the position of the scar, the coronary arteries and the gel depots are set in that script. Building it takes about half a minute. The three-stage story (scarred, hydrogel, restored), its timing and the lighting are in `js/heart3d.js`; the stage labels and the sentence under each stage are in `index.html`, in the hero. Open `tools/heart.html` through the local server to preview the heart on its own (`tools/heart.html?still&t=6.4` freezes it at a moment of the loop, in seconds).
+Its shape, the position and outline of the scar, the coronary arteries, the gel depots and the fibre phase that the renderer draws the muscle fibres from are set in that script, which takes a few seconds. The file is gzipped because static hosts rarely compress binary files; `js/heart3d.js` unpacks it. The three-stage story (scar, gel, goal), its timing, the needle, the fibres and the lighting are in `js/heart3d.js`; the stage labels and the sentence under each stage are in `index.html`, in the hero. Open `tools/heart.html` through the local server to preview the heart on its own (`tools/heart.html?still&t=8.1` freezes it at a moment of the loop, in seconds).
 
 With the local server running (see above), the share image, the still of the heart and the icons:
 

@@ -20,7 +20,7 @@ await ctx.close();
 // A still of the heart for visitors without JavaScript.
 ctx = await browser.newContext({ viewport: { width: 640, height: 800 }, deviceScaleFactor: 1.5, reducedMotion: "reduce" });
 page = await ctx.newPage();
-await page.goto(base + "tools/heart.html?still&yaw=-0.24&pitch=0.12&act=0&t=6.4", { waitUntil: "networkidle" });
+await page.goto(base + "tools/heart.html?still&yaw=-0.24&pitch=0.12&act=0", { waitUntil: "networkidle" });
 await page.waitForSelector("body[data-ready]");
 await page.waitForTimeout(300);
 await page.locator("#h").screenshot({ path: "assets/heart/heart-still.jpg", type: "jpeg", quality: 86 });

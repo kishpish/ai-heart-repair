@@ -76,6 +76,7 @@ export function createVentricle(canvas, initial = "healthy") {
   let visible = false;
   let raf = 0;
   let size = 0;
+  let paused = false;
 
   function resize() {
     const css = canvas.clientWidth || 360;
@@ -96,7 +97,7 @@ export function createVentricle(canvas, initial = "healthy") {
       for (const key in cur) cur[key] = mix(from[key], to[key], e);
       if (k >= 1) tweenDur = 0;
     }
-    const beat = reduce.matches ? 0 : activation(t);
+    const beat = reduce.matches || paused ? 0 : activation(t);
     const S = size;
     const c = S / 2;
     const u = S / 2;
@@ -211,7 +212,7 @@ export function createVentricle(canvas, initial = "healthy") {
   function frame(now) {
     raf = 0;
     draw(now);
-    if (visible && !document.hidden && (!reduce.matches || tweenDur > 0)) raf = requestAnimationFrame(frame);
+    if (visible && !document.hidden && ((!reduce.matches && !paused) || tweenDur > 0)) raf = requestAnimationFrame(frame);
   }
   function kick() {
     if (!raf) raf = requestAnimationFrame(frame);
@@ -236,6 +237,17 @@ export function createVentricle(canvas, initial = "healthy") {
   kick();
 
   return {
+    get playing() {
+      return !paused && !reduce.matches;
+    },
+    pause() {
+      paused = true;
+      kick();
+    },
+    play() {
+      paused = false;
+      kick();
+    },
     setState(name) {
       const target = STATES[name];
       if (!target) return;

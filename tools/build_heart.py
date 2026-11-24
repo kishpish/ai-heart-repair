@@ -1,36 +1,40 @@
 #!/usr/bin/env python3
-"""Build the geometry for the 3D heart drawn in the hero (assets/heart/heart.bin).
+"""Build the geometry for the 3D heart drawn in the hero (assets/heart/heart.bin.gz).
 
 Usage:
-    python3 tools/build_heart.py
+    python3 tools/build_heart.py [--out PATH]
+
+Writes assets/heart/heart.bin.gz. The file is gzipped because static hosts rarely
+compress binary files; js/heart3d.js unpacks it.
 
 Needs numpy and scikit-image (pip install numpy scikit-image).
 
-The heart is an illustration, not patient data. Its shape is a smooth blend of
-simple solids (two ventricles, two atria, the great vessels), wound with long
-fibre lines and crossed by the main coronary arteries. The hero plays it as a
-story: a scarred heart, hydrogel depots injected into the border zone, and the
-wall healed and restored, which is the long-term goal the work points toward.
-
-There are two sets of fibre lines on the ventricles. The healthy set covers the
-whole wall, the infarct included, and follows the healthy fibre field. The
-infarct set lies only over the scar and border zone. At first the infarct set is
-shown and the healthy set is hidden inside the infarct; as the wall heals the
-healthy lines knit back in and the infarct lines dissolve.
+The heart is an illustration, not patient data. Its shape is built by blending
+simple solids (two ventricles, two atria, the great vessels), crossed by the main
+coronary arteries. The muscle fibres are not geometry: js/heart3d.js draws them
+per pixel as the level lines of a phase that this script prepares for every
+vertex, so they stay crisp at any size. The hero plays the heart as a story: a
+scarred heart, hydrogel depots injected into the border zone, and the wall
+healed and restored, which is the long-term goal the work points toward.
 
 Taken from the paper so the picture says something true about the work:
   - healthy fibres wind at the epicardial helix angle of the rule-based field
     (-60 degrees); scar collagen runs circumferentially and the border zone at
     half the healthy angle (Section 2.7)
   - scar develops no active tension and the border zone 0.67 of remote (Section 2.11)
-  - nine gel depots sit in the border zone, clear of the scar (Fig. 4)
+  - nine depots sit at mid-wall in the border zone, clear of the core scar (Fig. 4),
+    each an ellipsoid whose long axis lies in the wall (Section 2.14)
   - the infarct lies downstream of a blocked coronary artery (Section 1.1)
+  - scar is thinner than healthy wall (Table 2), so it sits a little lower
+Only the fibres on the ventricles follow the paper; those on the atria are decorative.
 
 Output layout: uint32 length of a JSON header, the header (padded to 4 bytes),
 then the typed arrays the header describes. js/heart3d.js reads it.
 """
 from __future__ import annotations
 
+import argparse
+import gzip
 import json
 import struct
 from pathlib import Path
@@ -39,13 +43,14 @@ import numpy as np
 from skimage import measure
 
 ROOT = Path(__file__).resolve().parent.parent
-OUT = ROOT / "assets" / "heart" / "heart.bin"
+OUT = ROOT / "assets" / "heart" / "heart.bin.gz"
 RNG = np.random.default_rng(7)
 
-STEP = 0.034  # marching-cubes grid spacing
-K = 17  # points per fibre line
+STEP = 0.027  # marching-cubes grid spacing
 LO = np.array([-1.40, -1.50, -1.00])
 HI = np.array([1.50, 2.10, 0.90])
+N_FIBRES = 152  # fibres around the long axis; a multiple of 8, so the pattern closes on itself at every level of detail
+HELIX = np.deg2rad(60.0)  # epicardial helix angle (magnitude), Section 2.7
 
 # --- ventricle frame: long axis from apex to base, in viewer coordinates -----------------
 AXIS = np.array([-0.42, 0.88, -0.22])
@@ -100,7 +105,8 @@ def ventricles(p):
     lv = ellipsoid(w, (0.12, -0.06, -0.05), (0.56, 1.06, 0.55))
     # the right ventricle wraps the front and right of the left one and stops short of the apex
     rv = ellipsoid(w, (-0.33, 0.20, 0.17), (0.47, 0.70, 0.46))
-    d = smin(lv, rv, 0.12)
+    # a tighter blend than before leaves a visible groove between the two ventricles
+    d = smin(lv, rv, 0.075)
     return smax(d, l[..., 1] - BASE_H, 0.10), lv, rv
 
 
@@ -118,20 +124,14 @@ VESSELS = {
     "ivc": ([(-0.62, 0.20, -0.20), (-0.62, -0.55, -0.34)], [0.125, 0.120]),
 }
 
-# Each component: (name, group, axis used to orient its strokes)
-COMPONENTS: list[tuple[str, str, np.ndarray]] = [("ventricles", "vent", AXIS)]
-COMPONENTS += [("ra", "atrium", np.array([0.0, 1.0, 0.0])), ("la", "atrium", np.array([0.0, 1.0, 0.0]))]
 SEGMENTS = []
-for name, (pts, radii) in VESSELS.items():
-    for i in range(len(pts) - 1):
-        a, b = np.array(pts[i]), np.array(pts[i + 1])
-        SEGMENTS.append((a, b, radii[i], radii[i + 1]))
-        axis = (b - a) / np.linalg.norm(b - a)
-        COMPONENTS.append((f"{name}{i}", "vessel", axis))
+for _name, (_pts, _radii) in VESSELS.items():
+    for _i in range(len(_pts) - 1):
+        SEGMENTS.append((np.array(_pts[_i]), np.array(_pts[_i + 1]), _radii[_i], _radii[_i + 1]))
 
 
 def parts(p):
-    """Distance to every component, shape (n_components, N)."""
+    """Distance to every component, shape (n_components, N): ventricles, two atria, vessel segments."""
     dv, _, _ = ventricles(p)
     ra = smin(ellipsoid(p, (-0.58, 0.37, -0.08), (0.32, 0.38, 0.31)), ellipsoid(p, (-0.36, 0.56, 0.20), (0.24, 0.15, 0.17)), 0.10)
     la = smin(ellipsoid(p, (-0.05, 0.50, -0.42), (0.52, 0.33, 0.31)), ellipsoid(p, (0.40, 0.47, 0.02), (0.22, 0.15, 0.18)), 0.10)
@@ -184,32 +184,37 @@ def scar_centre():
 
 
 SCAR_C = scar_centre()
+SCAR_N = gradient(SCAR_C[None])[0]
 SCAR_R, BZ_W = 0.265, 0.115
+# a frame on the wall at the scar centre: V along the long axis, U around the heart
+SCAR_V = AXIS - (AXIS @ SCAR_N) * SCAR_N
+SCAR_V /= np.linalg.norm(SCAR_V)
+SCAR_U = np.cross(SCAR_V, SCAR_N)
+
+
+def scar_radius(p):
+    """Distance from the scar centre in units of the outer border-zone radius. The outline is
+    lobed and stretched toward the apex, so the scar does not read as a perfect oval."""
+    q = p - SCAR_C
+    u, v, w = q @ SCAR_U, q @ SCAR_V, q @ SCAR_N
+    v = np.where(v < 0.0, v / 1.18, v / 1.02)
+    ang = np.arctan2(v, u)
+    lobes = 1.0 + 0.045 * np.sin(2 * ang + 1.7) + 0.05 * np.sin(3 * ang + 0.9) + 0.03 * np.sin(5 * ang + 2.6)
+    wob = 0.02 * np.sin(9.0 * q[:, 0] + 1.3) * np.cos(8.0 * q[:, 1] - 0.4) + 0.015 * np.sin(13.0 * q[:, 2] + 11.0 * q[:, 1])
+    return (np.sqrt(u * u + v * v + w * w) * lobes + wob) / (SCAR_R + BZ_W)
 
 
 def tissue(p):
-    """Scar and border-zone membership, each 0..1 with an irregular edge."""
-    q = p - SCAR_C
-    r = np.linalg.norm(q, axis=1)
-    wob = 0.035 * np.sin(9.0 * q[:, 0] + 1.3) * np.cos(8.0 * q[:, 1] - 0.4) + 0.025 * np.sin(13.0 * q[:, 2] + 11.0 * q[:, 1])
-    r = r + wob
+    """Scar and border-zone membership, each 0..1."""
+    r = scar_radius(p) * (SCAR_R + BZ_W)
     scar = 1.0 - smoothstep(SCAR_R - 0.025, SCAR_R + 0.025, r)
     outer = 1.0 - smoothstep(SCAR_R + BZ_W - 0.025, SCAR_R + BZ_W + 0.025, r)
     return scar, np.maximum(outer - scar, 0.0)
 
 
-def scar_radius(p):
-    """Distance from the scar centre, with the same irregular edge as tissue(), in units of the outer border-zone radius."""
-    q = p - SCAR_C
-    r = np.linalg.norm(q, axis=1)
-    wob = 0.035 * np.sin(9.0 * q[:, 0] + 1.3) * np.cos(8.0 * q[:, 1] - 0.4) + 0.025 * np.sin(13.0 * q[:, 2] + 11.0 * q[:, 1])
-    return (r + wob) / (SCAR_R + BZ_W)
-
-
 def attributes(p):
-    """Per-point: ventricle weight, contractility, fade, scar, border zone, component index."""
+    """Per point: ventricle weight (for motion), contractility, fade, and shading weights for atria and vessels."""
     d = parts(p)
-    kind = np.argmin(d, axis=0)
     w = 1.0 - smoothstep(0.0, 0.30, d[0])
     scar, bz = tissue(p)
     on_vent = 1.0 - smoothstep(0.0, 0.05, d[0])
@@ -218,15 +223,15 @@ def attributes(p):
     # vessels dissolve with distance from the heart; the ventricles never fade
     m = np.linalg.norm((p - FADE_C) / np.array([0.95, 1.12, 1.0]), axis=1)
     fade = np.maximum(1.0 - smoothstep(0.98, 1.42, m), w)
-    return w, contract, fade, scar, bz, kind
+    # which kind of tissue a point shows: a soft choice between the closest groups
+    groups = np.stack([d[0], np.minimum(d[1], d[2]), d[3:].min(axis=0)])
+    e = np.exp(-(groups - groups.min(axis=0)) / 0.018)
+    e /= e.sum(axis=0)
+    return w, contract, fade, e[1], e[2]
 
 
 def u8(x):
-    return np.clip(np.round(x * 255.0), 0, 255).astype(np.uint8)
-
-
-def i8(x):
-    return np.clip(np.round(x * 127.0), -127, 127).astype(np.int8)
+    return np.clip(np.round(np.asarray(x) * 255.0), 0, 255).astype(np.uint8)
 
 
 def i16(x):
@@ -237,59 +242,6 @@ def q16(p):
     return np.clip(np.round((p - LO) / (HI - LO) * 65535.0), 0, 65535).astype(np.uint16)
 
 
-def poisson(points, radius):
-    """Greedy thinning: keep a point only if no kept point lies within its radius."""
-    cell = radius.max()
-    keys = np.floor(points / cell).astype(np.int64)
-    grid: dict[tuple, list[int]] = {}
-    keep = []
-    for i in RNG.permutation(len(points)):
-        k = tuple(keys[i])
-        ok = True
-        for dx in (-1, 0, 1):
-            for dy in (-1, 0, 1):
-                for dz in (-1, 0, 1):
-                    for j in grid.get((k[0] + dx, k[1] + dy, k[2] + dz), ()):
-                        if np.sum((points[i] - points[j]) ** 2) < radius[i] ** 2:
-                            ok = False
-                            break
-                    if not ok:
-                        break
-                if not ok:
-                    break
-            if not ok:
-                break
-        if ok:
-            keep.append(i)
-            grid.setdefault(k, []).append(i)
-    return np.array(keep)
-
-
-def icosphere(level=2):
-    t = (1 + 5**0.5) / 2
-    v = np.array([[-1, t, 0], [1, t, 0], [-1, -t, 0], [1, -t, 0], [0, -1, t], [0, 1, t], [0, -1, -t], [0, 1, -t], [t, 0, -1], [t, 0, 1], [-t, 0, -1], [-t, 0, 1]], float)
-    f = np.array([[0, 11, 5], [0, 5, 1], [0, 1, 7], [0, 7, 10], [0, 10, 11], [1, 5, 9], [5, 11, 4], [11, 10, 2], [10, 7, 6], [7, 1, 8], [3, 9, 4], [3, 4, 2], [3, 2, 6], [3, 6, 8], [3, 8, 9], [4, 9, 5], [2, 4, 11], [6, 2, 10], [8, 6, 7], [9, 8, 1]])
-    v /= np.linalg.norm(v, axis=1, keepdims=True)
-    for _ in range(level):
-        cache: dict[tuple, int] = {}
-        verts = list(v)
-
-        def mid(a, b):
-            key = (min(a, b), max(a, b))
-            if key not in cache:
-                m = (verts[a] + verts[b]) / 2
-                verts.append(m / np.linalg.norm(m))
-                cache[key] = len(verts) - 1
-            return cache[key]
-
-        nf = []
-        for a, b, c in f:
-            ab, bc, ca = mid(a, b), mid(b, c), mid(c, a)
-            nf += [[a, ab, ca], [b, bc, ab], [c, ca, bc], [ab, bc, ca]]
-        v, f = np.array(verts), np.array(nf)
-    return v, f
-
-
 def occlusion(p, n):
     """Cheap ambient occlusion from the distance field: 1 in the open, lower in creases."""
     acc = np.zeros(len(p))
@@ -298,130 +250,67 @@ def occlusion(p, n):
     return np.clip(1.0 - 1.35 * acc, 0.0, 1.0)
 
 
-def direction(p, n, kind, jitter, infarct=False):
-    """Unit tangent that a line follows at p: fibres on the ventricles, girth on the atria, length on vessels.
+# --- the fibre phase -------------------------------------------------------------------
+# On the ventricles the fibres are the level lines of  phi = N * theta + G(h),  with theta the
+# angle around the long axis and h the height along it. G is chosen so that the lines cross
+# the circumferential direction at the epicardial helix angle on the wall around the infarct.
+def lv_coords(p):
+    q = p - VC
+    return q @ EX, q @ AXIS, q @ EZ
 
-    With infarct=False the ventricles follow the healthy field everywhere; with infarct=True
-    scar collagen runs circumferentially and the border zone at half the healthy angle.
+
+def helix_table(verts, wv):
+    x, h, z = lv_coords(verts)
+    r = np.hypot(x, z)
+    theta = np.arctan2(z, x)
+    _, _, sz = lv_coords(SCAR_C[None])
+    th_s = np.arctan2(sz[0], lv_coords(SCAR_C[None])[0][0])
+    near = np.abs((theta - th_s + np.pi) % (2 * np.pi) - np.pi) < np.deg2rad(45)
+    sel = (wv > 0.9) & near
+    hs, rs = h[sel], r[sel]
+    edges = np.linspace(hs.min(), hs.max(), 90)
+    mids = 0.5 * (edges[1:] + edges[:-1])
+    prof = np.full(len(mids), np.nan)
+    for i in range(len(mids)):
+        m = (hs >= edges[i]) & (hs < edges[i + 1])
+        if m.sum() > 4:
+            prof[i] = np.median(rs[m])
+    ok = ~np.isnan(prof)
+    prof = np.interp(mids, mids[ok], prof[ok])
+    prof = np.convolve(np.pad(prof, 3, mode="edge"), np.ones(7) / 7, mode="valid")
+    table_h = np.linspace(h.min() - 0.05, h.max() + 0.05, 1200)
+    rad = np.maximum(np.interp(table_h, mids, prof), 0.045)
+    dsdh = np.sqrt(1.0 + np.gradient(rad, table_h) ** 2)
+    # along a fibre at the helix angle: dtheta / ds = cot(helix) / r. Integrated from the top down.
+    dG = N_FIBRES * dsdh / (rad * np.tan(HELIX))
+    G = np.concatenate([[0.0], np.cumsum(0.5 * (dG[1:] + dG[:-1]) * np.diff(table_h))])
+    G = G[-1] - G  # G = integral from h to the top
+    return table_h, G
+
+
+def phase(p, table):
+    x, h, z = lv_coords(p)
+    return N_FIBRES * np.arctan2(z, x) + np.interp(h, *table)
+
+
+def twirl_offset(verts, table):
+    """Phase offset that turns the fibres around the infarct to half the healthy helix angle.
+
+    The healthy pattern is rotated about the scar centre, within the plane of the wall, by 30
+    degrees across the border zone (and the scar, where scar collagen is drawn instead), easing
+    to no rotation a little outside it, so the fibres bend smoothly around the infarct.
     """
-    axis = np.array([c[2] for c in COMPONENTS])[kind]
-    circ = np.cross(axis, n)
-    circ /= np.maximum(np.linalg.norm(circ, axis=1, keepdims=True), 1e-9)
-    longi = np.cross(n, circ)
-    is_vent = kind == 0
-    is_vessel = kind >= 3
-    # epicardial helix angle: -60 degrees remote, halved in the border zone, 0 in scar
-    alpha = np.full(len(p), np.deg2rad(-60.0))
-    if infarct:
-        scar, bz = tissue(p)
-        alpha = alpha * (1.0 - scar) * (1.0 - 0.5 * bz)
-    alpha = np.where(is_vent, alpha, np.where(is_vessel, np.pi / 2, 0.0)) + jitter
-    return np.cos(alpha)[:, None] * circ + np.sin(alpha)[:, None] * longi
-
-
-def klass(kind):
-    return np.where(kind == 0, 0, np.where(kind <= 2, 1, 2))
-
-
-def trace(seeds, length, jitter, infarct=False):
-    """Trace one line through each seed, K points long, following direction(). Returns points and a live mask.
-
-    Infarct lines stop where they leave the infarct (the scar and border zone).
-    """
-    n_lines = len(seeds)
-    pts = np.zeros((n_lines, K, 3))
-    live = np.zeros((n_lines, K), bool)
-    mid = K // 2
-    kind0 = np.argmin(parts(seeds), axis=0)
-    k0 = klass(kind0)
-    pts[:, mid] = seeds
-    live[:, mid] = True
-    ds = length / (K - 1)
-    for sign, order in ((1.0, range(mid + 1, K)), (-1.0, range(mid - 1, -1, -1))):
-        p = seeds.copy()
-        alive = np.ones(n_lines, bool)
-        prev = None
-        for i in order:
-            nrm = gradient(p)
-            kind = np.argmin(parts(p), axis=0)
-            d = direction(p, nrm, kind, jitter, infarct) * sign
-            if prev is not None:
-                d = np.where((np.sum(d * prev, axis=1) < 0)[:, None], -d, d)
-            # midpoint step, then back onto the surface
-            pm = project(p + 0.5 * ds[:, None] * d, iters=1)
-            km = np.argmin(parts(pm), axis=0)
-            dm = direction(pm, gradient(pm), km, jitter, infarct) * sign
-            dm = np.where((np.sum(dm * d, axis=1) < 0)[:, None], -dm, dm)
-            q = project(p + ds[:, None] * dm, iters=2)
-            kq = np.argmin(parts(q), axis=0)
-            _, _, fade_q, _, _, _ = attributes(q)
-            alive &= (klass(kq) == k0) & (fade_q > 0.02)
-            if infarct:
-                alive &= scar_radius(q) < 1.05
-            q = np.where(alive[:, None], q, p)
-            pts[:, i] = q
-            live[:, i] = alive
-            prev = np.where(alive[:, None], dm, d)
-            p = q
-    return pts, live
-
-
-def select(pts, live, sep, blockers):
-    """Keep lines so that none runs closer than its separation to one already kept.
-
-    Lines are taken in random order and trimmed where they would crowd an earlier
-    line, which leaves an even hatch with staggered ends. Returns the kept line
-    indices and a trimmed live mask.
-    """
-    cell = float(sep.max())
-    grid: dict[tuple, list[np.ndarray]] = {}
-    mid = K // 2
-
-    def crowded(q, r):
-        k = np.floor(q / cell).astype(int)
-        for dx in (-1, 0, 1):
-            for dy in (-1, 0, 1):
-                for dz in (-1, 0, 1):
-                    for o in grid.get((k[0] + dx, k[1] + dy, k[2] + dz), ()):
-                        if (q[0] - o[0]) ** 2 + (q[1] - o[1]) ** 2 + (q[2] - o[2]) ** 2 < r * r:
-                            return True
-        return False
-
-    def insert(q):
-        grid.setdefault(tuple(np.floor(q / cell).astype(int)), []).append(q)
-
-    for b in blockers:
-        insert(b)
-    kept, masks = [], []
-    for i in RNG.permutation(len(pts)):
-        r = sep[i]
-        if crowded(pts[i, mid], r):
-            continue
-        lo = hi = mid
-        for step, bound in ((1, K), (-1, -1)):
-            j = mid
-            while j + step != bound and live[i, j + step]:
-                a, b = pts[i, j], pts[i, j + step]
-                if crowded(0.5 * (a + b), r) or crowded(b, r):
-                    break
-                j += step
-            if step == 1:
-                hi = j
-            else:
-                lo = j
-        if hi - lo < 3:
-            continue
-        m = np.zeros(K, bool)
-        m[lo : hi + 1] = True
-        for j in range(lo, hi + 1):
-            insert(pts[i, j])
-            if j < hi:
-                insert(0.5 * (pts[i, j] + pts[i, j + 1]))
-                insert(0.25 * pts[i, j] + 0.75 * pts[i, j + 1])
-                insert(0.75 * pts[i, j] + 0.25 * pts[i, j + 1])
-        kept.append(i)
-        masks.append(m)
-    return np.array(kept), np.array(masks)
+    rn = scar_radius(verts)
+    psi = HELIX / 2 * (1.0 - smoothstep(0.98, 1.30, rn))
+    v = verts - SCAR_C
+    a = -psi
+    k = SCAR_N
+    src = SCAR_C + v * np.cos(a)[:, None] + np.cross(k, v) * np.sin(a)[:, None] + k[None] * (v @ k)[:, None] * (1 - np.cos(a))[:, None]
+    x0, h0, z0 = lv_coords(verts)
+    x1, h1, z1 = lv_coords(src)
+    dth = (np.arctan2(z1, x1) - np.arctan2(z0, x0) + np.pi) % (2 * np.pi) - np.pi
+    out = N_FIBRES * dth + np.interp(h1, *table) - np.interp(h0, *table)
+    return np.where(psi > 1e-6, out, 0.0)
 
 
 def catmull(ctrl, n):
@@ -455,53 +344,82 @@ def on_ventricle(phi_deg, h):
 
 
 # Coronary arteries as (azimuth in degrees, height) paths on the ventricles:
-# name: (control points, width at start, width at end, blocked?)
+# name: (control points, radius factor at start, at end, blocked?)
 CORONARIES = {
     "lad": ([(107, 0.34), (105, 0.18), (102, -0.05), (98, -0.32), (94, -0.60), (89, -0.84), (84, -1.00)], 1.00, 0.45, False),
     "diagonal": ([(105, 0.20), (92, 0.14), (76, 0.09), (61, 0.03)], 0.72, 0.60, False),
-    "diagonal-blocked": ([(58, 0.00), (52, -0.14), (48, -0.30), (46, -0.47), (45, -0.60)], 0.80, 0.55, True),
+    "diagonal-blocked": ([(61, 0.03), (55, -0.12), (50, -0.28), (47, -0.45), (45, -0.60)], 0.62, 0.42, True),
     "septal": ([(104, 0.02), (117, -0.10), (130, -0.26), (139, -0.40)], 0.55, 0.32, False),
     "circumflex": ([(104, 0.46), (84, 0.49), (58, 0.47), (30, 0.45), (2, 0.44), (-24, 0.42)], 0.90, 0.50, False),
     "marginal": ([(22, 0.45), (15, 0.26), (9, 0.08), (4, -0.10)], 0.60, 0.32, False),
     "rca": ([(116, 0.47), (138, 0.48), (162, 0.47), (186, 0.45), (210, 0.44), (232, 0.43)], 0.90, 0.50, False),
     "acute": ([(166, 0.46), (161, 0.22), (153, -0.02), (144, -0.26)], 0.60, 0.32, False),
 }
+ARTERY_R = 0.0165  # radius of an artery with factor 1
 
 
-def coronary_lines():
-    """Arteries as K-point lines (long paths are cut into consecutive pieces that share an end point)."""
-    P, W, C, U, CONT = [], [], [], [], []
-    for ctrl, w0, w1, blocked in CORONARIES.values():
+def coronary_tubes():
+    """Each artery as a closed tube lying half sunk in the wall. Returns vertices, normals,
+    the point on the wall each vertex belongs to, position along the artery, blocked flag, faces."""
+    M = 8
+    V, Nrm, Wall, U, B, F = [], [], [], [], [], []
+    count = 0
+    for ctrl, r0, r1, blocked in CORONARIES.values():
         ctrl = np.array(ctrl, float)
         rough = on_ventricle(ctrl[:, 0], ctrl[:, 1])
         length = np.sum(np.linalg.norm(np.diff(rough, axis=0), axis=1))
-        pieces = max(1, int(np.ceil(length / 0.34)))
-        n = pieces * (K - 1) + 1
-        path = catmull(ctrl, n - 1)
+        n = max(16, int(length / 0.013))
+        path = catmull(ctrl, n)
         pts = on_ventricle(path[:, 0], path[:, 1])
-        pts += 0.017 * gradient(pts)
-        along = np.linspace(0.0, 1.0, n)
-        width = w0 + (w1 - w0) * along
-        for j in range(pieces):
-            sl = slice(j * (K - 1), j * (K - 1) + K)
-            P.append(pts[sl])
-            W.append(width[sl])
-            U.append(along[sl])
-            C.append(4 if blocked else 3)
-            CONT.append(j > 0)
-    return np.array(P), np.array(W), np.array(C), np.array(U), np.array(CONT)
+        for _ in range(4):
+            pts[1:-1] = 0.25 * pts[:-2] + 0.5 * pts[1:-1] + 0.25 * pts[2:]
+        pts = project(pts, iters=4)
+        nrm = gradient(pts)
+        seg = np.linalg.norm(np.diff(pts, axis=0), axis=1)
+        along = np.concatenate([[0.0], np.cumsum(seg)]) / max(seg.sum(), 1e-9)
+        radius = ARTERY_R * (r0 + (r1 - r0) * along)
+        dist = along * seg.sum()
+        # round off both ends
+        radius *= np.sqrt(np.clip(np.minimum(dist / 0.012, (seg.sum() - dist) / 0.05), 0.0, 1.0))
+        tan = np.gradient(pts, axis=0)
+        tan /= np.maximum(np.linalg.norm(tan, axis=1, keepdims=True), 1e-9)
+        side = np.cross(tan, nrm)
+        side /= np.maximum(np.linalg.norm(side, axis=1, keepdims=True), 1e-9)
+        up = np.cross(side, tan)
+        centre = pts + up * (radius * 0.35)[:, None]
+        for i in range(len(pts)):
+            for j in range(M):
+                a = 2 * np.pi * j / M
+                d = np.cos(a) * up[i] + np.sin(a) * side[i]
+                V.append(centre[i] + radius[i] * d)
+                Nrm.append(d)
+                Wall.append(pts[i])
+                U.append(along[i])
+                B.append(blocked)
+        for i in range(len(pts) - 1):
+            for j in range(M):
+                a = count + i * M + j
+                b = count + i * M + (j + 1) % M
+                F.append((a, b, a + M))
+                F.append((b, b + M, a + M))
+        count += len(pts) * M
+    return np.array(V), np.array(Nrm), np.array(Wall), np.array(U), np.array(B), np.array(F)
 
 
 def main() -> None:
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--out", type=Path, default=OUT)
+    out_path = ap.parse_args().out
+
     # ---- surface mesh -------------------------------------------------------------------
     axes = [np.arange(LO[i], HI[i] + STEP, STEP) for i in range(3)]
     gx, gy, gz = np.meshgrid(*axes, indexing="ij")
     grid = np.stack([gx, gy, gz], axis=-1).reshape(-1, 3)
-    vol = np.concatenate([field(chunk) for chunk in np.array_split(grid, 40)]).reshape(gx.shape)
+    vol = np.concatenate([field(chunk) for chunk in np.array_split(grid, 60)]).reshape(gx.shape)
     verts, faces, _, _ = measure.marching_cubes(vol, level=0.0, spacing=(STEP, STEP, STEP))
     verts = project(verts + LO, iters=2)
     normals = gradient(verts)
-    w, contract, fade, scar, bz, _ = attributes(verts)
+    w, contract, fade, w_atrium, w_vessel = attributes(verts)
     # drop triangles that have completely faded out
     alive = fade[faces].max(axis=1) > 0.004
     faces = faces[alive]
@@ -509,149 +427,95 @@ def main() -> None:
     remap = -np.ones(len(verts), dtype=np.int64)
     remap[used] = np.arange(len(used))
     verts, normals = verts[used], normals[used]
-    w, contract, fade, scar, bz = w[used], contract[used], fade[used], scar[used], bz[used]
+    w, contract, fade, w_atrium, w_vessel = w[used], contract[used], fade[used], w_atrium[used], w_vessel[used]
     faces = remap[faces]
-    assert len(verts) < 65536, len(verts)
     ao = occlusion(verts, normals)
     rn_mesh = scar_radius(verts)
-    print(f"mesh: {len(verts)} vertices, {len(faces)} triangles")
+    w_vent = np.clip(1.0 - w_atrium - w_vessel, 0, 1)
+    table = helix_table(verts, w_vent)
+    g_phase = np.interp(lv_coords(verts)[1], *table)
+    twirl = twirl_offset(verts, table)
+    print(f"mesh: {len(verts)} vertices, {len(faces)} triangles; G up to {g_phase.max():.0f}, twirl offset up to {np.abs(twirl).max():.0f} radians")
+
+    # ---- coronary arteries ----------------------------------------------------------------
+    tv, tn, twall, tu, tb, tf = coronary_tubes()
+    aw, ac, af, _, _ = attributes(twall)
+    a_ao = occlusion(twall, gradient(twall))
+    a_rn = scar_radius(twall)
+    print(f"arteries: {len(tv)} vertices, {len(tf)} triangles")
 
     # ---- gel depots: nine, in the middle of the border zone, clear of the scar ---------
-    n0 = gradient(SCAR_C[None])[0]
-    t1 = np.cross(n0, AXIS)
-    t1 /= np.linalg.norm(t1)
-    t2 = np.cross(n0, t1)
     ang = np.linspace(0, 2 * np.pi, 9, endpoint=False) + 0.35 + RNG.normal(0, 0.06, 9)
-    centres = []
+    entries = []
     for a_ in ang:
-        radii = np.linspace(SCAR_R - 0.05, SCAR_R + BZ_W + 0.10, 80)
-        ray = project(SCAR_C + radii[:, None] * (np.cos(a_) * t1 + np.sin(a_) * t2) + 0.12 * n0, iters=10)
+        radii = np.linspace(SCAR_R - 0.10, SCAR_R + BZ_W + 0.35, 160)
+        ray = project(SCAR_C + radii[:, None] * (np.cos(a_) * SCAR_U + np.sin(a_) * SCAR_V) + 0.12 * SCAR_N, iters=10)
         inside = np.flatnonzero(tissue(ray)[1] > 0.97)
         # spread the depots across the width of the band instead of along one circle
-        centres.append(ray[inside[int(len(inside) * RNG.uniform(0.2, 0.8))]])
-    centres = np.array(centres)
-    sv, sf = icosphere(2)
-    depot_r = 0.042
-    dw, dc, _, _, _, _ = attributes(centres)
-    print("depot border-zone membership:", np.round(tissue(centres)[1], 2))
-
-    # ---- fibre lines --------------------------------------------------------------------
-    tri = verts[faces]
-    area = 0.5 * np.linalg.norm(np.cross(tri[:, 1] - tri[:, 0], tri[:, 2] - tri[:, 0]), axis=1)
-
-    def sample(n_cand):
-        pick = RNG.choice(len(faces), size=n_cand, p=area / area.sum())
-        r1, r2 = RNG.random(n_cand), RNG.random(n_cand)
-        s1 = np.sqrt(r1)
-        return (1 - s1)[:, None] * tri[pick, 0] + (s1 * (1 - r2))[:, None] * tri[pick, 1] + (s1 * r2)[:, None] * tri[pick, 2]
-
-    def finish(pts, live):
-        """Taper each line to nothing at both ends of its live stretch and fold away unused points."""
-        first = np.argmax(live, axis=1)
-        last = K - 1 - np.argmax(live[:, ::-1], axis=1)
-        idx = np.arange(K)[None, :]
-        span = np.maximum(last - first, 1)[:, None]
-        u_live = np.clip((idx - first[:, None]) / span, 0.0, 1.0)
-        width = np.where(live, np.sin(np.pi * u_live) ** 0.5, 0.0)
-        for i in range(len(pts)):
-            pts[i, : first[i]] = pts[i, first[i]]
-            pts[i, last[i] + 1 :] = pts[i, last[i]]
-        return pts, width, u_live
-
-    # healthy set: the whole heart, the infarct included, along the healthy field
-    cand = sample(90_000)
-    _, _, cf, _, _, ckind = attributes(cand)
-    kc = klass(ckind)
-    radius = np.where(kc == 0, 0.0125, np.where(kc == 1, 0.022, 0.020))
-    ok = cf > 0.05
-    seeds = cand[ok][poisson(cand[ok], radius[ok])]
-    ks = klass(np.argmin(parts(seeds), axis=0))
-    n = len(seeds)
-    length = np.where(ks == 0, RNG.uniform(0.55, 1.05, n), np.where(ks == 1, RNG.uniform(0.34, 0.62, n), RNG.uniform(0.50, 0.95, n)))
-    jitter = np.deg2rad(RNG.normal(0, 1.5, n))
-    pts, live = trace(seeds, length, jitter)
-    sep = np.where(ks == 0, 0.0175, np.where(ks == 1, 0.034, 0.029))
-    kept, live = select(pts, live, sep, [])
-    pts, ks = pts[kept], ks[kept]
-    pts, width, u_live = finish(pts, live)
-    cls = ks.astype(np.uint8)
-    print(f"healthy lines: {len(pts)}  (ventricles {np.sum(cls == 0)}, atria {np.sum(cls == 1)}, vessels {np.sum(cls == 2)})")
-
-    # infarct set: scar collagen and border-zone fibres, only over the infarct
-    cand = sample(140_000)
-    _, _, _, _, _, ckind = attributes(cand)
-    rn_c = scar_radius(cand)
-    ok = (klass(ckind) == 0) & (rn_c < 1.02)
-    cand, rn_c = cand[ok], rn_c[ok]
-    in_scar_c = rn_c < (SCAR_R / (SCAR_R + BZ_W))
-    seeds_i = cand[poisson(cand, np.where(in_scar_c, 0.0075, 0.0105))]
-    rn_s = scar_radius(seeds_i)
-    in_scar = rn_s < (SCAR_R / (SCAR_R + BZ_W))
-    n = len(seeds_i)
-    length = np.where(in_scar, RNG.uniform(0.15, 0.27, n), RNG.uniform(0.22, 0.40, n))
-    jitter = np.deg2rad(np.where(in_scar, RNG.normal(0, 9.0, n), RNG.normal(0, 3.0, n)))
-    pts_i, live_i = trace(seeds_i, length, jitter, infarct=True)
-    sep_i = np.where(in_scar, 0.0098, 0.0150)
-    kept_i, live_i = select(pts_i, live_i, sep_i, [])
-    pts_i, in_scar = pts_i[kept_i], in_scar[kept_i]
-    pts_i, width_i, u_i = finish(pts_i, live_i)
-    # scar collagen is crimped: give each scar strand a gentle wave along its length
-    nrm_i = gradient(pts_i.reshape(-1, 3)).reshape(pts_i.shape)
-    tan_i = np.gradient(pts_i, axis=1)
-    side_i = np.cross(nrm_i, tan_i)
-    side_i /= np.maximum(np.linalg.norm(side_i, axis=2, keepdims=True), 1e-9)
-    arc = np.concatenate([np.zeros((len(pts_i), 1)), np.cumsum(np.linalg.norm(np.diff(pts_i, axis=1), axis=2), axis=1)], axis=1)
-    phase = RNG.uniform(0, 2 * np.pi, (len(pts_i), 1))
-    rn_pts = scar_radius(pts_i.reshape(-1, 3)).reshape(len(pts_i), K)
-    amp = 0.0042 * (1.0 - smoothstep(SCAR_R / (SCAR_R + BZ_W) - 0.06, SCAR_R / (SCAR_R + BZ_W), rn_pts))
-    pts_i = pts_i + (amp * np.sin(2 * np.pi * arc / 0.052 + phase))[:, :, None] * side_i
-    pts_i = project(pts_i.reshape(-1, 3), iters=2).reshape(pts_i.shape)
-    cls_i = np.full(len(pts_i), 5, np.uint8)
-    print(f"infarct lines: {len(pts_i)}  (scar {np.sum(in_scar)}, border zone {np.sum(~in_scar)})")
-
-    cp, cw, cc, cu, ccont = coronary_lines()
-    print(f"coronary pieces: {len(cp)}")
-    n_fibre = len(pts)
-    n_infarct = len(pts_i)
-    all_pts = np.concatenate([pts, pts_i, cp]).reshape(-1, 3)
-    all_w = np.concatenate([width, width_i, cw]).reshape(-1)
-    all_u = np.concatenate([u_live, u_i, cu]).reshape(-1)
-    all_cls = np.repeat(np.concatenate([cls, cls_i, cc.astype(np.uint8)]), K)
-    rand = np.repeat(RNG.random(n_fibre + n_infarct + len(cp)), K)
-
-    nrm = gradient(all_pts)
-    lw, lc, lf, ls, lb, _ = attributes(all_pts)
-    lao = occlusion(all_pts, nrm)
-    lifted = all_pts + np.where((all_cls == 3) | (all_cls == 4), 0.0, 0.010)[:, None] * nrm  # arteries were lifted already
-    lrn = scar_radius(all_pts)
-    # tangent by central differences along each line
-    L = lifted.reshape(-1, K, 3)
-    tan = np.zeros_like(L)
-    tan[:, 1:-1] = L[:, 2:] - L[:, :-2]
-    tan[:, 0] = L[:, 1] - L[:, 0]
-    tan[:, -1] = L[:, -1] - L[:, -2]
-    # where a line has stopped, reuse the last moving direction so the ribbon does not twist
-    lens = np.linalg.norm(tan, axis=2, keepdims=True)
-    for i in range(1, K):
-        tan[:, i] = np.where(lens[:, i] < 1e-6, tan[:, i - 1], tan[:, i])
-    for i in range(K - 2, -1, -1):
-        tan[:, i] = np.where(np.linalg.norm(tan[:, i], axis=1, keepdims=True) < 1e-6, tan[:, i + 1], tan[:, i])
-    # arteries are cut into pieces; make the direction continuous across the joins
-    for j, cont in enumerate(ccont):
-        if cont:
-            i = n_fibre + n_infarct + j
-            t = L[i, 1] - L[i - 1, K - 2]
-            tan[i, 0] = t
-            tan[i - 1, K - 1] = t
-    tan /= np.maximum(np.linalg.norm(tan, axis=2, keepdims=True), 1e-9)
+        entries.append(ray[inside[int(len(inside) * RNG.uniform(0.25, 0.75))]])
+    entries = np.array(entries)
+    # visit them in order around the scar, starting at the top
+    order = np.argsort(-((entries - SCAR_C) @ SCAR_V))
+    first = order[0]
+    angle = np.arctan2((entries - SCAR_C) @ SCAR_V, (entries - SCAR_C) @ SCAR_U)
+    order = np.argsort((angle - angle[first]) % (2 * np.pi))
+    entries = entries[order]
+    dn = gradient(entries)
+    # long axis in the wall, along the border-zone fibres with some scatter (Section 2.14)
+    base_dir = []
+    for p_, n_ in zip(entries, dn):
+        e = 1e-3
+        t1 = np.cross(AXIS, n_)
+        t1 /= np.linalg.norm(t1)
+        # direction of a fibre: along the level line of the twirled phase
+        offs = np.array([p_ + e * t1, p_ - e * t1, p_ + e * np.cross(n_, t1), p_ - e * np.cross(n_, t1)])
+        ph = phase(offs, table) + twirl_offset(offs, table)
+        g = (ph[0] - ph[1]) / (2 * e) * t1 + (ph[2] - ph[3]) / (2 * e) * np.cross(n_, t1)
+        f_dir = np.cross(n_, g)
+        base_dir.append(f_dir / np.linalg.norm(f_dir))
+    base_dir = np.array(base_dir)
+    tilt = np.deg2rad(RNG.normal(0, 14, 9))
+    long_ax = np.cos(tilt)[:, None] * base_dir + np.sin(tilt)[:, None] * np.cross(dn, base_dir)
+    short_ax = np.cross(dn, long_ax)
+    semi = np.array([0.080, 0.040])
+    dw, dc, _, _, _ = attributes(entries)
+    print("depot border-zone membership:", np.round(tissue(entries)[1], 2))
 
     # ---- write --------------------------------------------------------------------------
+    n_mesh = len(verts)
+    all_v = np.concatenate([verts, tv])
+    all_n = np.concatenate([normals, tn])
+    kind = np.concatenate([np.zeros(n_mesh), np.where(tb, 2, 1)])
+    attr = np.stack([
+        np.concatenate([w, aw]),
+        np.concatenate([contract, ac]),
+        np.concatenate([fade, af]),
+        np.clip(np.concatenate([rn_mesh, a_rn]) / 2.0, 0, 1),
+        np.concatenate([ao, a_ao]),
+        np.concatenate([w_atrium, tu]),
+        np.concatenate([w_vessel, np.zeros(len(tv))]),
+        kind / 255.0,
+    ], axis=1)
+    tw = np.concatenate([twirl, np.zeros(len(tv))])
+    tw_scale = float(np.abs(tw).max()) / 32767.0
+    all_f = np.concatenate([faces, tf + n_mesh])
+    assert len(all_v) < 65536, len(all_v)
+
     blobs: list[bytes] = []
     header = {
         "lo": LO.tolist(), "hi": HI.tolist(),
-        "axis": AXIS.tolist(), "centre": VC.tolist(), "baseH": BASE_H,
-        "scarCentre": SCAR_C.tolist(), "depotRadius": depot_r,
-        "pointsPerLine": K, "fibreLines": int(n_fibre), "infarctLines": int(n_infarct), "coronaryLines": int(len(cp)),
+        "axis": AXIS.tolist(), "ex": EX.tolist(), "ez": EZ.tolist(), "centre": VC.tolist(), "baseH": BASE_H,
+        "fibres": N_FIBRES,
+        # G(h) sampled evenly along the long axis, and the scale of the stored infarct offsets
+        "helix": {"h0": float(table[0][0]), "step": float(table[0][2] - table[0][0]), "g": [round(float(g), 3) for g in table[1][::2]]},
+        "twirlScale": tw_scale,
+        "scar": {"centre": SCAR_C.tolist(), "normal": SCAR_N.tolist(), "u": SCAR_U.tolist(), "v": SCAR_V.tolist()},
+        "depots": {
+            "entry": entries.tolist(), "normal": dn.tolist(),
+            "long": (long_ax / semi[0]).tolist(), "short": (short_ax / semi[1]).tolist(),
+            "contract": dc.tolist(), "rn": scar_radius(entries).tolist(),
+        },
+        "meshTriangles": int(len(faces)), "arteryTriangles": int(len(tf)),
         "arrays": {},
     }
     offset = 0
@@ -664,28 +528,22 @@ def main() -> None:
         blobs.append(raw + b"\0" * pad)
         offset += len(raw) + pad
 
-    add("meshPos", q16(verts), "u16", 3)
-    add("meshNrm", i16(normals), "i16", 3)
-    # per vertex: ventricle weight, contractility, fade, distance from the scar centre (0..2 mapped to 0..1), occlusion
-    add("meshAttr", np.stack([u8(w), u8(contract), u8(fade), u8(np.clip(rn_mesh / 2.0, 0, 1)), u8(ao), np.zeros(len(verts), np.uint8)], axis=1), "u8", 6)
-    add("meshIdx", faces.astype(np.uint16), "u16", 1)
-    add("linePos", q16(lifted), "u16", 3)
-    add("lineTan", i8(tan.reshape(-1, 3)), "i8", 3)
-    add("lineNrm", i8(nrm), "i8", 3)
-    # per point: ventricle weight, contractility, fade, distance from the scar centre (0..2 mapped to 0..1),
-    # occlusion, width, position along the line, spare
-    add("lineAttr", np.stack([u8(lw), u8(lc), u8(lf), u8(np.clip(lrn / 2.0, 0, 1)), u8(lao), u8(all_w), u8(all_u), np.zeros(len(lw), np.uint8)], axis=1), "u8", 8)
-    add("lineClass", np.stack([all_cls, u8(rand)], axis=1), "u8", 2)
-    add("depotCentre", q16(centres), "u16", 3)
-    add("depotAttr", np.stack([u8(dw), u8(dc)], axis=1), "u8", 2)
-    add("sphereVert", sv.astype(np.float32), "f32", 3)
-    add("sphereIdx", sf.astype(np.uint16), "u16", 1)
+    add("pos", q16(all_v), "u16", 3)
+    add("nrm", i16(all_n), "i16", 3)
+    # per vertex: ventricle weight, contractility, fade, distance from the scar centre (0..2 mapped
+    # to 0..1), occlusion, atrium weight (position along an artery), vessel weight, kind
+    # (0 wall, 1 artery, 2 blocked artery)
+    add("attr", u8(attr), "u8", 8)
+    # per vertex: the extra fibre phase that turns the fibres around the infarct (times twirlScale)
+    add("twirl", np.round(tw / max(tw_scale, 1e-12)).astype(np.int16), "i16", 1)
+    add("idx", all_f.astype(np.uint16), "u16", 1)
 
     head = json.dumps(header, separators=(",", ":")).encode()
     head += b" " * ((-len(head)) % 4)
-    OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_bytes(struct.pack("<I", len(head)) + head + b"".join(blobs))
-    print(f"wrote {OUT.relative_to(ROOT)}  {OUT.stat().st_size / 1024:.0f} KB")
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    raw = struct.pack("<I", len(head)) + head + b"".join(blobs)
+    out_path.write_bytes(gzip.compress(raw, 9, mtime=0))
+    print(f"wrote {out_path}  {out_path.stat().st_size / 1024:.0f} KB ({len(raw) / 1024:.0f} KB unpacked)")
 
 
 if __name__ == "__main__":

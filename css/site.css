@@ -2178,7 +2178,7 @@ pre.cite__text {
 }
 .heart3d__canvas:focus-visible {
   box-shadow: none;
-  outline: 1px solid var(--gel-lt);
+  outline: 2px solid var(--gel-lt);
   outline-offset: 2px;
 }
 @media (min-width: 56.01rem) {
@@ -2511,8 +2511,13 @@ pre.cite__text {
   column-gap: 0.6rem;
   margin-top: 0.4rem;
 }
-.heart-story[hidden] {
+.heart-story[hidden],
+.no-js .heart-story {
   display: none;
+}
+/* keeps its space from the first paint, so nothing below it moves; shown once the heart is ready */
+.heart-story[data-pending] {
+  visibility: hidden;
 }
 .heart-story__steps {
   display: grid;
@@ -2559,7 +2564,7 @@ pre.cite__text {
   transform-origin: left center;
 }
 .heart-story__steps button:hover,
-.heart-story__steps button[aria-pressed="true"] {
+.heart-story__steps button[aria-current="step"] {
   color: var(--on-film);
 }
 .heart-story__n {
@@ -2568,7 +2573,7 @@ pre.cite__text {
   letter-spacing: 0;
   color: var(--on-film-3);
 }
-.heart-story__steps button[aria-pressed="true"] .heart-story__n {
+.heart-story__steps button[aria-current="step"] .heart-story__n {
   color: var(--gel-lt);
 }
 .heart-story__pause {
@@ -2596,10 +2601,24 @@ pre.cite__text {
   display: block;
 }
 .heart-story__text {
+  display: grid;
   grid-column: 1 / -1;
-  min-height: 2.9em;
   margin-top: 0.15rem;
   color: var(--on-film);
   font-size: 0.98rem;
   line-height: 1.45;
+}
+/* the three sentences share one cell, so the box keeps the height of the longest */
+.heart-story__text > span {
+  grid-area: 1 / 1;
+  visibility: hidden;
+}
+.heart-story__text > span[data-on] {
+  visibility: visible;
+}
+/* below 360px the labels do not fit with their numbers */
+@media (max-width: 22.5rem) {
+  .heart-story__n {
+    display: none;
+  }
 }
